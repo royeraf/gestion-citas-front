@@ -6,7 +6,7 @@
             <div class="bg-white rounded-xl shadow-md p-5">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="pi pi-search text-blue-600"></i>
+                        <MagnifyingGlassIcon class="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
                         <h2 class="font-bold text-gray-800">Buscar Paciente</h2>
@@ -22,8 +22,8 @@
                         class="px-6 py-2.5 rounded-lg font-medium transition flex items-center gap-2" :class="dni && dni.length === 8 && !isSearching
                             ? 'bg-blue-600 hover:bg-blue-700 text-white'
                             : 'bg-gray-200 text-gray-400 cursor-not-allowed'">
-                        <i class="pi pi-spin pi-spinner" v-if="isSearching"></i>
-                        <i class="pi pi-search" v-else></i>
+                        <ArrowPathIcon class="w-5 h-5 animate-spin" v-if="isSearching" />
+                        <MagnifyingGlassIcon class="w-5 h-5" v-else />
                         {{ isSearching ? "Buscando..." : "Buscar" }}
                     </button>
                 </div>
@@ -34,8 +34,8 @@
                         'mt-3 px-3 py-2 rounded-lg text-sm flex items-center gap-2',
                         searchMessage.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
                     ]">
-                        <i
-                            :class="searchMessage.type === 'success' ? 'pi pi-check-circle' : 'pi pi-exclamation-circle'"></i>
+                        <CheckCircleIcon v-if="searchMessage.type === 'success'" class="w-5 h-5" />
+                        <ExclamationCircleIcon v-else class="w-5 h-5" />
                         {{ searchMessage.text }}
                     </div>
                 </transition>
@@ -47,15 +47,15 @@
                     class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                            <i class="pi pi-user text-emerald-600"></i>
+                            <UserIcon class="w-5 h-5 text-emerald-600" />
                         </div>
                         <div class="text-left">
                             <h2 class="font-bold text-gray-800">Datos Personales</h2>
                             <p class="text-xs text-gray-500">Información básica del paciente</p>
                         </div>
                     </div>
-                    <i
-                        :class="['pi transition-transform', seccionesAbiertas.datosPersonales ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+                    <ChevronUpIcon v-if="seccionesAbiertas.datosPersonales" class="w-5 h-5 transition-transform" />
+                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
                 </button>
 
                 <transition enter-active-class="transition-all duration-300 ease-out"
@@ -72,7 +72,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.nombres, 'border-gray-300': !errors.nombres }" />
                                 <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
-                                }}</span>
+                                    }}</span>
                             </div>
                             <!-- Apellido Paterno -->
                             <div>
@@ -145,7 +145,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.telefono, 'border-gray-300': !errors.telefono }" />
                                 <span v-if="errors.telefono" class="text-red-500 text-xs mt-1">{{ errors.telefono
-                                }}</span>
+                                    }}</span>
                             </div>
                             <!-- Email -->
                             <div>
@@ -164,7 +164,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.direccion, 'border-gray-300': !errors.direccion }" />
                                 <span v-if="errors.direccion" class="text-red-500 text-xs mt-1">{{ errors.direccion
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -177,15 +177,15 @@
                     class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <i class="pi pi-info-circle text-purple-600"></i>
+                            <InformationCircleIcon class="w-5 h-5 text-purple-600" />
                         </div>
                         <div class="text-left">
                             <h2 class="font-bold text-gray-800">Datos Adicionales</h2>
                             <p class="text-xs text-gray-500">Información complementaria (opcional)</p>
                         </div>
                     </div>
-                    <i
-                        :class="['pi transition-transform', seccionesAbiertas.datosAdicionales ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+                    <ChevronUpIcon v-if="seccionesAbiertas.datosAdicionales" class="w-5 h-5 transition-transform" />
+                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
                 </button>
 
                 <transition enter-active-class="transition-all duration-300 ease-out"
@@ -235,8 +235,8 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center"
                             :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'bg-red-100' : 'bg-amber-100'">
-                            <i class="pi pi-users"
-                                :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'text-red-600' : 'text-amber-600'"></i>
+                            <UsersIcon class="w-5 h-5"
+                                :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'text-red-600' : 'text-amber-600'" />
                         </div>
                         <div class="text-left">
                             <h2 class="font-bold text-gray-800">Acompañante <span class="text-red-500">*</span></h2>
@@ -247,8 +247,8 @@
                             Campos incompletos
                         </span>
                     </div>
-                    <i
-                        :class="['pi transition-transform', seccionesAbiertas.acompanante ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+                    <ChevronUpIcon v-if="seccionesAbiertas.acompanante" class="w-5 h-5 transition-transform" />
+                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
                 </button>
 
                 <transition enter-active-class="transition-all duration-300 ease-out"
@@ -298,8 +298,8 @@
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg flex items-center justify-center"
                             :class="errors.numeroSis || errors.tipoSeguro ? 'bg-red-100' : 'bg-blue-100'">
-                            <i class="pi pi-id-card"
-                                :class="errors.numeroSis || errors.tipoSeguro ? 'text-red-600' : 'text-blue-600'"></i>
+                            <IdentificationIcon class="w-5 h-5"
+                                :class="errors.numeroSis || errors.tipoSeguro ? 'text-red-600' : 'text-blue-600'" />
                         </div>
                         <div class="text-left">
                             <h2 class="font-bold text-gray-800">Afiliación a Seguro <span class="text-red-500">*</span>
@@ -311,8 +311,8 @@
                             Campos incompletos
                         </span>
                     </div>
-                    <i
-                        :class="['pi transition-transform', seccionesAbiertas.afiliacion ? 'pi-chevron-up' : 'pi-chevron-down']"></i>
+                    <ChevronUpIcon v-if="seccionesAbiertas.afiliacion" class="w-5 h-5 transition-transform" />
+                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
                 </button>
 
                 <transition enter-active-class="transition-all duration-300 ease-out"
@@ -327,7 +327,7 @@
                                     placeholder="000-000-000000" class="w-full px-3 py-2 border rounded-lg text-sm"
                                     :class="{ 'border-red-500 bg-red-50': errors.numeroSis, 'border-gray-300': !errors.numeroSis }" />
                                 <span v-if="errors.numeroSis" class="text-red-500 text-xs mt-1">{{ errors.numeroSis
-                                }}</span>
+                                    }}</span>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Tipo Seguro *</label>
@@ -339,7 +339,7 @@
                                     <option value="ESSALUD">ESSALUD</option>
                                 </select>
                                 <span v-if="errors.tipoSeguro" class="text-red-500 text-xs mt-1">{{ errors.tipoSeguro
-                                }}</span>
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -350,7 +350,7 @@
             <div class="bg-white rounded-xl shadow-md p-5">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                        <i class="pi pi-heart text-red-600"></i>
+                        <HeartIcon class="w-5 h-5 text-red-600" />
                     </div>
                     <div>
                         <h2 class="font-bold text-gray-800">Motivo de Consulta</h2>
@@ -374,7 +374,7 @@
                                 'w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all',
                                 areaSeleccionada ? 'bg-teal-600 text-white' : 'bg-teal-100 text-teal-600 ring-2 ring-teal-600'
                             ]">
-                                <i v-if="areaSeleccionada" class="pi pi-check"></i>
+                                <CheckIcon v-if="areaSeleccionada" class="w-4 h-4" />
                                 <span v-else>1</span>
                             </div>
                             <span class="text-sm font-medium text-gray-700 hidden sm:block">Área</span>
@@ -385,7 +385,7 @@
                                 'w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all',
                                 medicoSeleccionado ? 'bg-teal-600 text-white' : areaSeleccionada ? 'bg-teal-100 text-teal-600 ring-2 ring-teal-600' : 'bg-gray-200 text-gray-400'
                             ]">
-                                <i v-if="medicoSeleccionado" class="pi pi-check"></i>
+                                <CheckIcon v-if="medicoSeleccionado" class="w-4 h-4" />
                                 <span v-else>2</span>
                             </div>
                             <span class="text-sm font-medium hidden sm:block"
@@ -397,7 +397,7 @@
                                 'w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all',
                                 horarioSeleccionado ? 'bg-teal-600 text-white' : medicoSeleccionado ? 'bg-teal-100 text-teal-600 ring-2 ring-teal-600' : 'bg-gray-200 text-gray-400'
                             ]">
-                                <i v-if="horarioSeleccionado" class="pi pi-check"></i>
+                                <CheckIcon v-if="horarioSeleccionado" class="w-4 h-4" />
                                 <span v-else>3</span>
                             </div>
                             <span class="text-sm font-medium hidden sm:block"
@@ -410,7 +410,7 @@
                 <div class="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl p-6 border border-teal-100">
                     <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
                         <div class="w-8 h-8 bg-teal-600 text-white rounded-lg flex items-center justify-center">
-                            <i class="pi pi-building text-sm"></i>
+                            <BuildingOfficeIcon class="w-4 h-4" />
                         </div>
                         Paso 1: Seleccionar Área de Atención
                     </h2>
@@ -427,7 +427,7 @@
                             <!-- Icono check cuando está seleccionado -->
                             <div v-if="areaSeleccionada?.id === area.id"
                                 class="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md">
-                                <i class="pi pi-check text-teal-600 text-xs font-bold"></i>
+                                <CheckIcon class="w-3 h-3 text-teal-600 font-bold" />
                             </div>
 
                             <div class="flex flex-col items-center text-center">
@@ -437,124 +437,121 @@
                                         ? 'bg-white/20'
                                         : 'bg-teal-100 group-hover:bg-teal-200'
                                 ]">
-                                    <i :class="[
-                                        'pi text-xl',
-                                        getAreaIcon(area.nombre),
+                                    <component :is="getAreaIcon(area.nombre)" :class="[
+                                        'w-5 h-5',
                                         areaSeleccionada?.id === area.id ? 'text-white' : 'text-teal-600'
-                                    ]"></i>
+                                    ]" />
                                 </div>
-                                <span :class="[
-                                    'font-semibold text-sm leading-tight',
-                                    areaSeleccionada?.id === area.id ? 'text-white' : 'text-gray-800'
-                                ]">{{ area.nombre }}</span>
+                            </div>
+                            <span :class="[
+                                'font-semibold text-sm leading-tight',
+                                areaSeleccionada?.id === area.id ? 'text-white' : 'text-gray-800'
+                            ]">{{ area.nombre }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 2: Seleccionar Médico -->
+            <transition enter-active-class="transition ease-out duration-300"
+                enter-from-class="opacity-0 transform translate-y-4"
+                enter-to-class="opacity-100 transform translate-y-0">
+                <div v-if="areaSeleccionada" class="mt-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center">
+                            <UsersIcon class="w-4 h-4" />
+                        </div>
+                        Paso 2: Seleccionar Médico
+                    </h2>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Médicos disponibles en <span class="font-semibold text-teal-700">{{ areaSeleccionada.nombre
+                        }}</span>
+                    </p>
+
+                    <!-- Skeleton Loader para médicos -->
+                    <div v-if="isLoadingMedicos" class="space-y-4">
+                        <div class="flex items-center gap-2 text-teal-600">
+                            <ArrowPathIcon class="w-5 h-5 animate-spin" />
+                            <span class="font-medium">Buscando médicos disponibles...</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div v-for="n in 2" :key="n" class="border border-gray-200 rounded-xl p-4 animate-pulse">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-14 h-14 bg-gray-200 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
+                                        <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje cuando no hay médicos -->
+                    <div v-else-if="medicosDisponibles.length === 0"
+                        class="bg-amber-50 border border-amber-200 rounded-xl p-5 flex items-start gap-4">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <ExclamationTriangleIcon class="w-6 h-6 text-amber-600" />
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-amber-800 mb-1">No hay médicos disponibles</h4>
+                            <p class="text-amber-700 text-sm">
+                                No se encontraron médicos asignados al área de <strong>{{ areaSeleccionada.nombre
+                                }}</strong>.
+                                Por favor, seleccione otra área o contacte al administrador.
+                            </p>
+                            <button @click="areaSeleccionada = null" type="button"
+                                class="mt-3 text-sm font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-1">
+                                <ArrowLeftIcon class="w-3 h-3" />
+                                Elegir otra área
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grid de Médicos -->
+                    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div v-for="medico in medicosDisponibles" :key="medico.id" @click="seleccionarMedico(medico)"
+                            :class="[
+                                'relative rounded-xl p-4 cursor-pointer transition-all duration-200 border-2',
+                                medicoSeleccionado?.id === medico.id
+                                    ? 'bg-blue-50 border-blue-500 shadow-lg shadow-blue-100'
+                                    : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-md'
+                            ]">
+                            <!-- Badge de selección -->
+                            <div v-if="medicoSeleccionado?.id === medico.id"
+                                class="absolute -top-2 -right-2 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
+                                <CheckIcon class="w-3 h-3 text-white font-bold" />
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <!-- Avatar del médico -->
+                                <div :class="[
+                                    'w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0 transition-colors',
+                                    medicoSeleccionado?.id === medico.id
+                                        ? 'bg-blue-600 text-white'
+                                        : 'bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700'
+                                ]">
+                                    {{ getInitials(medico.name) }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 :class="[
+                                        'font-bold truncate',
+                                        medicoSeleccionado?.id === medico.id ? 'text-blue-800' : 'text-gray-800'
+                                    ]">{{ medico.name }}</h4>
+                                    <p class="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                                        <CalendarIcon class="w-3 h-3" />
+                                        Click para ver disponibilidad
+                                    </p>
+                                </div>
+                                <ChevronRightIcon :class="[
+                                    'w-5 h-5 transition-transform',
+                                    medicoSeleccionado?.id === medico.id ? 'text-blue-600 translate-x-1' : 'text-gray-400'
+                                ]" />
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Paso 2: Seleccionar Médico -->
-                <transition enter-active-class="transition ease-out duration-300"
-                    enter-from-class="opacity-0 transform translate-y-4"
-                    enter-to-class="opacity-100 transform translate-y-0">
-                    <div v-if="areaSeleccionada" class="mt-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                        <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-                            <div class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center">
-                                <i class="pi pi-users text-sm"></i>
-                            </div>
-                            Paso 2: Seleccionar Médico
-                        </h2>
-                        <p class="text-gray-600 text-sm mb-4">
-                            Médicos disponibles en <span class="font-semibold text-teal-700">{{ areaSeleccionada.nombre
-                            }}</span>
-                        </p>
-
-                        <!-- Skeleton Loader para médicos -->
-                        <div v-if="isLoadingMedicos" class="space-y-4">
-                            <div class="flex items-center gap-2 text-teal-600">
-                                <i class="pi pi-spin pi-spinner"></i>
-                                <span class="font-medium">Buscando médicos disponibles...</span>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div v-for="n in 2" :key="n"
-                                    class="border border-gray-200 rounded-xl p-4 animate-pulse">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-14 h-14 bg-gray-200 rounded-full"></div>
-                                        <div class="flex-1">
-                                            <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
-                                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Mensaje cuando no hay médicos -->
-                        <div v-else-if="medicosDisponibles.length === 0"
-                            class="bg-amber-50 border border-amber-200 rounded-xl p-5 flex items-start gap-4">
-                            <div
-                                class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                <i class="pi pi-exclamation-triangle text-amber-600 text-xl"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-amber-800 mb-1">No hay médicos disponibles</h4>
-                                <p class="text-amber-700 text-sm">
-                                    No se encontraron médicos asignados al área de <strong>{{ areaSeleccionada.nombre
-                                    }}</strong>.
-                                    Por favor, seleccione otra área o contacte al administrador.
-                                </p>
-                                <button @click="areaSeleccionada = null" type="button"
-                                    class="mt-3 text-sm font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-1">
-                                    <i class="pi pi-arrow-left text-xs"></i>
-                                    Elegir otra área
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Grid de Médicos -->
-                        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div v-for="medico in medicosDisponibles" :key="medico.id"
-                                @click="seleccionarMedico(medico)" :class="[
-                                    'relative rounded-xl p-4 cursor-pointer transition-all duration-200 border-2',
-                                    medicoSeleccionado?.id === medico.id
-                                        ? 'bg-blue-50 border-blue-500 shadow-lg shadow-blue-100'
-                                        : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-md'
-                                ]">
-                                <!-- Badge de selección -->
-                                <div v-if="medicoSeleccionado?.id === medico.id"
-                                    class="absolute -top-2 -right-2 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
-                                    <i class="pi pi-check text-white text-xs font-bold"></i>
-                                </div>
-
-                                <div class="flex items-center gap-4">
-                                    <!-- Avatar del médico -->
-                                    <div :class="[
-                                        'w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold flex-shrink-0 transition-colors',
-                                        medicoSeleccionado?.id === medico.id
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700'
-                                    ]">
-                                        {{ getInitials(medico.name) }}
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 :class="[
-                                            'font-bold truncate',
-                                            medicoSeleccionado?.id === medico.id ? 'text-blue-800' : 'text-gray-800'
-                                        ]">{{ medico.name }}</h4>
-                                        <p class="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                                            <i class="pi pi-calendar text-xs"></i>
-                                            Click para ver disponibilidad
-                                        </p>
-                                    </div>
-                                    <i :class="[
-                                        'pi pi-chevron-right transition-transform',
-                                        medicoSeleccionado?.id === medico.id ? 'text-blue-600 translate-x-1' : 'text-gray-400'
-                                    ]"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </transition>
-            </div>
+            </transition>
 
             <!-- Paso 3: Calendario de Disponibilidad -->
             <transition enter-active-class="transition ease-out duration-300"
@@ -563,7 +560,7 @@
                 <div v-if="medicoSeleccionado" class="mt-6 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                     <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-3">
                         <div class="w-8 h-8 bg-purple-600 text-white rounded-lg flex items-center justify-center">
-                            <i class="pi pi-calendar text-sm"></i>
+                            <CalendarIcon class="w-4 h-4" />
                         </div>
                         Paso 3: Seleccionar Fecha y Hora
                     </h2>
@@ -574,7 +571,7 @@
                     <!-- Skeleton Loader para horarios -->
                     <div v-if="isLoadingHorarios" class="space-y-4">
                         <div class="flex items-center gap-2 text-purple-600">
-                            <i class="pi pi-spin pi-spinner"></i>
+                            <ArrowPathIcon class="w-5 h-5 animate-spin" />
                             <span class="font-medium">Cargando disponibilidad del médico...</span>
                         </div>
 
@@ -607,11 +604,11 @@
                             <div class="flex gap-2">
                                 <button type="button" @click="cambiarMes(-1)"
                                     class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">
-                                    <i class="pi pi-chevron-left"></i>
+                                    <ChevronLeftIcon class="w-5 h-5" />
                                 </button>
                                 <button type="button" @click="cambiarMes(1)"
                                     class="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition">
-                                    <i class="pi pi-chevron-right"></i>
+                                    <ChevronRightIcon class="w-5 h-5" />
                                 </button>
                             </div>
                         </div>
@@ -639,17 +636,17 @@
                                         <div v-for="horario in dia.horarios.filter((h: Horario) => h.turno === 'M')"
                                             :key="'m-' + horario.id"
                                             class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded flex items-center gap-1">
-                                            <i class="pi pi-sun text-[10px]"></i>
+                                            <SunIcon class="w-3 h-3" />
                                             <span class="font-semibold">{{ horario.cupos_disponibles }}/{{ horario.cupos
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                         <!-- Turno Tarde -->
                                         <div v-for="horario in dia.horarios.filter((h: Horario) => h.turno === 'T')"
                                             :key="'t-' + horario.id"
                                             class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded flex items-center gap-1">
-                                            <i class="pi pi-moon text-[10px]"></i>
+                                            <MoonIcon class="w-3 h-3" />
                                             <span class="font-semibold">{{ horario.cupos_disponibles }}/{{ horario.cupos
-                                            }}</span>
+                                                }}</span>
                                         </div>
                                     </div>
                                     <div v-else class="text-xs text-gray-400">No disponible</div>
@@ -662,7 +659,7 @@
                             <div v-if="diaSeleccionado"
                                 class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
                                 <h3 class="font-semibold text-blue-900 mb-4 flex items-center gap-2">
-                                    <i class="pi pi-clock"></i>
+                                    <ClockIcon class="w-5 h-5" />
                                     Turnos disponibles para {{ diaSeleccionado.fechaCompleta }}
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -683,7 +680,7 @@
                                                     'w-12 h-12 rounded-full flex items-center justify-center',
                                                     horarioSeleccionado?.id === horario.id ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-600'
                                                 ]">
-                                                    <i class="pi pi-sun text-xl"></i>
+                                                    <SunIcon class="w-6 h-6" />
                                                 </div>
                                                 <div class="text-left flex-1">
                                                     <div class="font-bold text-gray-800">Turno Mañana</div>
@@ -719,7 +716,7 @@
                                                     'w-12 h-12 rounded-full flex items-center justify-center',
                                                     horarioSeleccionado?.id === horario.id ? 'bg-indigo-500 text-white' : 'bg-indigo-100 text-indigo-600'
                                                 ]">
-                                                    <i class="pi pi-moon text-xl"></i>
+                                                    <MoonIcon class="w-6 h-6" />
                                                 </div>
                                                 <div class="text-left flex-1">
                                                     <div class="font-bold text-gray-800">Turno Tarde</div>
@@ -741,8 +738,8 @@
 
                                 <!-- Mensaje si no hay horarios disponibles -->
                                 <div v-if="diaSeleccionado.horarios.length === 0"
-                                    class="text-center py-4 text-gray-500">
-                                    <i class="pi pi-info-circle mr-2"></i>
+                                    class="text-center py-4 text-gray-500 flex justify-center items-center gap-2">
+                                    <InformationCircleIcon class="w-5 h-5" />
                                     No hay turnos configurados para este día
                                 </div>
                             </div>
@@ -759,13 +756,13 @@
                         ? 'bg-emerald-500 hover:bg-emerald-600 text-white hover:shadow-lg'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed',
                 ]">
-                    <i v-if="isSubmitting" class="pi pi-spin pi-spinner"></i>
-                    <i v-else class="pi pi-check"></i>
+                    <ArrowPathIcon v-if="isSubmitting" class="w-5 h-5 animate-spin" />
+                    <CheckIcon v-else class="w-5 h-5" />
                     {{ isSubmitting ? 'Registrando...' : 'Registrar Paciente y Asignar Cita' }}
                 </button>
                 <button type="button" @click="resetForm"
                     class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                    <i class="pi pi-times"></i>
+                    <XMarkIcon class="w-5 h-5" />
                     Limpiar Formulario
                 </button>
             </div>
@@ -778,7 +775,7 @@
             leave-to-class="opacity-0 transform translate-y-2">
             <div v-if="showSuccess"
                 class="mt-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center justify-center shadow-md">
-                <i class="pi pi-check-circle mr-2"></i>
+                <CheckCircleIcon class="w-5 h-5 mr-2" />
                 <span class="font-medium">Paciente registrado y cita asignada exitosamente</span>
             </div>
         </transition>
@@ -793,6 +790,38 @@ import pacienteService from "../../services/pacienteService";
 import horarioService from "../../services/horarioService";
 import citaService from "../../services/citaService";
 import api from "../../services/api";
+import {
+    MagnifyingGlassIcon,
+    ArrowPathIcon,
+    CheckCircleIcon,
+    ExclamationCircleIcon,
+    UserIcon,
+    ChevronUpIcon,
+    ChevronDownIcon,
+    InformationCircleIcon,
+    UsersIcon,
+    IdentificationIcon,
+    HeartIcon,
+    CheckIcon,
+    BuildingOfficeIcon,
+    ExclamationTriangleIcon,
+    ArrowLeftIcon,
+    CalendarIcon,
+    ChevronRightIcon,
+    ChevronLeftIcon,
+    SunIcon,
+    MoonIcon,
+    ClockIcon,
+    XMarkIcon,
+    WrenchIcon,
+    ShareIcon,
+    ChatBubbleLeftRightIcon,
+    EyeIcon,
+    StarIcon,
+    BeakerIcon,
+    PhotoIcon,
+    CogIcon
+} from '@heroicons/vue/24/outline'
 
 interface Medico {
     id: number;
@@ -851,7 +880,7 @@ const schema = yup.object({
 
 });
 
-const { handleSubmit, resetForm: resetVeeForm, setValues, values, errors, defineField, isFieldTouched } = useForm({
+const { handleSubmit, resetForm: resetVeeForm, setValues, values, errors, defineField } = useForm({
     validationSchema: schema,
     initialValues: {
         dni: "",
@@ -1080,23 +1109,23 @@ const handleAreaClick = (area: Area) => {
     seleccionarArea(area);
 };
 
-const getAreaIcon = (nombre: string): string => {
+const getAreaIcon = (nombre: string) => {
     const nombreLower = nombre.toLowerCase();
-    if (nombreLower.includes('medicina') || nombreLower.includes('general')) return 'pi-heart';
-    if (nombreLower.includes('pediatr')) return 'pi-users';
-    if (nombreLower.includes('gineco') || nombreLower.includes('obstetr')) return 'pi-heart-fill';
-    if (nombreLower.includes('cardio')) return 'pi-heart-fill';
-    if (nombreLower.includes('trauma') || nombreLower.includes('ortoped')) return 'pi-wrench';
-    if (nombreLower.includes('neuro')) return 'pi-sitemap';
-    if (nombreLower.includes('derma')) return 'pi-sun';
-    if (nombreLower.includes('psico') || nombreLower.includes('psiqui')) return 'pi-comments';
-    if (nombreLower.includes('oftalmo')) return 'pi-eye';
-    if (nombreLower.includes('odonto') || nombreLower.includes('dental')) return 'pi-star';
-    if (nombreLower.includes('laboratorio')) return 'pi-flask';
-    if (nombreLower.includes('rayos') || nombreLower.includes('imagen')) return 'pi-image';
-    if (nombreLower.includes('urgencia') || nombreLower.includes('emergencia')) return 'pi-exclamation-triangle';
-    if (nombreLower.includes('cirug')) return 'pi-cog';
-    return 'pi-building';
+    if (nombreLower.includes('medicina') || nombreLower.includes('general')) return HeartIcon;
+    if (nombreLower.includes('pediatr')) return UsersIcon;
+    if (nombreLower.includes('gineco') || nombreLower.includes('obstetr')) return HeartIcon;
+    if (nombreLower.includes('cardio')) return HeartIcon;
+    if (nombreLower.includes('trauma') || nombreLower.includes('ortoped')) return WrenchIcon;
+    if (nombreLower.includes('neuro')) return ShareIcon;
+    if (nombreLower.includes('derma')) return SunIcon;
+    if (nombreLower.includes('psico') || nombreLower.includes('psiqui')) return ChatBubbleLeftRightIcon;
+    if (nombreLower.includes('oftalmo')) return EyeIcon;
+    if (nombreLower.includes('odonto') || nombreLower.includes('dental')) return StarIcon;
+    if (nombreLower.includes('laboratorio')) return BeakerIcon;
+    if (nombreLower.includes('rayos') || nombreLower.includes('imagen')) return PhotoIcon;
+    if (nombreLower.includes('urgencia') || nombreLower.includes('emergencia')) return ExclamationTriangleIcon;
+    if (nombreLower.includes('cirug')) return CogIcon;
+    return BuildingOfficeIcon;
 };
 
 const getInitials = (name: string): string => {
@@ -1243,14 +1272,14 @@ const buscarPorDNI = async () => {
                 fechaNacimiento: data.fechaNacimiento || data.fecha_nacimiento,
                 sexo: data.sexo,
                 estado_civil: data.estado_civil,
-                gradoInstruccion: data.grado_instruccion,
-                religion: data.religion,
-                procedencia: data.procedencia,
-                telefono: data.telefono,
-                email: data.email,
+                gradoInstruccion: data.grado_instruccion ?? "",
+                religion: data.religion ?? "",
+                procedencia: data.procedencia ?? "",
+                telefono: data.telefono ?? "",
+                email: data.email ?? "",
                 direccion: data.direccion,
-                tipoSeguro: data.seguro || "",
-                numeroSis: data.numero_afiliacion || "",
+                tipoSeguro: data.seguro ?? "",
+                numeroSis: data.numero_afiliacion ?? "",
                 // Limpiar datos de cita anterior
                 sintomas: "",
                 ocupacion: "",
@@ -1300,54 +1329,47 @@ const onSubmit = handleSubmit(async (values) => {
         return;
     }
 
-    // Datos del paciente
-    const patientPayload = {
-        id: pacienteId.value, // Include ID if exists
-        dni: values.dni,
-        nombres: values.nombres,
-        apellido_paterno: values.apellidoPaterno,
-        apellido_materno: values.apellidoMaterno,
-        fecha_nacimiento: values.fechaNacimiento,
-        sexo: values.sexo,
-        estado_civil: values.estado_civil,
-        direccion: values.direccion,
-        sintomas: values.sintomas, // Also sent to patient, maybe redundant but safe
-        seguro: values.tipoSeguro,
-        telefono: values.telefono,
-        email: values.email,
-        ocupacion: values.ocupacion,
-        contacto_emergencia: values.nombreAcompanante,
-
-        // Extra fields
-        grado_instruccion: values.gradoInstruccion,
-        religion: values.religion,
-        procedencia: values.procedencia,
-        dni_contacto_emergencia: values.dniAcompanante,
-        telefono_contacto_emergencia: values.telefonoAcompanante,
-        numero_seguro: values.numeroSis,
-    };
-
     try {
         isSubmitting.value = true;
 
         // 1. Registrar o actualizar paciente
-        const { data: pacienteData } = await pacienteService.crearPaciente(patientPayload);
-        const pId = pacienteData.id || pacienteId.value;
+        const pacientePayload = {
+            dni: values.dni,
+            nombres: values.nombres,
+            apellido_paterno: values.apellidoPaterno,
+            apellido_materno: values.apellidoMaterno,
+            fecha_nacimiento: values.fechaNacimiento,
+            sexo: values.sexo,
+            estado_civil: values.estado_civil,
+            direccion: values.direccion,
+            telefono: values.telefono,
+            email: values.email,
+            grado_instruccion: values.gradoInstruccion,
+            religion: values.religion,
+            procedencia: values.procedencia,
+            seguro: values.tipoSeguro,
+        };
 
-        if (!pId) {
-            throw new Error("No se pudo obtener el ID del paciente");
-        }
+        const { data: pacienteData } = await pacienteService.crearPaciente(pacientePayload);
 
-        // 2. Crear la cita
-        await citaService.crearCita({
-            paciente_id: pId,
+        console.log('Paciente registrado:', pacienteData);
+
+        // 2. Crear la cita usando el nuevo endpoint
+        const citaPayload = {
+            paciente_id: pacienteData.id,
             horario_id: horarioSeleccionado.value.id,
             fecha: diaSeleccionado.value.fecha,
             sintomas: values.sintomas,
-            area_id: areaSeleccionada.value?.id
-        });
+            area_id: areaSeleccionada.value?.id,
+            dni_acompanante: values.dniAcompanante,
+            nombre_acompanante: values.nombreAcompanante,
+            telefono_acompanante: values.telefonoAcompanante,
+        };
 
+        const { data: citaData } = await citaService.crearCita(citaPayload);
 
+        console.log('Cita creada:', citaData);
+        console.log('Cupos restantes:', citaData.cupos_restantes);
 
         // Mostrar mensaje de éxito
         showSuccess.value = true;
@@ -1357,13 +1379,17 @@ const onSubmit = handleSubmit(async (values) => {
 
         // Limpiar formulario después del registro
         resetForm();
-    } catch (error) {
-        console.error(error);
-        alert(error instanceof Error ? error.message : 'Hubo un error al registrar el paciente');
-        // Si el error viene de axios y tiene respuesta del backend
-        if ((error as any).response && (error as any).response.data && (error as any).response.data.message) {
-            alert((error as any).response.data.message);
-        }
+
+    } catch (error: unknown) {
+        console.error('Error:', error);
+
+        // Mostrar error específico del backend
+        const axiosError = error as { response?: { data?: { error?: string; message?: string } } };
+        const errorMessage = axiosError.response?.data?.error
+            || axiosError.response?.data?.message
+            || 'Hubo un error al registrar';
+
+        alert(errorMessage);
     } finally {
         isSubmitting.value = false;
     }
@@ -1371,21 +1397,6 @@ const onSubmit = handleSubmit(async (values) => {
     // Callback cuando hay errores de validación
     scrollToFirstError();
 });
-
-// Función para capitalizar la primera letra de cada palabra
-const capitalizeInput = (fieldName: keyof typeof values) => {
-    const value = values[fieldName] as string;
-    if (typeof value === 'string') {
-        const capitalized = value
-            .split(' ')
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-            .join(' ');
-        setValues({
-            ...values,
-            [fieldName]: capitalized
-        });
-    }
-};
 
 // Función para convertir a mayúsculas
 const toUpperCase = (fieldName: keyof typeof values) => {
@@ -1398,16 +1409,6 @@ const toUpperCase = (fieldName: keyof typeof values) => {
     }
 };
 
-// Función para validar que solo se ingresen números en teléfonos
-const validatePhone = (fieldName: keyof typeof values) => {
-    const value = values[fieldName] as string;
-    if (typeof value === 'string') {
-        setValues({
-            ...values,
-            [fieldName]: value.replace(/[^0-9]/g, '')
-        });
-    }
-};
 onMounted(() => {
     fetchAreas();
 });

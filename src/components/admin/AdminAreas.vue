@@ -7,7 +7,7 @@
             </div>
             <button @click="abrirModalArea"
                 class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center gap-2">
-                <i class="pi pi-plus"></i>
+                <PlusIcon class="w-5 h-5" />
                 Nueva Área
             </button>
         </div>
@@ -18,7 +18,7 @@
             <div v-if="isLoadingListAreas"
                 class="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
                 <div class="flex flex-col items-center">
-                    <i class="pi pi-spin pi-spinner text-teal-600 text-4xl"></i>
+                    <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-600" />
                     <p class="mt-2 text-gray-500 font-medium">Cargando áreas...</p>
                 </div>
             </div>
@@ -62,19 +62,19 @@
                                     <button @click="editarArea(area)"
                                         class="text-blue-600 hover:text-blue-800 transition p-2 rounded-lg hover:bg-blue-50"
                                         title="Editar área">
-                                        <i class="pi pi-pencil"></i>
+                                        <PencilIcon class="w-5 h-5" />
                                     </button>
                                     <button @click="eliminarArea(area.id)"
                                         class="text-red-600 hover:text-red-800 transition p-2 rounded-lg hover:bg-red-50"
                                         title="Eliminar área">
-                                        <i class="pi pi-trash"></i>
+                                        <TrashIcon class="w-5 h-5" />
                                     </button>
                                 </div>
                             </td>
                         </tr>
                         <tr v-if="areas.length === 0">
                             <td colspan="4" class="px-6 py-12 text-center text-gray-500">
-                                <i class="pi pi-building text-gray-400 mb-2" style="font-size: 2rem"></i>
+                                <BuildingOfficeIcon class="w-16 h-16 mx-auto text-gray-400 mb-2" />
                                 <p>No hay áreas registradas</p>
                             </td>
                         </tr>
@@ -96,7 +96,7 @@
                             {{ esEdicionArea ? 'Editar Área' : 'Nueva Área' }}
                         </h3>
                         <button @click="cerrarModalArea" class="text-gray-400 hover:text-gray-600 transition">
-                            <i class="pi pi-times text-xl"></i>
+                            <XMarkIcon class="w-6 h-6" />
                         </button>
                     </div>
 
@@ -129,8 +129,8 @@
                         <div class="flex gap-3 pt-4">
                             <button type="submit" :disabled="isLoadingArea"
                                 class="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                                <i v-if="isLoadingArea" class="pi pi-spin pi-spinner"></i>
-                                <i v-else class="pi pi-check"></i>
+                                <ArrowPathIcon v-if="isLoadingArea" class="w-5 h-5 animate-spin" />
+                                <CheckIcon v-else class="w-5 h-5" />
                                 {{ isLoadingArea ? 'Guardando...' : (esEdicionArea ? 'Actualizar' : 'Crear Área') }}
                             </button>
                             <button type="button" @click="cerrarModalArea"
@@ -150,7 +150,7 @@
             leave-to-class="opacity-0 transform translate-y-2">
             <div v-if="showToast"
                 class="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
-                <i class="pi pi-check-circle text-xl"></i>
+                <CheckCircleIcon class="w-6 h-6" />
                 <span class="font-medium">{{ toastMessage }}</span>
             </div>
         </transition>
@@ -162,6 +162,16 @@ import { ref, onMounted } from 'vue'
 import api from '../../services/api'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import {
+    PlusIcon,
+    ArrowPathIcon,
+    PencilIcon,
+    TrashIcon,
+    BuildingOfficeIcon,
+    XMarkIcon,
+    CheckIcon,
+    CheckCircleIcon
+} from '@heroicons/vue/24/outline'
 
 interface Area {
     id: number
@@ -188,7 +198,7 @@ const areaSchema = yup.object({
     activo: yup.boolean().default(true)
 })
 
-const { handleSubmit: handleAreaSubmit, resetForm: resetAreaForm, values: areaValues, errors: areaErrors, defineField: defineAreaField } = useForm({
+const { handleSubmit: handleAreaSubmit, resetForm: resetAreaForm, errors: areaErrors, defineField: defineAreaField } = useForm({
     validationSchema: areaSchema,
     initialValues: {
         nombre: '',

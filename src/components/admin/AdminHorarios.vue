@@ -5,14 +5,14 @@
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
-                        <i class="pi pi-calendar text-teal-200"></i>
+                        <CalendarIcon class="w-8 h-8 text-teal-200" />
                         Gestión de Horarios Médicos
                     </h1>
                     <p class="text-teal-100 mt-1">Configura la disponibilidad de los médicos de forma sencilla</p>
                 </div>
                 <button @click="abrirModalHorario"
                     class="bg-white text-teal-700 hover:bg-teal-50 font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
-                    <i class="pi pi-plus-circle text-lg"></i>
+                    <PlusCircleIcon class="w-6 h-6" />
                     Nuevo Horario
                 </button>
             </div>
@@ -22,7 +22,7 @@
                 <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
-                            <i class="pi pi-users text-white"></i>
+                            <UsersIcon class="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ todosMedicos.length }}</p>
@@ -33,7 +33,7 @@
                 <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
-                            <i class="pi pi-building text-white"></i>
+                            <BuildingOfficeIcon class="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ areas.length }}</p>
@@ -44,7 +44,7 @@
                 <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-amber-400/80 rounded-full flex items-center justify-center">
-                            <i class="pi pi-sun text-white"></i>
+                            <SunIcon class="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ totalCuposManana }}</p>
@@ -55,7 +55,7 @@
                 <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-indigo-400/80 rounded-full flex items-center justify-center">
-                            <i class="pi pi-moon text-white"></i>
+                            <MoonIcon class="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ totalCuposTarde }}</p>
@@ -66,7 +66,7 @@
                 <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-white/30 rounded-full flex items-center justify-center">
-                            <i class="pi pi-ticket text-white"></i>
+                            <TicketIcon class="w-6 h-6 text-white" />
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ totalCupos }}</p>
@@ -80,14 +80,14 @@
         <!-- Filtros mejorados -->
         <div class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center gap-2 mb-4">
-                <i class="pi pi-filter text-teal-600"></i>
+                <FunnelIcon class="w-5 h-5 text-teal-600" />
                 <h2 class="text-lg font-semibold text-gray-800">Filtrar Horarios</h2>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">
-                        <i class="pi pi-building mr-1"></i> Área
+                    <label class="block text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
+                        <BuildingOfficeIcon class="w-4 h-4" /> Área
                     </label>
                     <select v-model="filtroAreaId" @change="cargarHorariosFiltrados"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white transition">
@@ -96,8 +96,8 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">
-                        <i class="pi pi-user mr-1"></i> Médico
+                    <label class="block text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
+                        <UserIcon class="w-4 h-4" /> Médico
                     </label>
                     <select v-model="filtroMedicoId" @change="cargarHorariosFiltrados"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white transition">
@@ -106,15 +106,15 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">
-                        <i class="pi pi-calendar mr-1"></i> Mes
+                    <label class="block text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
+                        <CalendarIcon class="w-4 h-4" /> Mes
                     </label>
                     <input type="month" v-model="filtroMes" @change="cargarHorariosFiltrados"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-600 mb-2">
-                        <i class="pi pi-clock mr-1"></i> Turno
+                    <label class="block text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
+                        <ClockIcon class="w-4 h-4" /> Turno
                     </label>
                     <select v-model="filtroTurno" @change="cargarHorariosFiltrados"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white transition">
@@ -126,7 +126,7 @@
                 <div class="flex items-end">
                     <button @click="limpiarFiltros"
                         class="w-full px-4 py-2.5 border border-gray-300 text-gray-600 hover:bg-gray-50 rounded-lg transition flex items-center justify-center gap-2">
-                        <i class="pi pi-filter-slash"></i>
+                        <XMarkIcon class="w-5 h-5" />
                         Limpiar
                     </button>
                 </div>
@@ -140,21 +140,21 @@
                     'px-4 py-2 rounded-md transition font-medium text-sm flex items-center gap-2',
                     vistaActual === 'tabla' ? 'bg-white shadow text-teal-700' : 'text-gray-600 hover:text-gray-800'
                 ]">
-                    <i class="pi pi-list"></i>
+                    <ListBulletIcon class="w-5 h-5" />
                     Tabla
                 </button>
                 <button @click="vistaActual = 'tarjetas'" :class="[
                     'px-4 py-2 rounded-md transition font-medium text-sm flex items-center gap-2',
                     vistaActual === 'tarjetas' ? 'bg-white shadow text-teal-700' : 'text-gray-600 hover:text-gray-800'
                 ]">
-                    <i class="pi pi-th-large"></i>
+                    <Squares2X2Icon class="w-5 h-5" />
                     Tarjetas
                 </button>
                 <button v-if="filtroMedicoId && filtroMes" @click="vistaActual = 'calendario'" :class="[
                     'px-4 py-2 rounded-md transition font-medium text-sm flex items-center gap-2',
                     vistaActual === 'calendario' ? 'bg-white shadow text-teal-700' : 'text-gray-600 hover:text-gray-800'
                 ]">
-                    <i class="pi pi-calendar"></i>
+                    <CalendarIcon class="w-5 h-5" />
                     Calendario
                 </button>
             </div>
@@ -169,20 +169,20 @@
         <div v-if="vistaActual === 'tabla'" class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div v-if="isLoadingList" class="flex items-center justify-center py-12">
                 <div class="flex flex-col items-center">
-                    <i class="pi pi-spin pi-spinner text-teal-600 text-4xl"></i>
+                    <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-600" />
                     <p class="mt-3 text-gray-500 font-medium">Cargando horarios...</p>
                 </div>
             </div>
 
             <div v-else-if="horariosList.length === 0" class="flex flex-col items-center justify-center py-16">
                 <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <i class="pi pi-calendar-times text-gray-400 text-3xl"></i>
+                    <CalendarDaysIcon class="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay horarios registrados</h3>
                 <p class="text-gray-500 text-sm mb-4">Comienza creando un nuevo horario para los médicos</p>
                 <button @click="abrirModalHorario"
                     class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
-                    <i class="pi pi-plus"></i>
+                    <PlusIcon class="w-5 h-5" />
                     Crear Horario
                 </button>
             </div>
@@ -194,35 +194,35 @@
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    <i class="pi pi-user text-teal-500"></i>
+                                    <UserIcon class="w-4 h-4 text-teal-500" />
                                     Médico
                                 </div>
                             </th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    <i class="pi pi-building text-teal-500"></i>
+                                    <BuildingOfficeIcon class="w-4 h-4 text-teal-500" />
                                     Área
                                 </div>
                             </th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    <i class="pi pi-calendar text-teal-500"></i>
+                                    <CalendarIcon class="w-4 h-4 text-teal-500" />
                                     Fecha
                                 </div>
                             </th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    <i class="pi pi-clock text-teal-500"></i>
+                                    <ClockIcon class="w-4 h-4 text-teal-500" />
                                     Turno
                                 </div>
                             </th>
                             <th
                                 class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                 <div class="flex items-center gap-2">
-                                    <i class="pi pi-ticket text-teal-500"></i>
+                                    <TicketIcon class="w-4 h-4 text-teal-500" />
                                     Cupos
                                 </div>
                             </th>
@@ -264,8 +264,8 @@
                                         'px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1',
                                         getTurnoBadgeClass(horario.turno)
                                     ]">
-                                        <i :class="horario.turno === 'M' ? 'pi pi-sun' : 'pi pi-moon'"
-                                            class="text-xs"></i>
+                                        <SunIcon v-if="horario.turno === 'M'" class="w-3 h-3" />
+                                        <MoonIcon v-else class="w-3 h-3" />
                                         {{ horario.turno_nombre || (horario.turno === 'M' ? 'Mañana' : 'Tarde') }}
                                     </span>
                                 </div>
@@ -285,7 +285,7 @@
                                 <div class="flex items-center justify-center gap-2">
                                     <button @click="eliminarHorario(horario.id)"
                                         class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Eliminar">
-                                        <i class="pi pi-trash"></i>
+                                        <TrashIcon class="w-5 h-5" />
                                     </button>
                                 </div>
                             </td>
@@ -299,7 +299,7 @@
         <div v-if="vistaActual === 'tarjetas'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div v-if="isLoadingList" class="col-span-full flex items-center justify-center py-12">
                 <div class="flex flex-col items-center">
-                    <i class="pi pi-spin pi-spinner text-teal-600 text-4xl"></i>
+                    <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-600" />
                     <p class="mt-3 text-gray-500 font-medium">Cargando horarios...</p>
                 </div>
             </div>
@@ -307,13 +307,14 @@
             <div v-else-if="horariosList.length === 0"
                 class="col-span-full flex flex-col items-center justify-center py-16">
                 <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                    <i class="pi pi-calendar-times text-gray-400 text-3xl"></i>
+                    <CalendarDaysIcon class="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 class="text-lg font-semibold text-gray-700 mb-2">No hay horarios registrados</h3>
                 <p class="text-gray-500 text-sm mb-4">Comienza creando un nuevo horario</p>
                 <button @click="abrirModalHorario"
-                    class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-lg transition">
-                    <i class="pi pi-plus mr-2"></i>Crear Horario
+                    class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-lg transition flex items-center gap-2">
+                    <PlusIcon class="w-5 h-5" />
+                    Crear Horario
                 </button>
             </div>
 
@@ -330,7 +331,8 @@
                             <h3 class="font-semibold truncate">{{ horario.medico_nombre || 'Médico ' + horario.medico_id
                             }}</h3>
                             <span class="px-2 py-0.5 bg-white/20 rounded text-xs font-medium flex items-center gap-1">
-                                <i :class="horario.turno === 'M' ? 'pi pi-sun' : 'pi pi-moon'" class="text-[10px]"></i>
+                                <SunIcon v-if="horario.turno === 'M'" class="w-3 h-3" />
+                                <MoonIcon v-else class="w-3 h-3" />
                                 {{ horario.turno_nombre || (horario.turno === 'M' ? 'Mañana' : 'Tarde') }}
                             </span>
                         </div>
@@ -338,13 +340,13 @@
                     <div class="p-4 space-y-3">
                         <div class="flex items-center gap-3 text-gray-600">
                             <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <i class="pi pi-building text-blue-600 text-sm"></i>
+                                <BuildingOfficeIcon class="w-4 h-4 text-blue-600" />
                             </div>
                             <span class="text-sm">{{ horario.area_nombre || getAreaNombre(horario.area_id) }}</span>
                         </div>
                         <div class="flex items-center gap-3 text-gray-600">
                             <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <i class="pi pi-calendar text-purple-600 text-sm"></i>
+                                <CalendarIcon class="w-4 h-4 text-purple-600" />
                             </div>
                             <div>
                                 <span class="text-sm font-medium">{{ formatearFecha(horario.fecha) }}</span>
@@ -354,14 +356,14 @@
                         </div>
                         <div class="flex items-center gap-3 text-gray-600">
                             <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
-                                <i class="pi pi-clock text-gray-600 text-sm"></i>
+                                <ClockIcon class="w-4 h-4 text-gray-600" />
                             </div>
                             <span class="text-sm font-medium">{{ horario.hora_inicio?.slice(0, 5) }} - {{
                                 horario.hora_fin?.slice(0, 5) }}</span>
                         </div>
                         <div class="flex items-center gap-3 text-gray-600">
                             <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                                <i class="pi pi-ticket text-emerald-600 text-sm"></i>
+                                <TicketIcon class="w-4 h-4 text-emerald-600" />
                             </div>
                             <span class="text-sm"><strong>{{ horario.cupos }}</strong> cupos disponibles</span>
                         </div>
@@ -369,7 +371,7 @@
                     <div class="px-4 py-3 bg-gray-50 border-t flex justify-end gap-2">
                         <button @click="eliminarHorario(horario.id)"
                             class="px-3 py-1.5 text-sm text-red-600 hover:bg-red-100 rounded-lg transition flex items-center gap-1">
-                            <i class="pi pi-trash text-xs"></i>
+                            <TrashIcon class="w-4 h-4" />
                             Eliminar
                         </button>
                     </div>
@@ -382,7 +384,7 @@
             class="bg-white rounded-xl shadow-lg p-6">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                    <i class="pi pi-calendar text-teal-600"></i>
+                    <CalendarIcon class="w-6 h-6 text-teal-600" />
                     Calendario - {{ nombreMedicoSeleccionado }}
                 </h2>
                 <span class="text-gray-500">{{ getMesNombre(filtroMes) }}</span>
@@ -406,14 +408,14 @@
                         <!-- Turno Mañana -->
                         <div v-if="dia.turnos?.M"
                             class="text-xs bg-amber-500 text-white px-2 py-1 rounded mb-1 flex items-center gap-1">
-                            <i class="pi pi-sun text-[10px]"></i>
+                            <SunIcon class="w-3 h-3" />
                             <span>{{ dia.turnos.M.cupos }} cupos</span>
                         </div>
 
                         <!-- Turno Tarde -->
                         <div v-if="dia.turnos?.T"
                             class="text-xs bg-indigo-500 text-white px-2 py-1 rounded flex items-center gap-1">
-                            <i class="pi pi-moon text-[10px]"></i>
+                            <MoonIcon class="w-3 h-3" />
                             <span>{{ dia.turnos.T.cupos }} cupos</span>
                         </div>
 
@@ -444,7 +446,7 @@
                             </div>
                             <button @click="cerrarModal"
                                 class="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition">
-                                <i class="pi pi-times"></i>
+                                <XMarkIcon class="w-5 h-5 text-white" />
                             </button>
                         </div>
                     </div>
@@ -476,8 +478,9 @@
                             <!-- Médico y Área -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        <i class="pi pi-user mr-1 text-teal-600"></i>
+                                    <label
+                                        class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                                        <UserIcon class="w-4 h-4 text-teal-600" />
                                         Médico <span class="text-red-500">*</span>
                                     </label>
                                     <select v-model="form.medico_id" required
@@ -490,8 +493,9 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        <i class="pi pi-building mr-1 text-teal-600"></i>
+                                    <label
+                                        class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                                        <BuildingOfficeIcon class="w-4 h-4 text-teal-600" />
                                         Área <span class="text-red-500">*</span>
                                     </label>
                                     <select v-model="form.area_id" required
@@ -506,8 +510,8 @@
 
                             <!-- Mes -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    <i class="pi pi-calendar mr-1 text-teal-600"></i>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                                    <CalendarIcon class="w-4 h-4 text-teal-600" />
                                     Mes <span class="text-red-500">*</span>
                                 </label>
                                 <input type="month" v-model="form.mes" required
@@ -516,8 +520,8 @@
 
                             <!-- Días de la semana -->
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-3">
-                                    <i class="pi pi-calendar-plus mr-1 text-teal-600"></i>
+                                <label class="block text-sm font-semibold text-gray-700 mb-3 flex items-center gap-1">
+                                    <CalendarDaysIcon class="w-4 h-4 text-teal-600" />
                                     Días de Atención <span class="text-red-500">*</span>
                                 </label>
                                 <div class="grid grid-cols-4 md:grid-cols-7 gap-2">
@@ -530,9 +534,9 @@
                                         <input type="checkbox" :value="index" v-model="form.dias_seleccionados"
                                             class="sr-only" />
                                         <span class="font-bold text-lg">{{ dia }}</span>
-                                        <i v-if="form.dias_seleccionados.includes(index)"
-                                            class="pi pi-check-circle text-teal-600 mt-1"></i>
-                                        <i v-else class="pi pi-circle text-gray-300 mt-1"></i>
+                                        <CheckCircleIcon v-if="form.dias_seleccionados.includes(index)"
+                                            class="w-5 h-5 text-teal-600 mt-1" />
+                                        <div v-else class="w-5 h-5 rounded-full border-2 border-gray-300 mt-1"></div>
                                     </label>
                                 </div>
                                 <div class="flex gap-2 mt-3">
@@ -555,8 +559,8 @@
 
                             <!-- Configuración de Turnos -->
                             <div class="space-y-4">
-                                <label class="block text-sm font-semibold text-gray-700">
-                                    <i class="pi pi-clock mr-1 text-teal-600"></i>
+                                <label class="block text-sm font-semibold text-gray-700 flex items-center gap-1">
+                                    <ClockIcon class="w-4 h-4 text-teal-600" />
                                     Configuración de Turnos
                                 </label>
 
@@ -571,7 +575,7 @@
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                                                <i class="pi pi-sun text-amber-600 text-lg"></i>
+                                                <SunIcon class="w-6 h-6 text-amber-600" />
                                             </div>
                                             <div>
                                                 <h4 class="font-semibold text-gray-800">Turno Mañana</h4>
@@ -606,7 +610,7 @@
                                         <div class="flex items-center gap-3">
                                             <div
                                                 class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                                                <i class="pi pi-moon text-indigo-600 text-lg"></i>
+                                                <MoonIcon class="w-6 h-6 text-indigo-600" />
                                             </div>
                                             <div>
                                                 <h4 class="font-semibold text-gray-800">Turno Tarde</h4>
@@ -635,13 +639,13 @@
                             <div v-if="form.dias_seleccionados.length > 0 && form.mes && (form.turnos.manana.activo || form.turnos.tarde.activo)"
                                 class="bg-gradient-to-r from-blue-50 to-teal-50 border border-blue-200 rounded-xl p-4">
                                 <h4 class="font-bold text-blue-900 mb-3 flex items-center gap-2">
-                                    <i class="pi pi-info-circle"></i>
+                                    <InformationCircleIcon class="w-5 h-5" />
                                     Resumen de Configuración
                                 </h4>
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <i class="pi pi-calendar text-blue-600"></i>
+                                            <CalendarIcon class="w-5 h-5 text-blue-600" />
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs">Días</p>
@@ -650,7 +654,7 @@
                                     </div>
                                     <div v-if="form.turnos.manana.activo" class="flex items-center gap-2">
                                         <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
-                                            <i class="pi pi-sun text-amber-600"></i>
+                                            <SunIcon class="w-4 h-4 text-amber-600" />
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs">Mañana</p>
@@ -660,7 +664,7 @@
                                     </div>
                                     <div v-if="form.turnos.tarde.activo" class="flex items-center gap-2">
                                         <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                                            <i class="pi pi-moon text-indigo-600"></i>
+                                            <MoonIcon class="w-4 h-4 text-indigo-600" />
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs">Tarde</p>
@@ -670,7 +674,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <div class="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center">
-                                            <i class="pi pi-ticket text-teal-600"></i>
+                                            <TicketIcon class="w-4 h-4 text-teal-600" />
                                         </div>
                                         <div>
                                             <p class="text-gray-500 text-xs">Total</p>
@@ -689,7 +693,7 @@
                             <!-- Validación: al menos un turno activo -->
                             <div v-if="!form.turnos.manana.activo && !form.turnos.tarde.activo"
                                 class="bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm flex items-center gap-2">
-                                <i class="pi pi-exclamation-triangle"></i>
+                                <ExclamationTriangleIcon class="w-5 h-5" />
                                 Debe activar al menos un turno (mañana o tarde)
                             </div>
 
@@ -698,8 +702,8 @@
                                 <button type="submit"
                                     :disabled="isLoading || form.dias_seleccionados.length === 0 || (!form.turnos.manana.activo && !form.turnos.tarde.activo)"
                                     class="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
-                                    <i v-if="isLoading" class="pi pi-spin pi-spinner"></i>
-                                    <i v-else class="pi pi-check-circle"></i>
+                                    <ArrowPathIcon v-if="isLoading" class="w-5 h-5 animate-spin" />
+                                    <CheckCircleIcon v-else class="w-5 h-5" />
                                     {{ isLoading ? 'Guardando...' : 'Crear Horarios' }}
                                 </button>
                                 <button type="button" @click="cerrarModal"
@@ -722,10 +726,8 @@
                 'fixed bottom-6 right-6 px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 z-50',
                 toastType === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'
             ]">
-                <i :class="[
-                    'text-2xl',
-                    toastType === 'success' ? 'pi pi-check-circle' : 'pi pi-times-circle'
-                ]"></i>
+                <CheckCircleIcon v-if="toastType === 'success'" class="w-8 h-8" />
+                <XCircleIcon v-else class="w-8 h-8" />
                 <span class="font-medium">{{ toastMessage }}</span>
             </div>
         </transition>
@@ -736,6 +738,29 @@
 import { ref, onMounted, computed } from 'vue'
 import api from '../../services/api'
 import horarioService, { type Horario } from '../../services/horarioService'
+import {
+    CalendarIcon,
+    PlusCircleIcon,
+    UsersIcon,
+    BuildingOfficeIcon,
+    SunIcon,
+    MoonIcon,
+    TicketIcon,
+    FunnelIcon,
+    UserIcon,
+    ClockIcon,
+    XMarkIcon,
+    ListBulletIcon,
+    Squares2X2Icon,
+    ArrowPathIcon,
+    PlusIcon,
+    TrashIcon,
+    CheckCircleIcon,
+    InformationCircleIcon,
+    ExclamationTriangleIcon,
+    XCircleIcon,
+    CalendarDaysIcon
+} from '@heroicons/vue/24/outline'
 
 const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
 const diasSemanaCompletos = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']

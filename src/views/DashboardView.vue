@@ -12,11 +12,11 @@
                         <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.totalPacientes }}</p>
                     </div>
                     <div class="bg-blue-100 p-3 rounded-full">
-                        <i class="pi pi-users text-blue-600 text-xl"></i>
+                        <UsersIcon class="w-6 h-6 text-blue-600" />
                     </div>
                 </div>
                 <p class="text-sm text-green-600 mt-4 flex items-center">
-                    <i class="pi pi-arrow-up mr-1"></i>
+                    <ArrowTrendingUpIcon class="w-4 h-4 mr-1" />
                     <span>+12% este mes</span>
                 </p>
             </div>
@@ -29,7 +29,7 @@
                         <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasHoy }}</p>
                     </div>
                     <div class="bg-emerald-100 p-3 rounded-full">
-                        <i class="pi pi-calendar text-emerald-600 text-xl"></i>
+                        <CalendarIcon class="w-6 h-6 text-emerald-600" />
                     </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-4">
@@ -45,7 +45,7 @@
                         <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.medicosActivos }}</p>
                     </div>
                     <div class="bg-purple-100 p-3 rounded-full">
-                        <i class="pi pi-user-plus text-purple-600 text-xl"></i>
+                        <UserPlusIcon class="w-6 h-6 text-purple-600" />
                     </div>
                 </div>
                 <p class="text-sm text-gray-500 mt-4">
@@ -61,11 +61,11 @@
                         <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasPendientesTotal }}</p>
                     </div>
                     <div class="bg-orange-100 p-3 rounded-full">
-                        <i class="pi pi-clock text-orange-600 text-xl"></i>
+                        <ClockIcon class="w-6 h-6 text-orange-600" />
                     </div>
                 </div>
                 <p class="text-sm text-orange-600 mt-4 flex items-center">
-                    <i class="pi pi-exclamation-circle mr-1"></i>
+                    <ExclamationCircleIcon class="w-4 h-4 mr-1" />
                     <span>Requieren confirmación</span>
                 </p>
             </div>
@@ -92,7 +92,7 @@
                                     <h3 class="text-base font-semibold text-gray-900">{{ cita.paciente }}</h3>
                                     <p class="text-sm text-gray-500">{{ cita.especialidad }} - {{ cita.doctor }}</p>
                                     <p class="text-xs text-gray-400 mt-1 flex items-center">
-                                        <i class="pi pi-clock mr-1"></i>
+                                        <ClockIcon class="w-3 h-3 mr-1" />
                                         {{ cita.hora }}
                                     </p>
                                 </div>
@@ -114,7 +114,7 @@
                         <router-link to="/pacientes"
                             class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition group">
                             <div class="bg-blue-100 p-2 rounded-full mr-3 group-hover:bg-blue-200 transition">
-                                <i class="pi pi-user-plus text-blue-600"></i>
+                                <UserPlusIcon class="w-5 h-5 text-blue-600" />
                             </div>
                             <span class="font-medium text-gray-700 group-hover:text-blue-700">Registrar Paciente</span>
                         </router-link>
@@ -122,7 +122,7 @@
                         <router-link to="/citas"
                             class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-emerald-50 hover:border-emerald-200 transition group">
                             <div class="bg-emerald-100 p-2 rounded-full mr-3 group-hover:bg-emerald-200 transition">
-                                <i class="pi pi-calendar-plus text-emerald-600"></i>
+                                <CalendarDaysIcon class="w-5 h-5 text-emerald-600" />
                             </div>
                             <span class="font-medium text-gray-700 group-hover:text-emerald-700">Nueva Cita</span>
                         </router-link>
@@ -130,7 +130,7 @@
                         <router-link to="/medicos"
                             class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-purple-50 hover:border-purple-200 transition group">
                             <div class="bg-purple-100 p-2 rounded-full mr-3 group-hover:bg-purple-200 transition">
-                                <i class="pi pi-id-card text-purple-600"></i>
+                                <IdentificationIcon class="w-5 h-5 text-purple-600" />
                             </div>
                             <span class="font-medium text-gray-700 group-hover:text-purple-700">Gestionar Médicos</span>
                         </router-link>
@@ -160,6 +160,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import {
+    UsersIcon,
+    ArrowTrendingUpIcon,
+    CalendarIcon,
+    UserPlusIcon,
+    ClockIcon,
+    ExclamationCircleIcon,
+    IdentificationIcon,
+    CalendarDaysIcon
+} from '@heroicons/vue/24/outline';
 
 // Datos simulados para el dashboard
 const stats = ref({

@@ -6,7 +6,7 @@
       </h1>
       <button @click="abrirModalCrear"
         class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center gap-2">
-        <i class="pi pi-user-plus"></i>
+        <UserPlusIcon class="w-5 h-5" />
         Nuevo Médico
       </button>
     </div>
@@ -89,7 +89,7 @@
                   <div class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
                     <span class="text-emerald-600 font-semibold">{{
                       medico.iniciales
-                    }}</span>
+                      }}</span>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
@@ -130,11 +130,11 @@
                 <div class="flex gap-2">
                   <button @click="verDetalle(medico)" class="text-blue-600 hover:text-blue-800 transition"
                     title="Ver detalle">
-                    <i class="pi pi-eye"></i>
+                    <EyeIcon class="w-5 h-5" />
                   </button>
                   <button @click="editarMedico(medico)" class="text-green-600 hover:text-green-800 transition"
                     title="Editar">
-                    <i class="pi pi-pen-to-square"></i>
+                    <PencilSquareIcon class="w-5 h-5" />
                   </button>
                   <button @click="toggleEstado(medico)" :class="[
                     'transition',
@@ -143,11 +143,8 @@
                       : 'text-green-600 hover:text-green-800',
                   ]" :title="medico.estado === 'activo' ? 'Desactivar' : 'Activar'
                     ">
-                    <i :class="[
-                      medico.estado === 'activo'
-                        ? 'pi pi-ban'
-                        : 'pi pi-check-circle',
-                    ]"></i>
+                    <NoSymbolIcon v-if="medico.estado === 'activo'" class="w-5 h-5" />
+                    <CheckCircleIcon v-else class="w-5 h-5" />
                   </button>
                 </div>
               </td>
@@ -208,7 +205,7 @@
               class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
               <span class="sr-only">Anterior</span>
-              <i class="pi pi-chevron-left" aria-hidden="true"></i>
+              <ChevronLeftIcon class="w-5 h-5" />
             </button>
 
             <button v-for="page in totalPages" :key="page" @click="currentPage = page"
@@ -221,7 +218,7 @@
               class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }">
               <span class="sr-only">Siguiente</span>
-              <i class="pi pi-chevron-right" aria-hidden="true"></i>
+              <ChevronRightIcon class="w-5 h-5" />
             </button>
           </nav>
         </div>
@@ -374,7 +371,7 @@
               <div class="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
                 <span class="text-emerald-600 font-bold text-xl">{{
                   modalDetalle.medico.iniciales
-                }}</span>
+                  }}</span>
               </div>
               <div>
                 <h4 class="text-xl font-semibold text-gray-800">
@@ -465,6 +462,15 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import {
+  UserPlusIcon,
+  EyeIcon,
+  PencilSquareIcon,
+  NoSymbolIcon,
+  CheckCircleIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
+} from '@heroicons/vue/24/outline';
 
 interface Medico {
   id: number;
@@ -702,19 +708,24 @@ const guardarMedico = () => {
     // Actualizar médico existente
     const index = medicos.value.findIndex((m) => m.id === formData.value.id);
     if (index !== -1) {
-      medicos.value[index] = {
-        ...medicos.value[index],
-        nombre: formData.value.nombre,
-        iniciales: obtenerIniciales(formData.value.nombre),
-        email: formData.value.email,
-        telefono: formData.value.telefono,
-        cmp: formData.value.cmp,
-        area: formData.value.area,
-        especialidad: formData.value.especialidad,
-        horario: formData.value.horario,
-        cuposDia: formData.value.cuposDia,
-        direccion: formData.value.direccion,
-      };
+      const existingMedico = medicos.value[index];
+      if (existingMedico) {
+        medicos.value[index] = {
+          ...existingMedico,
+          id: existingMedico.id,
+          nombre: formData.value.nombre,
+          iniciales: obtenerIniciales(formData.value.nombre),
+          email: formData.value.email,
+          telefono: formData.value.telefono,
+          cmp: formData.value.cmp,
+          area: formData.value.area,
+          especialidad: formData.value.especialidad,
+          horario: formData.value.horario,
+          cuposDia: formData.value.cuposDia,
+          direccion: formData.value.direccion,
+          estado: existingMedico.estado
+        };
+      }
       console.log("Médico actualizado:", medicos.value[index]);
     }
   } else {

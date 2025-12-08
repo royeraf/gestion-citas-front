@@ -7,7 +7,7 @@
             </div>
             <button @click="abrirModalCrear"
                 class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center gap-2">
-                <i class="pi pi-plus"></i>
+                <PlusIcon class="w-5 h-5" />
                 Nuevo Usuario
             </button>
         </div>
@@ -21,7 +21,7 @@
                         <p class="text-3xl font-bold text-gray-800 mt-1">{{ users.length }}</p>
                     </div>
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <i class="pi pi-users text-blue-600 text-2xl"></i>
+                        <UsersIcon class="w-8 h-8 text-blue-600" />
                     </div>
                 </div>
             </div>
@@ -33,7 +33,7 @@
                         <p class="text-3xl font-bold text-gray-800 mt-1">{{ countByRole('admin') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <i class="pi pi-shield text-purple-600 text-2xl"></i>
+                        <ShieldCheckIcon class="w-8 h-8 text-purple-600" />
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                         <p class="text-3xl font-bold text-gray-800 mt-1">{{ countByRole('medico') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                        <i class="pi pi-briefcase text-green-600 text-2xl"></i>
+                        <BriefcaseIcon class="w-8 h-8 text-green-600" />
                     </div>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="pi pi-search text-gray-400"></i>
+                            <MagnifyingGlassIcon class="w-5 h-5 text-gray-400" />
                         </div>
                         <input type="text" id="filtroBuscar" v-model="filtroBusqueda" placeholder="Nombre o usuario"
                             class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
@@ -130,8 +130,8 @@
                                 <div class="text-sm text-gray-900">{{ user.username }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span :class="getRoleBadgeClass(user.role)">
-                                    <i :class="getRoleIcon(user.role)" class="mr-1"></i>
+                                <span :class="[getRoleBadgeClass(user.role), 'flex items-center inline-flex gap-1']">
+                                    <component :is="getRoleIconComponent(user.role)" class="w-4 h-4" />
                                     {{ getRoleLabel(user.role) }}
                                 </span>
                             </td>
@@ -143,12 +143,12 @@
                                     <button @click="editarUsuario(user)"
                                         class="text-blue-600 hover:text-blue-800 transition p-2 rounded-lg hover:bg-blue-50"
                                         title="Editar usuario">
-                                        <i class="pi pi-pencil"></i>
+                                        <PencilIcon class="w-5 h-5" />
                                     </button>
                                     <button @click="eliminarUsuario(user.id)"
                                         class="text-red-600 hover:text-red-800 transition p-2 rounded-lg hover:bg-red-50"
                                         title="Eliminar usuario">
-                                        <i class="pi pi-trash"></i>
+                                        <TrashIcon class="w-5 h-5" />
                                     </button>
                                 </div>
                             </td>
@@ -158,8 +158,8 @@
             </div>
 
             <!-- Mensaje cuando no hay resultados -->
-            <div v-if="usuariosFiltrados.length === 0" class="text-center py-12">
-                <i class="pi pi-users text-gray-400" style="font-size: 3rem"></i>
+            <div v-if="usuariosFiltrados.length === 0" class="text-center py-12 flex flex-col items-center">
+                <UsersIcon class="w-16 h-16 text-gray-400" />
                 <p class="mt-4 text-gray-500">No se encontraron usuarios</p>
             </div>
         </div>
@@ -186,7 +186,7 @@
                         <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
                         a
                         <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, usuariosFiltrados.length)
-                        }}</span>
+                            }}</span>
                         de
                         <span class="font-medium">{{ usuariosFiltrados.length }}</span>
                         resultados
@@ -205,7 +205,7 @@
                             class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                             :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                             <span class="sr-only">Anterior</span>
-                            <i class="pi pi-chevron-left" aria-hidden="true"></i>
+                            <ChevronLeftIcon class="w-5 h-5" aria-hidden="true" />
                         </button>
 
                         <button v-for="page in totalPages" :key="page" @click="currentPage = page"
@@ -218,7 +218,7 @@
                             class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                             :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }">
                             <span class="sr-only">Siguiente</span>
-                            <i class="pi pi-chevron-right" aria-hidden="true"></i>
+                            <ChevronRightIcon class="w-5 h-5" aria-hidden="true" />
                         </button>
                     </nav>
                 </div>
@@ -238,7 +238,7 @@
                             {{ esEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
                         </h3>
                         <button @click="cerrarModal" class="text-gray-400 hover:text-gray-600 transition">
-                            <i class="pi pi-times text-xl"></i>
+                            <XMarkIcon class="w-6 h-6" />
                         </button>
                     </div>
 
@@ -291,7 +291,7 @@
                             enter-to-class="opacity-100 transform translate-y-0">
                             <div v-if="errorMessage"
                                 class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-                                <i class="pi pi-exclamation-circle"></i>
+                                <ExclamationCircleIcon class="w-5 h-5" />
                                 <span class="text-sm">{{ errorMessage }}</span>
                             </div>
                         </transition>
@@ -299,8 +299,8 @@
                         <div class="flex gap-3 pt-4">
                             <button type="submit" :disabled="isLoading"
                                 class="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                                <i v-if="isLoading" class="pi pi-spin pi-spinner"></i>
-                                <i v-else class="pi pi-check"></i>
+                                <ArrowPathIcon v-if="isLoading" class="w-5 h-5 animate-spin" />
+                                <CheckIcon v-else class="w-5 h-5" />
                                 {{ isLoading ? 'Guardando...' : (esEdicion ? 'Actualizar' : 'Crear Usuario') }}
                             </button>
                             <button type="button" @click="cerrarModal"
@@ -320,7 +320,7 @@
             leave-to-class="opacity-0 transform translate-y-2">
             <div v-if="showToast"
                 class="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
-                <i class="pi pi-check-circle text-xl"></i>
+                <CheckCircleIcon class="w-6 h-6" />
                 <span class="font-medium">{{ toastMessage }}</span>
             </div>
         </transition>
@@ -330,6 +330,23 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import api from '../../services/api'
+import {
+    PlusIcon,
+    UsersIcon,
+    ShieldCheckIcon,
+    BriefcaseIcon,
+    MagnifyingGlassIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    PencilIcon,
+    TrashIcon,
+    XMarkIcon,
+    CheckIcon,
+    ExclamationCircleIcon,
+    CheckCircleIcon,
+    UserIcon,
+    ArrowPathIcon
+} from '@heroicons/vue/24/outline'
 
 // --- Lógica de Usuarios ---
 interface User {
@@ -526,13 +543,13 @@ const getRoleLabel = (role: string): string => {
     return labels[role] || role
 }
 
-const getRoleIcon = (role: string): string => {
-    const icons: Record<string, string> = {
-        admin: 'pi-shield',
-        medico: 'pi-briefcase',
-        asistente: 'pi-user'
+const getRoleIconComponent = (role: string) => {
+    const icons: Record<string, any> = {
+        admin: ShieldCheckIcon,
+        medico: BriefcaseIcon,
+        asistente: UserIcon
     }
-    return `pi ${icons[role] || 'pi-user'}`
+    return icons[role] || UserIcon
 }
 
 const getRoleBadgeClass = (role: string): string => {

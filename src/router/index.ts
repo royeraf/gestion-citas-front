@@ -65,7 +65,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const auth = useAuthStore();
   
   // Si el usuario está autenticado y trata de ir al login, redirigir al dashboard

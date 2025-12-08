@@ -24,18 +24,12 @@
           </transition>
           <!-- Desktop Toggle Button -->
           <button @click="toggleSidebar" class="hidden md:block p-2 rounded-lg hover:bg-teal-600 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path v-if="sidebarOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-            </svg>
+            <ChevronDoubleLeftIcon v-if="sidebarOpen" class="w-6 h-6" />
+            <ChevronDoubleRightIcon v-else class="w-6 h-6" />
           </button>
           <!-- Mobile Close Button -->
           <button @click="mobileMenuOpen = false" class="md:hidden p-2 rounded-lg hover:bg-teal-600 transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <XMarkIcon class="w-6 h-6" />
           </button>
         </div>
       </div>
@@ -47,11 +41,8 @@
           :class="isActive('/dashboard') ?
             'bg-white text-teal-700 shadow-lg translate-x-2' :
             'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-          <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-            :class="{ 'scale-110': isActive('/dashboard') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
+          <Squares2X2Icon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+            :class="{ 'scale-110': isActive('/dashboard') }" />
           <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Dashboard</span>
         </router-link>
 
@@ -60,11 +51,8 @@
           :class="isActive('/pacientes') ?
             'bg-white text-teal-700 shadow-lg translate-x-2' :
             'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-          <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-            :class="{ 'scale-110': isActive('/pacientes') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
+          <UserGroupIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+            :class="{ 'scale-110': isActive('/pacientes') }" />
           <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Pacientes</span>
         </router-link>
 
@@ -73,11 +61,8 @@
           :class="isActive('/citas') ?
             'bg-white text-teal-700 shadow-lg translate-x-2' :
             'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-          <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-            :class="{ 'scale-110': isActive('/citas') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
+          <CalendarIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+            :class="{ 'scale-110': isActive('/citas') }" />
           <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Citas</span>
         </router-link>
 
@@ -86,11 +71,8 @@
           :class="isActive('/medicos') ?
             'bg-white text-teal-700 shadow-lg translate-x-2' :
             'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-          <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-            :class="{ 'scale-110': isActive('/medicos') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
+          <BriefcaseIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+            :class="{ 'scale-110': isActive('/medicos') }" />
           <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Médicos</span>
         </router-link>
 
@@ -100,11 +82,8 @@
             :class="isActive('/reportes') ?
               'bg-white text-teal-700 shadow-lg translate-x-2' :
               'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-            <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-              :class="{ 'scale-110': isActive('/reportes') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+            <ChartBarIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+              :class="{ 'scale-110': isActive('/reportes') }" />
             <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Reportes</span>
           </router-link>
 
@@ -113,13 +92,8 @@
             :class="isActive('/admin') ?
               'bg-white text-teal-700 shadow-lg translate-x-2' :
               'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
-            <svg class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
-              :class="{ 'scale-110': isActive('/admin') }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+            <Cog6ToothIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
+              :class="{ 'scale-110': isActive('/admin') }" />
             <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Configuración</span>
           </router-link>
         </div>
@@ -129,10 +103,7 @@
       <div class="p-4 border-t border-teal-600">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+            <UserIcon class="w-6 h-6 text-white" />
           </div>
           <div :class="{ 'md:hidden': !sidebarOpen }" class="flex-1 min-w-0">
             <p class="font-medium truncate">{{ auth.user?.dni }}</p>
@@ -140,10 +111,7 @@
           </div>
           <button :class="{ 'md:hidden': !sidebarOpen }" @click="cerrarSesion"
             class="p-2 rounded-lg hover:bg-teal-600 transition-colors" title="Cerrar sesión">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
+            <ArrowRightOnRectangleIcon class="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -158,9 +126,7 @@
             <!-- Mobile Menu Button -->
             <button @click="mobileMenuOpen = true"
               class="md:hidden p-2 -ml-2 rounded-lg hover:bg-gray-100 transition-colors">
-              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <Bars3Icon class="w-6 h-6 text-gray-600" />
             </button>
 
             <div>
@@ -178,7 +144,7 @@
           <div class="flex items-center gap-4">
             <!-- Notificaciones -->
             <button class="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-              <i class="pi pi-bell"></i>
+              <BellIcon class="w-6 h-6 text-gray-700" />
               <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
 
@@ -217,6 +183,21 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  XMarkIcon,
+  Squares2X2Icon,
+  UserGroupIcon,
+  CalendarIcon,
+  BriefcaseIcon,
+  ChartBarIcon,
+  Cog6ToothIcon,
+  UserIcon,
+  ArrowRightOnRectangleIcon,
+  Bars3Icon,
+  BellIcon
+} from '@heroicons/vue/24/outline'
 
 const auth = useAuthStore()
 

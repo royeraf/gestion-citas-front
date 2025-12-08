@@ -28,12 +28,12 @@
                 </div>
                 <button @click="generarReporte"
                     class="w-full md:w-auto bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                    <i class="pi pi-search"></i>
+                    <MagnifyingGlassIcon class="w-5 h-5" />
                     Generar
                 </button>
                 <button @click="exportarPDF"
                     class="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2">
-                    <i class="pi pi-file-pdf"></i>
+                    <DocumentTextIcon class="w-5 h-5" />
                     PDF
                 </button>
             </div>
@@ -46,7 +46,7 @@
                 <p class="text-3xl font-bold text-gray-800">{{ stats.totalCitas }}</p>
                 <div class="mt-2 flex items-center text-sm">
                     <span class="text-green-600 font-medium flex items-center">
-                        <i class="pi pi-arrow-up mr-1"></i> 5%
+                        <ArrowTrendingUpIcon class="w-4 h-4 mr-1" /> 5%
                     </span>
                     <span class="text-gray-500 ml-2">vs mes anterior</span>
                 </div>
@@ -57,7 +57,7 @@
                 <p class="text-3xl font-bold text-gray-800">{{ stats.tasaAsistencia }}%</p>
                 <div class="mt-2 flex items-center text-sm">
                     <span class="text-green-600 font-medium flex items-center">
-                        <i class="pi pi-check-circle mr-1"></i> +2%
+                        <CheckCircleIcon class="w-4 h-4 mr-1" /> +2%
                     </span>
                     <span class="text-gray-500 ml-2">mejora</span>
                 </div>
@@ -68,7 +68,7 @@
                 <p class="text-3xl font-bold text-gray-800">{{ stats.cancelaciones }}</p>
                 <div class="mt-2 flex items-center text-sm">
                     <span class="text-red-600 font-medium flex items-center">
-                        <i class="pi pi-arrow-down mr-1"></i> -1%
+                        <ArrowTrendingDownIcon class="w-4 h-4 mr-1" /> -1%
                     </span>
                     <span class="text-gray-500 ml-2">vs mes anterior</span>
                 </div>
@@ -149,6 +149,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import {
+    MagnifyingGlassIcon,
+    DocumentTextIcon,
+    ArrowTrendingUpIcon,
+    CheckCircleIcon,
+    ArrowTrendingDownIcon
+} from '@heroicons/vue/24/outline';
 
 const filtros = ref({
     fechaInicio: new Date().toISOString().split('T')[0],

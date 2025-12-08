@@ -5,17 +5,17 @@
     <!-- Filtros -->
     <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
       <h2 class="text-lg font-semibold text-gray-800 mb-4">Filtros de Búsqueda</h2>
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <!-- Filtro por fecha -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <!-- Filtro por fecha de cita -->
         <div>
           <label for="filtroFecha" class="block text-sm font-medium text-gray-700 mb-2">
-            Fecha
+            Fecha de Cita
           </label>
           <input type="date" id="filtroFecha" v-model="filtros.fecha"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
         </div>
 
-        <!-- Filtro por área -->
+        <!-- Filtro por área (dinámico) -->
         <div>
           <label for="filtroArea" class="block text-sm font-medium text-gray-700 mb-2">
             Área
@@ -23,10 +23,22 @@
           <select id="filtroArea" v-model="filtros.area"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white">
             <option value="">Todas las áreas</option>
-            <option value="odontologia">Odontología</option>
-            <option value="psicologia">Psicología</option>
-            <option value="nutricion">Nutrición</option>
-            <option value="medicina_general">Medicina General</option>
+            <option v-for="area in areas" :key="area.id" :value="area.nombre">
+              {{ area.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Filtro por turno -->
+        <div>
+          <label for="filtroTurno" class="block text-sm font-medium text-gray-700 mb-2">
+            Turno
+          </label>
+          <select id="filtroTurno" v-model="filtros.turno"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white">
+            <option value="">Todos los turnos</option>
+            <option value="M">Mañana</option>
+            <option value="T">Tarde</option>
           </select>
         </div>
 
@@ -46,23 +58,26 @@
           </select>
         </div>
 
-        <!-- Buscar por paciente -->
+        <!-- Buscar por paciente (DNI) -->
         <div>
           <label for="filtroPaciente" class="block text-sm font-medium text-gray-700 mb-2">
-            Buscar Paciente
+            DNI Paciente
           </label>
-          <input type="text" id="filtroPaciente" v-model="filtros.paciente" placeholder="DNI o nombre"
+          <input type="text" id="filtroPaciente" v-model="filtros.paciente_dni" placeholder="DNI del paciente"
+            maxlength="8"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent" />
         </div>
       </div>
 
       <div class="flex gap-3 mt-4">
         <button @click="aplicarFiltros"
-          class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition duration-200">
+          class="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg transition duration-200 flex items-center gap-2">
+          <MagnifyingGlassIcon class="w-5 h-5" />
           Buscar
         </button>
         <button @click="limpiarFiltros"
-          class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition duration-200">
+          class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition duration-200 flex items-center gap-2">
+          <XMarkIcon class="w-5 h-5" />
           Limpiar
         </button>
       </div>
@@ -75,7 +90,7 @@
           <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Fecha/Hora
+                Fecha / Turno
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Paciente
@@ -98,63 +113,97 @@
             <tr v-if="isLoading">
               <td colspan="6" class="px-6 py-12 text-center">
                 <div class="flex flex-col items-center justify-center">
-                  <i class="pi pi-spin pi-spinner text-4xl text-emerald-500 mb-3"></i>
+                  <ArrowPathIcon class="w-10 h-10 text-emerald-500 mb-3 animate-spin" />
                   <span class="text-gray-500 font-medium">Cargando citas...</span>
                 </div>
               </td>
             </tr>
             <template v-else>
               <tr v-for="cita in citas" :key="cita.id" class="hover:bg-gray-50 transition duration-150">
+                <!-- Fecha y Turno -->
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ formatFechaHora(cita.fecha_registro).fecha }}</div>
-                  <div class="text-sm text-gray-500">{{ formatFechaHora(cita.fecha_registro).hora }}</div>
+                  <div v-if="cita.fecha" class="text-sm font-medium text-gray-900">
+                    {{ formatFecha(cita.fecha) }}
+                  </div>
+                  <div v-else class="text-sm font-medium text-gray-500">
+                    Sin programar
+                  </div>
+                  <!-- Mostrar turno si existe -->
+                  <div v-if="cita.horario_turno" class="mt-1">
+                    <span :class="[
+                      'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
+                      cita.horario_turno === 'M'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-indigo-100 text-indigo-800'
+                    ]">
+                      <SunIcon v-if="cita.horario_turno === 'M'" class="w-3 h-3 mr-1" />
+                      <MoonIcon v-else class="w-3 h-3 mr-1" />
+                      {{ cita.horario_turno_nombre }}
+                    </span>
+                  </div>
+                  <!-- Horario si existe -->
+                  <div v-if="cita.horario" class="text-xs text-gray-500 mt-1">
+                    {{ cita.horario.hora_inicio?.slice(0, 5) }} - {{ cita.horario.hora_fin?.slice(0, 5) }}
+                  </div>
                 </td>
+                <!-- Paciente -->
                 <td class="px-6 py-4">
                   <div class="text-sm font-medium text-gray-900">{{ getNombreCompleto(cita.paciente) }}</div>
-                  <div class="text-sm text-gray-500">DNI: {{ cita.paciente.dni }}</div>
+                  <div class="text-sm text-gray-500">DNI: {{ cita.paciente?.dni || 'N/A' }}</div>
+                  <div v-if="cita.paciente?.telefono" class="text-xs text-gray-400 flex items-center gap-1 mt-1">
+                    <PhoneIcon class="w-3 h-3" />
+                    {{ cita.paciente.telefono }}
+                  </div>
                 </td>
+                <!-- Área -->
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ formatArea(cita.area) }}</div>
+                  <div class="text-sm text-gray-900">{{ cita.area_nombre || cita.area || 'N/A' }}</div>
                 </td>
+                <!-- Doctor -->
                 <td class="px-6 py-4">
-                  <div class="text-sm text-gray-900">{{ cita.doctor_nombre || 'Dr. ID: ' + cita.doctor_id }}</div>
+                  <div class="text-sm text-gray-900">{{ cita.doctor_nombre || 'Sin asignar' }}</div>
                 </td>
+                <!-- Estado -->
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span :class="getEstadoClass(cita.estado)">
                     {{ formatEstado(cita.estado) }}
                   </span>
                 </td>
+                <!-- Acciones -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                   <div class="flex gap-2">
                     <button @click="verDetalle(cita)" class="text-blue-600 hover:text-blue-800 transition"
                       title="Ver detalle">
-                      <i class="pi pi-eye text-lg"></i>
+                      <EyeIcon class="w-5 h-5" />
                     </button>
                     <button v-if="cita.estado === 'pendiente'" @click="confirmarCita(cita.id)"
                       class="text-green-600 hover:text-green-800 transition" title="Confirmar cita">
-                      <i class="pi pi-check text-lg"></i>
+                      <CheckIcon class="w-5 h-5" />
                     </button>
                     <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
                       @click="cambiarEstado(cita.id, 'atendida')"
                       class="text-purple-600 hover:text-purple-800 transition" title="Marcar como atendida">
-                      <i class="pi pi-check-circle text-lg"></i>
+                      <CheckCircleIcon class="w-5 h-5" />
                     </button>
                     <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
                       @click="cambiarEstado(cita.id, 'referido')"
                       class="text-orange-600 hover:text-orange-800 transition" title="Referir a otro hospital">
-                      <i class="pi pi-send text-lg"></i>
+                      <PaperAirplaneIcon class="w-5 h-5" />
                     </button>
                     <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
                       @click="cancelarCita(cita.id)" class="text-red-600 hover:text-red-800 transition"
                       title="Cancelar cita">
-                      <i class="pi pi-times text-lg"></i>
+                      <XMarkIcon class="w-5 h-5" />
                     </button>
                   </div>
                 </td>
               </tr>
               <tr v-if="citas.length === 0">
                 <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                  No se encontraron citas con los filtros aplicados
+                  <div class="flex flex-col items-center">
+                    <CalendarIcon class="w-10 h-10 text-gray-300 mb-3" />
+                    <p>No se encontraron citas con los filtros aplicados</p>
+                  </div>
                 </td>
               </tr>
             </template>
@@ -203,10 +252,10 @@
               class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
               <span class="sr-only">Anterior</span>
-              <i class="pi pi-chevron-left" aria-hidden="true"></i>
+              <ChevronLeftIcon class="w-4 h-4" />
             </button>
 
-            <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+            <button v-for="page in paginationPages" :key="page" @click="currentPage = page"
               class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
               :class="page === currentPage ? 'z-10 bg-emerald-50 border-emerald-500 text-emerald-600' : 'text-gray-500 hover:bg-gray-50'">
               {{ page }}
@@ -216,86 +265,173 @@
               class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }">
               <span class="sr-only">Siguiente</span>
-              <i class="pi pi-chevron-right" aria-hidden="true"></i>
+              <ChevronRightIcon class="w-4 h-4" />
             </button>
           </nav>
         </div>
       </div>
     </div>
+
+    <!-- Modal Detalle de Cita -->
     <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
       enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100"
       leave-to-class="opacity-0">
       <div v-if="modalDetalle.visible"
         class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
         @click.self="cerrarModal">
-        <div class="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl transform transition-all">
+        <div
+          class="bg-white rounded-lg max-w-3xl w-full p-6 shadow-xl transform transition-all max-h-[90vh] overflow-y-auto">
           <div class="flex justify-between items-start mb-4">
             <h3 class="text-2xl font-bold text-gray-800">Detalle de la Cita</h3>
             <button @click="cerrarModal" class="text-gray-400 hover:text-gray-600 transition">
-              <i class="pi pi-times text-xl"></i>
+              <XMarkIcon class="w-6 h-6" />
             </button>
           </div>
 
-          <div v-if="modalDetalle.cita" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <p class="text-sm text-gray-500">Paciente</p>
-                <p class="font-semibold text-gray-800">{{ getNombreCompleto(modalDetalle.cita.paciente) }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">DNI</p>
-                <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente.dni }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Fecha y Hora</p>
-                <p class="font-semibold text-gray-800">{{ formatFechaHora(modalDetalle.cita.fecha_registro).fecha }} -
-                  {{
-                    formatFechaHora(modalDetalle.cita.fecha_registro).hora }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Estado</p>
-                <span :class="getEstadoClass(modalDetalle.cita.estado)">
-                  {{ formatEstado(modalDetalle.cita.estado) }}
-                </span>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Área</p>
-                <p class="font-semibold text-gray-800">{{ formatArea(modalDetalle.cita.area) }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Doctor</p>
-                <p class="font-semibold text-gray-800">{{ modalDetalle.cita.doctor_nombre || 'Dr. ID: ' +
-                  modalDetalle.cita.doctor_id }}</p>
+          <div v-if="modalDetalle.cita" class="space-y-6">
+            <!-- Información de la Cita -->
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-100">
+              <h4 class="font-semibold text-emerald-800 mb-3 flex items-center gap-2">
+                <CalendarIcon class="w-5 h-5" />
+                Información de la Cita
+              </h4>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p class="text-xs text-gray-500">Fecha de Cita</p>
+                  <p class="font-semibold text-gray-800">
+                    {{ modalDetalle.cita.fecha ? formatFecha(modalDetalle.cita.fecha) : 'Sin programar' }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Turno</p>
+                  <p class="font-semibold text-gray-800">
+                    <span v-if="modalDetalle.cita.horario_turno" :class="[
+                      'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
+                      modalDetalle.cita.horario_turno === 'M'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-indigo-100 text-indigo-800'
+                    ]">
+                      <SunIcon v-if="modalDetalle.cita.horario_turno === 'M'" class="w-3 h-3 mr-1" />
+                      <MoonIcon v-else class="w-3 h-3 mr-1" />
+                      {{ modalDetalle.cita.horario_turno_nombre }}
+                    </span>
+                    <span v-else class="text-gray-400">N/A</span>
+                  </p>
+                </div>
+                <div v-if="modalDetalle.cita.horario">
+                  <p class="text-xs text-gray-500">Horario</p>
+                  <p class="font-semibold text-gray-800">
+                    {{ modalDetalle.cita.horario.hora_inicio?.slice(0, 5) }} -
+                    {{ modalDetalle.cita.horario.hora_fin?.slice(0, 5) }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Estado</p>
+                  <span :class="getEstadoClass(modalDetalle.cita.estado)">
+                    {{ formatEstado(modalDetalle.cita.estado) }}
+                  </span>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Área</p>
+                  <p class="font-semibold text-gray-800">
+                    {{ modalDetalle.cita.area_nombre || modalDetalle.cita.area || 'N/A' }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">Doctor</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.doctor_nombre || 'Sin asignar' }}</p>
+                </div>
               </div>
             </div>
 
+            <!-- Información del Paciente -->
+            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                <UserIcon class="w-5 h-5" />
+                Datos del Paciente
+              </h4>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="col-span-2">
+                  <p class="text-xs text-gray-500">Nombre Completo</p>
+                  <p class="font-semibold text-gray-800">{{ getNombreCompleto(modalDetalle.cita.paciente) }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500">DNI</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente?.dni || 'N/A' }}</p>
+                </div>
+                <div v-if="modalDetalle.cita.paciente?.telefono">
+                  <p class="text-xs text-gray-500">Teléfono</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente.telefono }}</p>
+                </div>
+                <div v-if="modalDetalle.cita.paciente?.email">
+                  <p class="text-xs text-gray-500">Email</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente.email }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acompañante (si existe) -->
+            <div v-if="modalDetalle.cita.nombre_acompanante"
+              class="bg-purple-50 rounded-lg p-4 border border-purple-100">
+              <h4 class="font-semibold text-purple-800 mb-3 flex items-center gap-2">
+                <UsersIcon class="w-5 h-5" />
+                Acompañante
+              </h4>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <p class="text-xs text-gray-500">Nombre</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.nombre_acompanante }}</p>
+                </div>
+                <div v-if="modalDetalle.cita.dni_acompanante">
+                  <p class="text-xs text-gray-500">DNI</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.dni_acompanante }}</p>
+                </div>
+                <div v-if="modalDetalle.cita.telefono_acompanante">
+                  <p class="text-xs text-gray-500">Teléfono</p>
+                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.telefono_acompanante }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Síntomas -->
             <div>
-              <p class="text-sm text-gray-500 mb-2">Síntomas</p>
-              <p class="text-gray-800 bg-gray-50 p-3 rounded-lg">{{ modalDetalle.cita.sintomas }}</p>
+              <p class="text-sm text-gray-500 mb-2 flex items-center gap-2">
+                <HeartIcon class="w-5 h-5" />
+                Síntomas / Motivo de Consulta
+              </p>
+              <p class="text-gray-800 bg-gray-50 p-3 rounded-lg">{{ modalDetalle.cita.sintomas || 'No especificado' }}
+              </p>
             </div>
 
-            <div v-if="modalDetalle.cita.observaciones">
-              <p class="text-sm text-gray-500 mb-2">Observaciones</p>
-              <p class="text-gray-800 bg-gray-50 p-3 rounded-lg">{{ modalDetalle.cita.observaciones }}</p>
+            <!-- Fecha de registro -->
+            <div class="text-xs text-gray-400 border-t pt-3 flex items-center">
+              <ClockIcon class="w-4 h-4 mr-1" />
+              Registrado el: {{ formatFechaHora(modalDetalle.cita.fecha_registro).fecha }} a las
+              {{ formatFechaHora(modalDetalle.cita.fecha_registro).hora }}
             </div>
 
-            <div class="flex gap-3 pt-4 border-t">
+            <!-- Botones de acción -->
+            <div class="flex flex-wrap gap-3 pt-4 border-t">
               <button v-if="modalDetalle.cita.estado === 'pendiente'" @click="confirmarCita(modalDetalle.cita.id)"
-                class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition">
+                class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                <CheckIcon class="w-5 h-5" />
                 Confirmar Cita
               </button>
               <button v-if="!['atendida', 'cancelada', 'referido'].includes(modalDetalle.cita.estado)"
                 @click="cambiarEstado(modalDetalle.cita.id, 'atendida')"
-                class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition">
-                Marcar como Atendida
+                class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                <CheckCircleIcon class="w-5 h-5" />
+                Marcar Atendida
               </button>
               <button v-if="!['atendida', 'cancelada', 'referido'].includes(modalDetalle.cita.estado)"
                 @click="cambiarEstado(modalDetalle.cita.id, 'referido')"
-                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition">
-                Referir Paciente
+                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                <PaperAirplaneIcon class="w-5 h-5" />
+                Referir
               </button>
               <button @click="cerrarModal"
-                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition">
+                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                <XMarkIcon class="w-5 h-5" />
                 Cerrar
               </button>
             </div>
@@ -307,42 +443,97 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import citaService from '../services/citaService'
+import api from '../services/api'
+import {
+  MagnifyingGlassIcon,
+  XMarkIcon,
+  SunIcon,
+  MoonIcon,
+  PhoneIcon,
+  EyeIcon,
+  CheckIcon,
+  CheckCircleIcon,
+  PaperAirplaneIcon,
+  CalendarIcon,
+  ArrowPathIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  UserIcon,
+  UsersIcon,
+  HeartIcon,
+  ClockIcon
+} from '@heroicons/vue/24/outline'
 
+// Interfaces actualizadas según el nuevo backend
 interface Paciente {
   id: number
   nombres: string
   apellido_paterno: string
   apellido_materno: string
   dni: string
+  telefono?: string | null
+  email?: string | null
+  fecha_nacimiento?: string | null
+  sexo?: string
+  direccion?: string
+  seguro?: string | null
+}
+
+interface Horario {
+  id: number
+  turno: 'M' | 'T'
+  turno_nombre: string
+  hora_inicio: string
+  hora_fin: string
+  cupos?: number
 }
 
 interface Cita {
   id: number
-  fecha_registro: string
-  estado: string
-  area: string
-  doctor_id: number
+  paciente_id: number
+  horario_id: number | null
+  doctor_id: number | null
+  area_id: number | null
+  area: string | null
+  area_nombre: string | null
+  fecha: string | null          // Fecha de la cita (YYYY-MM-DD)
+  fecha_registro: string        // Cuando se registró
   sintomas: string
+  estado: string
+  doctor_nombre: string | null
+  horario_turno: 'M' | 'T' | null
+  horario_turno_nombre: string | null
+  dni_acompanante: string | null
+  nombre_acompanante: string | null
+  telefono_acompanante: string | null
   observaciones?: string
-  paciente: Paciente
-  // Optional fields that might come from backend or be computed
-  doctor_nombre?: string
+  paciente?: Paciente
+  horario?: Horario
+}
+
+interface Area {
+  id: number
+  nombre: string
+  descripcion?: string
+  activo: boolean
 }
 
 interface Filtros {
   fecha: string
   area: string
+  turno: '' | 'M' | 'T'
   estado: string
-  paciente: string
+  paciente_dni: string
 }
 
 const filtros = ref<Filtros>({
   fecha: '',
   area: '',
+  turno: '',
   estado: '',
-  paciente: ''
+  paciente_dni: ''
 })
 
 const modalDetalle = ref<{
@@ -354,11 +545,39 @@ const modalDetalle = ref<{
 })
 
 const citas = ref<Cita[]>([])
+const areas = ref<Area[]>([])
 const totalItems = ref(0)
 const totalPages = ref(0)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const isLoading = ref(false)
+
+// Computed para limitar páginas en paginación
+const paginationPages = computed(() => {
+  const pages: number[] = []
+  const maxPages = 5
+  let start = Math.max(1, currentPage.value - Math.floor(maxPages / 2))
+  const end = Math.min(totalPages.value, start + maxPages - 1)
+
+  if (end - start + 1 < maxPages) {
+    start = Math.max(1, end - maxPages + 1)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
+// Cargar áreas desde el backend
+const fetchAreas = async () => {
+  try {
+    const { data } = await api.get<Area[]>('/areas/')
+    areas.value = data.filter(a => a.activo)
+  } catch (error) {
+    console.error('Error al cargar áreas:', error)
+  }
+}
 
 const fetchCitas = async () => {
   isLoading.value = true
@@ -368,11 +587,9 @@ const fetchCitas = async () => {
       per_page: itemsPerPage.value,
       fecha: filtros.value.fecha || undefined,
       area: filtros.value.area || undefined,
+      turno: (filtros.value.turno || undefined) as 'M' | 'T' | undefined,
       estado: filtros.value.estado || undefined,
-      // Si es número asumimos DNI, si no, búsqueda general (aunque el backend pide paciente_dni, 
-      // la UI tiene un solo campo "Buscar Paciente". Asumiremos que se usa para DNI por ahora 
-      // o implementaremos lógica si el backend soporta búsqueda por nombre)
-      paciente_dni: filtros.value.paciente || undefined
+      paciente_dni: filtros.value.paciente_dni || undefined
     }
 
     const { data } = await citaService.getCitas(params)
@@ -412,14 +629,26 @@ watch(itemsPerPage, () => {
   fetchCitas()
 })
 
-const formatArea = (area: string): string => {
-  const areas: Record<string, string> = {
-    odontologia: 'Odontología',
-    psicologia: 'Psicología',
-    nutricion: 'Nutrición',
-    medicina_general: 'Medicina General'
+// Función para formatear fecha de cita (solo fecha, sin hora)
+const formatFecha = (fechaStr: string): string => {
+  if (!fechaStr) return ''
+  const fecha = new Date(fechaStr + 'T00:00:00') // Evitar problemas de timezone
+  return fecha.toLocaleDateString('es-PE', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+// Función para formatear fecha y hora de registro
+const formatFechaHora = (fechaRegistro: string) => {
+  if (!fechaRegistro) return { fecha: '', hora: '' }
+  const date = new Date(fechaRegistro)
+  return {
+    fecha: date.toLocaleDateString('es-PE'),
+    hora: date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
   }
-  return areas[area] || area
 }
 
 const formatEstado = (estado: string): string => {
@@ -453,17 +682,18 @@ const limpiarFiltros = () => {
   filtros.value = {
     fecha: '',
     area: '',
+    turno: '',
     estado: '',
-    paciente: ''
+    paciente_dni: ''
   }
   aplicarFiltros()
 }
 
 const verDetalle = async (cita: Cita) => {
   try {
-    // Obtener detalle completo si es necesario
+    // Obtener detalle completo
     const { data } = await citaService.getCita(cita.id)
-    modalDetalle.value.cita = data
+    modalDetalle.value.cita = data as Cita
     modalDetalle.value.visible = true
   } catch (error) {
     console.error('Error al obtener detalle de cita:', error)
@@ -498,15 +728,7 @@ const cambiarEstado = async (id: number, nuevoEstado: string) => {
 const cancelarCita = async (id: number) => {
   if (confirm('¿Está seguro que desea cancelar esta cita?')) {
     try {
-      // Opción 1: Actualizar estado a cancelada
       await citaService.actualizarCita(id, { estado: 'cancelada' })
-      // Opción 2: Eliminar registro (según requerimiento backend "Eliminar Cita" es DELETE)
-      // El usuario dijo: "Eliminar Cita... Elimina permanentemente". 
-      // Pero también hay estado "cancelada". 
-      // Usualmente cancelar es cambiar estado. Eliminar es borrar.
-      // Voy a asumir que el botón "Cancelar" cambia el estado a 'cancelada'.
-      // Si hubiera un botón "Eliminar", usaría delete.
-
       fetchCitas()
     } catch (error) {
       console.error('Error al cancelar cita:', error)
@@ -514,22 +736,13 @@ const cancelarCita = async (id: number) => {
   }
 }
 
-// Helpers para formato de fecha y nombre
-const formatFechaHora = (fechaRegistro: string) => {
-  if (!fechaRegistro) return { fecha: '', hora: '' }
-  const date = new Date(fechaRegistro)
-  return {
-    fecha: date.toLocaleDateString(),
-    hora: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-  }
-}
-
-const getNombreCompleto = (p: Paciente) => {
+const getNombreCompleto = (p: Paciente | undefined) => {
   if (!p) return 'Desconocido'
   return `${p.nombres} ${p.apellido_paterno} ${p.apellido_materno}`
 }
 
 onMounted(() => {
+  fetchAreas()
   fetchCitas()
 })
 </script>

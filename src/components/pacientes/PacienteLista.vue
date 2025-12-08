@@ -6,7 +6,7 @@
             <div class="relative w-full md:w-96">
                 <input type="text" v-model="busquedaPaciente" placeholder="Buscar por DNI o Nombre..."
                     class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
-                <i class="pi pi-search absolute left-3 top-3 text-gray-400"></i>
+                <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-3 text-gray-400" />
             </div>
         </div>
 
@@ -33,7 +33,7 @@
                     <tr v-if="isLoading">
                         <td colspan="6" class="px-6 py-12 text-center">
                             <div class="flex flex-col items-center justify-center">
-                                <i class="pi pi-spin pi-spinner text-4xl text-teal-500 mb-3"></i>
+                                <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-500 mb-3" />
                                 <span class="text-gray-500 font-medium">Cargando pacientes...</span>
                             </div>
                         </td>
@@ -64,10 +64,12 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm font-medium">
-                                <button class="text-teal-600 hover:text-teal-900 mr-3" title="Ver Historial"><i
-                                        class="pi pi-history"></i></button>
-                                <button class="text-blue-600 hover:text-blue-900" title="Editar"><i
-                                        class="pi pi-pencil"></i></button>
+                                <button class="text-teal-600 hover:text-teal-900 mr-3" title="Ver Historial">
+                                    <ClockIcon class="w-5 h-5" />
+                                </button>
+                                <button class="text-blue-600 hover:text-blue-900" title="Editar">
+                                    <PencilIcon class="w-5 h-5" />
+                                </button>
                             </td>
                         </tr>
                         <tr v-if="pacientes.length === 0">
@@ -110,7 +112,7 @@
                             class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                             :class="{ 'opacity-50 cursor-not-allowed': currentPage === 1 }">
                             <span class="sr-only">Anterior</span>
-                            <i class="pi pi-chevron-left"></i>
+                            <ChevronLeftIcon class="w-5 h-5" />
                         </button>
                         <button v-for="page in totalPages" :key="page" @click="currentPage = page"
                             class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
@@ -121,7 +123,7 @@
                             class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                             :class="{ 'opacity-50 cursor-not-allowed': currentPage === totalPages }">
                             <span class="sr-only">Siguiente</span>
-                            <i class="pi pi-chevron-right"></i>
+                            <ChevronRightIcon class="w-5 h-5" />
                         </button>
                     </nav>
                 </div>
@@ -133,6 +135,14 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
 import pacienteService from "../../services/pacienteService";
+import {
+    MagnifyingGlassIcon,
+    ArrowPathIcon,
+    ClockIcon,
+    PencilIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon
+} from '@heroicons/vue/24/outline'
 
 // Estado
 const busquedaPaciente = ref('');

@@ -23,8 +23,8 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Evita bucles infinitos
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Evita bucles infinitos y no reintenta si es login
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/login')) {
       originalRequest._retry = true;
 
       try {
