@@ -103,6 +103,17 @@ const horarioService = {
         })
     },
 
+    // Crear horarios en bloque (bulk)
+    crearHorariosBulk(payload: {
+        medico_id: number
+        area_id: number
+        mes: string
+        dias_semana: number[]
+        turnos: { turno: string; cupos: number }[]
+    }) {
+        return api.post('/horarios/bulk', payload)
+    },
+
     // Crear horario individual (legacy compatible)
     crearHorario(data: Horario | Horario[]) {
         return api.post('/horarios/', data)

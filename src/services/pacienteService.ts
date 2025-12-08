@@ -10,12 +10,13 @@ export interface RegistrarPacientePayload {
     sexo: string
     estado_civil: string
     direccion: string
-    telefono?: string
+    grado_instruccion: string
+    religion: string
+    procedencia: string
+    telefono: string
     email?: string
-    grado_instruccion?: string
-    religion?: string
-    procedencia?: string
-    seguro?: string
+    seguro: string
+    numero_seguro?: string
 }
 
 export interface PacienteResponse {
@@ -28,6 +29,7 @@ export interface PacienteResponse {
     apellidoMaterno: string  // Alias para compatibilidad
     fecha_nacimiento: string
     fechaNacimiento: string  // Alias para compatibilidad
+    fecha_registro?: string
     edad: number
     sexo: string
     estado_civil: string
@@ -38,7 +40,8 @@ export interface PacienteResponse {
     email: string | null
     direccion: string
     seguro: string | null
-    numero_afiliacion?: string | null  // Para búsqueda por DNI
+    numero_seguro?: string | null  // Nuevo campo para número de seguro
+    numero_afiliacion?: string | null  // Mantener para compatibilidad
     origen?: 'local' | 'reniec'  // Indica si viene de BD local o RENIEC
 }
 

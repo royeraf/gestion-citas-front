@@ -132,7 +132,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span :class="[getRoleBadgeClass(user.role), 'flex items-center inline-flex gap-1']">
                                     <component :is="getRoleIconComponent(user.role)" class="w-4 h-4" />
-                                    {{ getRoleLabel(user.role) }}
+                                    {{ getRoleLabel(user.role, user.role_nombre) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -318,9 +318,12 @@
             enter-from-class="opacity-0 transform translate-y-2" enter-to-class="opacity-100 transform translate-y-0"
             leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100 transform translate-y-0"
             leave-to-class="opacity-0 transform translate-y-2">
-            <div v-if="showToast"
-                class="fixed bottom-4 right-4 bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50">
-                <CheckCircleIcon class="w-6 h-6" />
+            <div v-if="showToast" :class="[
+                'fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50',
+                toastType === 'success' ? 'bg-green-100 border border-green-400 text-green-700' : 'bg-red-100 border border-red-400 text-red-700'
+            ]">
+                <CheckCircleIcon v-if="toastType === 'success'" class="w-6 h-6" />
+                <ExclamationCircleIcon v-else class="w-6 h-6" />
                 <span class="font-medium">{{ toastMessage }}</span>
             </div>
         </transition>
@@ -329,7 +332,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import api from '../../services/api'
+import userService, { type User, type CreateUserPayload, type UpdateUserPayload } from '../../services/userService'
 import {
     PlusIcon,
     UsersIcon,
@@ -349,129 +352,16 @@ import {
 } from '@heroicons/vue/24/outline'
 
 // --- Lógica de Usuarios ---
-interface User {
-    id: number
-    name: string
-    username: string
-    role: string
-    createdAt?: string
-}
-
 const newUser = ref({
     id: 0,
     name: '',
     username: '',
     password: '',
-    role: '',
+    role: '' as 'admin' | 'medico' | 'asistente' | '',
 })
 
-const users = ref<User[]>([
-    {
-        id: 1,
-        name: 'Carlos Mendoza García',
-        username: 'cmendoza',
-        role: 'admin',
-        createdAt: '2024-01-15T08:30:00'
-    },
-    {
-        id: 2,
-        name: 'María González Ruiz',
-        username: 'mgonzalez',
-        role: 'medico',
-        createdAt: '2024-02-10T10:15:00'
-    },
-    {
-        id: 3,
-        name: 'Ana Torres Silva',
-        username: 'atorres',
-        role: 'medico',
-        createdAt: '2024-02-20T14:45:00'
-    },
-    {
-        id: 4,
-        name: 'Pedro Ramírez López',
-        username: 'pramirez',
-        role: 'asistente',
-        createdAt: '2024-03-05T09:20:00'
-    },
-    {
-        id: 5,
-        name: 'Laura Pérez Vega',
-        username: 'lperez',
-        role: 'medico',
-        createdAt: '2024-03-12T11:30:00'
-    },
-    {
-        id: 6,
-        name: 'Fernando López Díaz',
-        username: 'flopez',
-        role: 'admin',
-        createdAt: '2024-03-18T08:00:00'
-    },
-    {
-        id: 7,
-        name: 'Sofia Martínez Cruz',
-        username: 'smartinez',
-        role: 'medico',
-        createdAt: '2024-04-02T13:15:00'
-    },
-    {
-        id: 8,
-        name: 'Roberto Silva Campos',
-        username: 'rsilva',
-        role: 'asistente',
-        createdAt: '2024-04-08T10:00:00'
-    },
-    {
-        id: 9,
-        name: 'Carmen Ruiz Flores',
-        username: 'cruiz',
-        role: 'medico',
-        createdAt: '2024-04-15T15:30:00'
-    },
-    {
-        id: 10,
-        name: 'Miguel Castro Romero',
-        username: 'mcastro',
-        role: 'asistente',
-        createdAt: '2024-04-22T09:45:00'
-    },
-    {
-        id: 11,
-        name: 'Patricia Díaz Herrera',
-        username: 'pdiaz',
-        role: 'medico',
-        createdAt: '2024-05-01T11:00:00'
-    },
-    {
-        id: 12,
-        name: 'Luis Vargas Soto',
-        username: 'lvargas',
-        role: 'asistente',
-        createdAt: '2024-05-10T14:20:00'
-    },
-    {
-        id: 13,
-        name: 'Isabel Morales Paz',
-        username: 'imorales',
-        role: 'medico',
-        createdAt: '2024-05-18T08:30:00'
-    },
-    {
-        id: 14,
-        name: 'Jorge Ramos Neira',
-        username: 'jramos',
-        role: 'asistente',
-        createdAt: '2024-06-01T10:15:00'
-    },
-    {
-        id: 15,
-        name: 'Verónica Salazar Ríos',
-        username: 'vsalazar',
-        role: 'admin',
-        createdAt: '2024-06-15T13:00:00'
-    }
-])
+const users = ref<User[]>([])
+const isLoadingList = ref(false)
 
 const modalVisible = ref(false)
 const esEdicion = ref(false)
@@ -479,9 +369,10 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const showToast = ref(false)
 const toastMessage = ref('')
+const toastType = ref<'success' | 'error'>('success')
 
 // Filtros
-const filtroRol = ref('')
+const filtroRol = ref<'admin' | 'medico' | 'asistente' | ''>('')
 const filtroBusqueda = ref('')
 
 const usuariosFiltrados = computed(() => {
@@ -489,7 +380,8 @@ const usuariosFiltrados = computed(() => {
         const cumpleRol = !filtroRol.value || user.role === filtroRol.value
         const cumpleBusqueda = !filtroBusqueda.value ||
             user.name.toLowerCase().includes(filtroBusqueda.value.toLowerCase()) ||
-            user.username.toLowerCase().includes(filtroBusqueda.value.toLowerCase())
+            user.username.toLowerCase().includes(filtroBusqueda.value.toLowerCase()) ||
+            (user.dni && user.dni.includes(filtroBusqueda.value))
 
         return cumpleRol && cumpleBusqueda
     })
@@ -506,7 +398,7 @@ const paginatedUsers = computed(() => {
 })
 
 const totalPages = computed(() => {
-    return Math.ceil(usuariosFiltrados.value.length / itemsPerPage.value)
+    return Math.ceil(usuariosFiltrados.value.length / itemsPerPage.value) || 1
 })
 
 const nextPage = () => {
@@ -534,7 +426,10 @@ const getInitials = (name: string): string => {
     return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase()
 }
 
-const getRoleLabel = (role: string): string => {
+const getRoleLabel = (role: string, roleNombre?: string): string => {
+    // Usar role_nombre del backend si está disponible
+    if (roleNombre) return roleNombre
+
     const labels: Record<string, string> = {
         admin: 'Administrador',
         medico: 'Médico',
@@ -561,7 +456,7 @@ const getRoleBadgeClass = (role: string): string => {
     return classes[role] || 'px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800'
 }
 
-const formatDate = (date: string | undefined): string => {
+const formatDate = (date: string | null | undefined): string => {
     if (!date) return 'N/A'
     return new Date(date).toLocaleDateString('es-PE', {
         year: 'numeric',
@@ -571,12 +466,15 @@ const formatDate = (date: string | undefined): string => {
 }
 
 const fetchUsers = async () => {
+    isLoadingList.value = true
     try {
-        const { data } = await api.get('/users')
+        const { data } = await userService.getUsers()
         users.value = data
     } catch (error) {
         console.error('Error al obtener usuarios:', error)
-        // mostrarError('Error al cargar usuarios')
+        mostrarToast('Error al cargar usuarios', 'error')
+    } finally {
+        isLoadingList.value = false
     }
 }
 
@@ -613,17 +511,33 @@ const guardarUsuario = async () => {
 
     try {
         if (esEdicion.value) {
-            await api.put(`/users/${newUser.value.id}`, newUser.value)
-            mostrarToast('Usuario actualizado exitosamente')
+            const payload: UpdateUserPayload = {
+                name: newUser.value.name,
+                username: newUser.value.username,
+                role: newUser.value.role as 'admin' | 'medico' | 'asistente'
+            }
+            // Solo incluir password si se proporcionó uno nuevo
+            if (newUser.value.password) {
+                payload.password = newUser.value.password
+            }
+            await userService.updateUser(newUser.value.id, payload)
+            mostrarToast('Usuario actualizado exitosamente', 'success')
         } else {
-            await api.post('/users', newUser.value)
-            mostrarToast('Usuario creado exitosamente')
+            const payload: CreateUserPayload = {
+                name: newUser.value.name,
+                username: newUser.value.username,
+                password: newUser.value.password,
+                role: newUser.value.role as 'admin' | 'medico' | 'asistente'
+            }
+            await userService.createUser(payload)
+            mostrarToast('Usuario creado exitosamente', 'success')
         }
 
         await fetchUsers()
         cerrarModal()
     } catch (error: any) {
-        errorMessage.value = error?.response?.data?.message || 'Error al guardar usuario'
+        const mensaje = error?.response?.data?.error || error?.response?.data?.message || 'Error al guardar usuario'
+        errorMessage.value = mensaje
         console.error('Error al guardar usuario:', error)
     } finally {
         isLoading.value = false
@@ -634,12 +548,13 @@ const eliminarUsuario = async (id: number) => {
     if (!confirm('¿Está seguro que desea eliminar este usuario?')) return
 
     try {
-        await api.delete(`/users/${id}`)
+        await userService.deleteUser(id)
         await fetchUsers()
-        mostrarToast('Usuario eliminado exitosamente')
-    } catch (error) {
+        mostrarToast('Usuario eliminado exitosamente', 'success')
+    } catch (error: any) {
         console.error('Error al eliminar usuario:', error)
-        mostrarError('Error al eliminar usuario')
+        const mensaje = error?.response?.data?.error || 'Error al eliminar usuario'
+        mostrarToast(mensaje, 'error')
     }
 }
 
@@ -648,16 +563,13 @@ const limpiarFiltros = () => {
     filtroBusqueda.value = ''
 }
 
-const mostrarToast = (mensaje: string) => {
+const mostrarToast = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
     toastMessage.value = mensaje
+    toastType.value = tipo
     showToast.value = true
     setTimeout(() => {
         showToast.value = false
     }, 3000)
-}
-
-const mostrarError = (mensaje: string) => {
-    errorMessage.value = mensaje
 }
 
 onMounted(() => {

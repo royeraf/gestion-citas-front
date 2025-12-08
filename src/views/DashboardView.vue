@@ -4,82 +4,112 @@
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Total Pacientes -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase">Total Pacientes</p>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.totalPacientes }}</p>
+            <template v-if="isLoading">
+                <div v-for="i in 4" :key="i"
+                    class="bg-white rounded-lg shadow-md p-6 border-l-4 border-gray-200 animate-pulse">
+                    <div class="flex items-center justify-between">
+                        <div class="w-full">
+                            <div class="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
+                            <div class="h-8 bg-gray-200 rounded w-1/3"></div>
+                        </div>
+                        <div class="bg-gray-100 p-3 rounded-full w-12 h-12"></div>
                     </div>
-                    <div class="bg-blue-100 p-3 rounded-full">
-                        <UsersIcon class="w-6 h-6 text-blue-600" />
-                    </div>
+                    <div class="mt-4 h-4 bg-gray-200 rounded w-3/4"></div>
                 </div>
-                <p class="text-sm text-green-600 mt-4 flex items-center">
-                    <ArrowTrendingUpIcon class="w-4 h-4 mr-1" />
-                    <span>+12% este mes</span>
-                </p>
-            </div>
+            </template>
+            <template v-else>
+                <!-- Total Pacientes -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium uppercase">Total Pacientes</p>
+                            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.totalPacientes }}</p>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <UsersIcon class="w-6 h-6 text-blue-600" />
+                        </div>
+                    </div>
+                    <p class="text-sm text-green-600 mt-4 flex items-center">
+                        <ArrowTrendingUpIcon class="w-4 h-4 mr-1" />
+                        <span>Registros activos</span>
+                    </p>
+                </div>
 
-            <!-- Citas Hoy -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-emerald-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase">Citas Hoy</p>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasHoy }}</p>
+                <!-- Citas Hoy -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium uppercase">Citas Hoy</p>
+                            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasHoy }}</p>
+                        </div>
+                        <div class="bg-emerald-100 p-3 rounded-full">
+                            <CalendarIcon class="w-6 h-6 text-emerald-600" />
+                        </div>
                     </div>
-                    <div class="bg-emerald-100 p-3 rounded-full">
-                        <CalendarIcon class="w-6 h-6 text-emerald-600" />
-                    </div>
+                    <p class="text-sm text-gray-500 mt-4">
+                        {{ stats.citasPendientesHoy }} pendientes de atención
+                    </p>
                 </div>
-                <p class="text-sm text-gray-500 mt-4">
-                    {{ stats.citasPendientesHoy }} pendientes de atención
-                </p>
-            </div>
 
-            <!-- Médicos Activos -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase">Médicos Activos</p>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.medicosActivos }}</p>
+                <!-- Médicos Activos -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium uppercase">Médicos Activos</p>
+                            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.medicosActivos }}</p>
+                        </div>
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <UserPlusIcon class="w-6 h-6 text-purple-600" />
+                        </div>
                     </div>
-                    <div class="bg-purple-100 p-3 rounded-full">
-                        <UserPlusIcon class="w-6 h-6 text-purple-600" />
-                    </div>
+                    <p class="text-sm text-gray-500 mt-4">
+                        Personal disponible
+                    </p>
                 </div>
-                <p class="text-sm text-gray-500 mt-4">
-                    En 4 especialidades
-                </p>
-            </div>
 
-            <!-- Ingresos (Simulado) -->
-            <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500 font-medium uppercase">Citas Pendientes</p>
-                        <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasPendientesTotal }}</p>
+                <!-- Citas Pendientes Total -->
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium uppercase">Citas Pendientes</p>
+                            <p class="text-2xl font-bold text-gray-800 mt-1">{{ stats.citasPendientesTotal }}</p>
+                        </div>
+                        <div class="bg-orange-100 p-3 rounded-full">
+                            <ClockIcon class="w-6 h-6 text-orange-600" />
+                        </div>
                     </div>
-                    <div class="bg-orange-100 p-3 rounded-full">
-                        <ClockIcon class="w-6 h-6 text-orange-600" />
-                    </div>
+                    <p class="text-sm text-orange-600 mt-4 flex items-center">
+                        <ExclamationCircleIcon class="w-4 h-4 mr-1" />
+                        <span>Total general</span>
+                    </p>
                 </div>
-                <p class="text-sm text-orange-600 mt-4 flex items-center">
-                    <ExclamationCircleIcon class="w-4 h-4 mr-1" />
-                    <span>Requieren confirmación</span>
-                </p>
-            </div>
+            </template>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Próximas Citas -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
                 <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                     <h2 class="text-lg font-semibold text-gray-800">Próximas Citas</h2>
                     <router-link to="/citas" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Ver
                         todas</router-link>
                 </div>
-                <div class="divide-y divide-gray-200">
+                <div v-if="isLoading" class="p-6 space-y-4">
+                    <div v-for="i in 5" :key="i" class="flex justify-between items-center animate-pulse">
+                        <div class="flex gap-4 w-full">
+                            <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                            <div class="flex-1 space-y-2">
+                                <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+                                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                        </div>
+                        <div class="w-20 h-6 bg-gray-200 rounded-full"></div>
+                    </div>
+                </div>
+                <div v-else class="divide-y divide-gray-200">
+                    <div v-if="proximasCitas.length === 0" class="p-8 text-center text-gray-500">
+                        No hay citas próximas programadas.
+                    </div>
                     <div v-for="cita in proximasCitas" :key="cita.id"
                         class="p-6 hover:bg-gray-50 transition duration-150">
                         <div class="flex items-center justify-between">
@@ -137,17 +167,32 @@
                     </div>
                 </div>
 
-                <!-- Distribución por Especialidad (Simulado con barras simples) -->
+                <!-- Distribución por Especialidad -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-lg font-semibold text-gray-800 mb-4">Citas por Especialidad (Hoy)</h2>
-                    <div class="space-y-4">
+
+                    <div v-if="isLoading" class="space-y-4 animate-pulse">
+                        <div v-for="i in 3" :key="i">
+                            <div class="flex justify-between mb-1">
+                                <div class="h-3 bg-gray-200 rounded w-1/3"></div>
+                                <div class="h-3 bg-gray-200 rounded w-10"></div>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full w-full"></div>
+                        </div>
+                    </div>
+
+                    <div v-else class="space-y-4">
+                        <div v-if="citasPorEspecialidad.length === 0" class="text-sm text-gray-500 italic">
+                            No hay datos para mostrar hoy.
+                        </div>
                         <div v-for="item in citasPorEspecialidad" :key="item.nombre">
                             <div class="flex justify-between text-sm mb-1">
                                 <span class="text-gray-600">{{ item.nombre }}</span>
                                 <span class="font-medium text-gray-800">{{ item.cantidad }}</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" :style="{ width: item.porcentaje + '%' }">
+                                <div class="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                                    :style="{ width: item.porcentaje + '%' }">
                                 </div>
                             </div>
                         </div>
@@ -159,7 +204,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import dashboardService, { type DashboardStats, type UpcomingAppointment, type AppointmentBySpecialty } from '../services/dashboardService';
 import {
     UsersIcon,
     ArrowTrendingUpIcon,
@@ -171,70 +217,63 @@ import {
     CalendarDaysIcon
 } from '@heroicons/vue/24/outline';
 
-// Datos simulados para el dashboard
-const stats = ref({
-    totalPacientes: 1248,
-    citasHoy: 42,
-    citasPendientesHoy: 15,
-    medicosActivos: 18,
-    citasPendientesTotal: 86
+const isLoading = ref(true);
+
+const stats = ref<DashboardStats>({
+    totalPacientes: 0,
+    citasHoy: 0,
+    citasPendientesHoy: 0,
+    medicosActivos: 0,
+    citasPendientesTotal: 0
 });
 
-const proximasCitas = ref([
-    {
-        id: 1,
-        fecha: '2024-11-23',
-        hora: '09:00 AM',
-        paciente: 'Juan Pérez García',
-        doctor: 'Dr. Carlos Mendoza',
-        especialidad: 'Odontología',
-        estado: 'Confirmada'
-    },
-    {
-        id: 2,
-        fecha: '2024-11-23',
-        hora: '09:30 AM',
-        paciente: 'María López Silva',
-        doctor: 'Dra. Ana Torres',
-        especialidad: 'Psicología',
-        estado: 'Pendiente'
-    },
-    {
-        id: 3,
-        fecha: '2024-11-23',
-        hora: '10:00 AM',
-        paciente: 'Pedro Ramírez',
-        doctor: 'Dr. Fernando López',
-        especialidad: 'Medicina General',
-        estado: 'Atendida'
-    },
-    {
-        id: 4,
-        fecha: '2024-11-23',
-        hora: '10:30 AM',
-        paciente: 'Luisa Martínez',
-        doctor: 'Dra. Laura Pérez',
-        especialidad: 'Nutrición',
-        estado: 'Pendiente'
+const proximasCitas = ref<UpcomingAppointment[]>([]);
+const citasPorEspecialidad = ref<AppointmentBySpecialty[]>([]);
+
+const fetchData = async () => {
+    isLoading.value = true;
+    try {
+        const [statsRes, upcomingRes, specialtyRes] = await Promise.all([
+            dashboardService.getStats(),
+            dashboardService.getUpcomingAppointments(),
+            dashboardService.getAppointmentsBySpecialty()
+        ]);
+
+        stats.value = statsRes.data;
+        proximasCitas.value = upcomingRes.data;
+        citasPorEspecialidad.value = specialtyRes.data;
+    } catch (error) {
+        console.error("Error cargando dashboard:", error);
+    } finally {
+        isLoading.value = false;
     }
-]);
+};
 
-const citasPorEspecialidad = ref([
-    { nombre: 'Medicina General', cantidad: 15, porcentaje: 45 },
-    { nombre: 'Odontología', cantidad: 12, porcentaje: 35 },
-    { nombre: 'Psicología', cantidad: 8, porcentaje: 25 },
-    { nombre: 'Nutrición', cantidad: 7, porcentaje: 20 }
-]);
+onMounted(() => {
+    fetchData();
+});
 
-// Helpers para fechas
+// Helpers para fechas (Robustos a UTC string "YYYY-MM-DD")
 const getMes = (fechaStr: string) => {
-    const fecha = new Date(fechaStr);
-    return fecha.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
+    if (!fechaStr) return '';
+    const parts = fechaStr.split('-');
+    if (parts.length !== 3) return '';
+
+    // Asignar y castear
+    const year = parts[0] as string;
+    const month = parts[1] as string;
+    const day = parts[2] as string;
+
+    // Meses en JS son 0-based
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return date.toLocaleString('es-ES', { month: 'short' }).replace('.', '');
 };
 
 const getDia = (fechaStr: string) => {
-    const fecha = new Date(fechaStr);
-    return fecha.getDate();
+    if (!fechaStr) return '';
+    const parts = fechaStr.split('-');
+    if (parts.length !== 3) return '';
+    return parts[2]; // Retorna el día tal cual del string "2024-12-08" -> "08"
 };
 
 const getEstadoClass = (estado: string) => {

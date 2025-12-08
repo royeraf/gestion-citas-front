@@ -1279,7 +1279,7 @@ const buscarPorDNI = async () => {
                 email: data.email ?? "",
                 direccion: data.direccion,
                 tipoSeguro: data.seguro ?? "",
-                numeroSis: data.numero_afiliacion ?? "",
+                numeroSis: data.numero_seguro ?? data.numero_afiliacion ?? "",
                 // Limpiar datos de cita anterior
                 sintomas: "",
                 ocupacion: "",
@@ -1348,6 +1348,7 @@ const onSubmit = handleSubmit(async (values) => {
             religion: values.religion,
             procedencia: values.procedencia,
             seguro: values.tipoSeguro,
+            numero_seguro: values.numeroSis,
         };
 
         const { data: pacienteData } = await pacienteService.crearPaciente(pacientePayload);
