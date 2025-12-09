@@ -336,9 +336,9 @@ const resetForm = () => {
         medico_id: null,
         area_id: null,
         mes: `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`,
-        dias_seleccionados: [0, 1, 2, 3, 4],
+        dias_seleccionados: [0, 1, 2, 3, 4, 5],
         turnos: {
-            manana: { activo: true, cupos: 5 },
+            manana: { activo: true, cupos: 7 },
             tarde: { activo: true, cupos: 7 }
         }
     }

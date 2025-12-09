@@ -44,19 +44,23 @@
                                 <div class="flex items-center">
                                     <div
                                         class="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
-                                        <span class="text-teal-600 font-semibold text-sm">{{ paciente.nombres[0] }}{{
-                                            paciente.apellidoPaterno[0] }}</span>
+                                        <span class="text-teal-600 font-semibold text-sm">{{ paciente.nombres?.[0] || ''
+                                        }}{{
+                                                paciente.apellidoPaterno?.[0] || paciente.apellido_paterno?.[0] || ''
+                                            }}</span>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900">{{ paciente.apellidoPaterno }} {{
-                                            paciente.apellidoMaterno }}, {{ paciente.nombres }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{
+                                            paciente.apellidoPaterno || paciente.apellido_paterno }} {{
+                                                paciente.apellidoMaterno || paciente.apellido_materno }}, {{
+                                                paciente.nombres }}</div>
                                         <div class="text-xs text-gray-500">{{ paciente.email || 'Sin email' }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ paciente.dni }}</td>
                             <td class="px-6 py-4 text-sm text-gray-500">{{ paciente.edad }} años</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ paciente.telefono }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-500">{{ paciente.telefono || '-' }}</td>
                             <td class="px-6 py-4">
                                 <span
                                     :class="['px-2 py-1 text-xs font-semibold rounded-full', paciente.seguro === 'SIS' ? 'bg-blue-100 text-blue-800' : paciente.seguro === 'ESSALUD' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800']">
@@ -64,10 +68,12 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-sm font-medium">
-                                <button class="text-teal-600 hover:text-teal-900 mr-3" title="Ver Historial">
+                                <button @click="verHistorial(paciente)" class="text-teal-600 hover:text-teal-900 mr-3"
+                                    title="Ver Historial">
                                     <ClockIcon class="w-5 h-5" />
                                 </button>
-                                <button class="text-blue-600 hover:text-blue-900" title="Editar">
+                                <button @click="editarPaciente(paciente)" class="text-blue-600 hover:text-blue-900"
+                                    title="Editar">
                                     <PencilIcon class="w-5 h-5" />
                                 </button>
                             </td>
@@ -114,7 +120,7 @@
                             <span class="sr-only">Anterior</span>
                             <ChevronLeftIcon class="w-5 h-5" />
                         </button>
-                        <button v-for="page in totalPages" :key="page" @click="currentPage = page"
+                        <button v-for="page in displayedPages" :key="page" @click="currentPage = page"
                             class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
                             :class="page === currentPage ? 'z-10 bg-teal-50 border-teal-500 text-teal-600' : 'text-gray-500 hover:bg-gray-50'">
                             {{ page }}
@@ -130,11 +136,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Modales desacoplados -->
+    <ModalHistorialPaciente :show="showHistorialModal" :paciente="pacienteSeleccionado"
+        @close="showHistorialModal = false" />
+
+    <ModalEditarPaciente :show="showEditModal" :paciente="pacienteSeleccionado" @close="showEditModal = false"
+        @saved="onPacienteGuardado" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
-import pacienteService from "../../services/pacienteService";
+import { ref, watch, onMounted, computed } from "vue";
+import pacienteService, { type Paciente } from "../../services/pacienteService";
+import ModalHistorialPaciente from "./ModalHistorialPaciente.vue";
+import ModalEditarPaciente from "./ModalEditarPaciente.vue";
 import {
     MagnifyingGlassIcon,
     ArrowPathIcon,
@@ -144,14 +159,36 @@ import {
     ChevronRightIcon
 } from '@heroicons/vue/24/outline'
 
-// Estado
+// Estado principal
 const busquedaPaciente = ref('');
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const totalPages = ref(0);
 const totalItems = ref(0);
-const pacientes = ref<any[]>([]);
+const pacientes = ref<Paciente[]>([]);
 const isLoading = ref(false);
+
+// Estado de modales
+const showHistorialModal = ref(false);
+const showEditModal = ref(false);
+const pacienteSeleccionado = ref<Paciente | null>(null);
+
+// Computed para mostrar máximo 5 páginas en la paginación
+const displayedPages = computed(() => {
+    const pages: number[] = [];
+    const maxPages = 5;
+    let start = Math.max(1, currentPage.value - Math.floor(maxPages / 2));
+    let end = Math.min(totalPages.value, start + maxPages - 1);
+
+    if (end - start + 1 < maxPages) {
+        start = Math.max(1, end - maxPages + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i);
+    }
+    return pages;
+});
 
 // Función para cargar pacientes desde la API
 const fetchPacientes = async () => {
@@ -173,6 +210,21 @@ const fetchPacientes = async () => {
     } finally {
         isLoading.value = false;
     }
+};
+
+// Acciones de los botones
+const verHistorial = (paciente: Paciente) => {
+    pacienteSeleccionado.value = paciente;
+    showHistorialModal.value = true;
+};
+
+const editarPaciente = (paciente: Paciente) => {
+    pacienteSeleccionado.value = paciente;
+    showEditModal.value = true;
+};
+
+const onPacienteGuardado = () => {
+    fetchPacientes();
 };
 
 // Observadores para recargar cuando cambie la búsqueda o página

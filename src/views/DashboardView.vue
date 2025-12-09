@@ -1,6 +1,27 @@
 <template>
     <div class="max-w-7xl mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8">Dashboard General</h1>
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                        {{ getSaludo }}, <span
+                            class="bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">{{
+                            getNombreUsuario }}</span> 👋
+                    </h1>
+                    <p class="text-gray-500 mt-1">
+                        {{ getFechaCompleta }}
+                    </p>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                    <span
+                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-100 text-teal-700 rounded-full font-medium">
+                        <span class="w-2 h-2 bg-teal-500 rounded-full animate-pulse"></span>
+                        Sistema activo
+                    </span>
+                </div>
+            </div>
+        </div>
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -204,7 +225,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useAuthStore } from '../store/auth';
 import dashboardService, { type DashboardStats, type UpcomingAppointment, type AppointmentBySpecialty } from '../services/dashboardService';
 import {
     UsersIcon,
@@ -217,7 +239,38 @@ import {
     CalendarDaysIcon
 } from '@heroicons/vue/24/outline';
 
+const auth = useAuthStore();
 const isLoading = ref(true);
+
+// Computed properties para el saludo personalizado
+const getSaludo = computed(() => {
+    const hora = new Date().getHours();
+    if (hora >= 5 && hora < 12) return 'Buenos días';
+    if (hora >= 12 && hora < 18) return 'Buenas tardes';
+    return 'Buenas noches';
+});
+
+const getNombreUsuario = computed(() => {
+    if (auth.user?.nombres_completos) {
+        // Obtener solo el primer nombre
+        const nombres = auth.user.nombres_completos.split(' ');
+        return nombres[0];
+    }
+    return auth.user?.username || 'Usuario';
+});
+
+const getFechaCompleta = computed(() => {
+    const fecha = new Date();
+    const opciones: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    };
+    const fechaFormateada = fecha.toLocaleDateString('es-PE', opciones);
+    // Capitalizar primera letra
+    return fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+});
 
 const stats = ref<DashboardStats>({
     totalPacientes: 0,

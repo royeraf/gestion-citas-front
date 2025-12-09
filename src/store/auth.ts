@@ -5,11 +5,11 @@ import api from '../services/api'
 
 interface User {
   id: number
-  email: string
   dni: string
-  nombre?: string
-  role_id?: number
-  roles: string[] // ej: ['asistente_tecnico'], ['administrador']
+  username: string | null
+  nombres_completos: string | null
+  rol_id: number  // 1=administrador, 2=medico, 3=asistente
+  activo: boolean
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -75,7 +75,12 @@ export const useAuthStore = defineStore('auth', () => {
 
 
   function hasRole(role: string) {
-    return !!user.value && user.value.roles.includes(role)
+    const roleMap: Record<string, number> = {
+      'administrador': 1,
+      'medico': 2,
+      'asistente': 3
+    }
+    return !!user.value && user.value.rol_id === roleMap[role]
   }
 
   // intenta reconstruir user desde token si no tenemos user (opcional)

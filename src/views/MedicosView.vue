@@ -127,7 +127,12 @@
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <div class="flex gap-2">
+                <div v-if="procesandoMedicoId === medico.id"
+                  class="flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                  <ArrowPathIcon class="w-4 h-4 animate-spin" />
+                  <span class="text-xs font-medium">Procesando...</span>
+                </div>
+                <div v-else class="flex gap-2">
                   <button @click="verDetalle(medico)" class="text-blue-600 hover:text-blue-800 transition"
                     title="Ver detalle">
                     <EyeIcon class="w-5 h-5" />
@@ -226,242 +231,20 @@
     </div>
 
     <!-- Modal de Crear/Editar -->
-    <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
-      enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100"
-      leave-to-class="opacity-0">
-      <div v-if="modalForm.visible"
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-        @click.self="cerrarModalForm">
-        <div
-          class="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl transform transition-all max-h-screen overflow-y-auto">
-          <div class="flex justify-between items-start mb-6">
-            <h3 class="text-2xl font-bold text-gray-800">
-              {{ modalForm.esEdicion ? "Editar Médico" : "Nuevo Médico" }}
-            </h3>
-            <button @click="cerrarModalForm" class="text-gray-400 hover:text-gray-600 transition">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <form @submit.prevent="guardarMedico" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Nombre Completo <span class="text-red-500">*</span>
-                </label>
-                <input type="text" v-model="formData.nombre" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Dr. Juan Pérez" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  CMP <span class="text-red-500">*</span>
-                </label>
-                <input type="text" v-model="formData.cmp" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="123456" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Email <span class="text-red-500">*</span>
-                </label>
-                <input type="email" v-model="formData.email" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="doctor@ejemplo.com" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Teléfono <span class="text-red-500">*</span>
-                </label>
-                <input type="tel" v-model="formData.telefono" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="999 999 999" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Área <span class="text-red-500">*</span>
-                </label>
-                <select v-model="formData.area" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white">
-                  <option value="">Seleccione un área</option>
-                  <option value="odontologia">Odontología</option>
-                  <option value="psicologia">Psicología</option>
-                  <option value="nutricion">Nutrición</option>
-                  <option value="medicina_general">Medicina General</option>
-                </select>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Especialidad <span class="text-red-500">*</span>
-                </label>
-                <input type="text" v-model="formData.especialidad" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Ej: Ortodoncista" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Horario <span class="text-red-500">*</span>
-                </label>
-                <input type="text" v-model="formData.horario" required
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="8:00 AM - 2:00 PM" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Cupos por Día <span class="text-red-500">*</span>
-                </label>
-                <input type="number" v-model.number="formData.cuposDia" required min="1" max="50"
-                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="10" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Dirección de Consultorio
-              </label>
-              <input type="text" v-model="formData.direccion"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                placeholder="Dirección completa" />
-            </div>
-
-            <div class="flex gap-3 pt-4">
-              <button type="submit"
-                class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg transition">
-                {{ modalForm.esEdicion ? "Actualizar" : "Registrar" }} Médico
-              </button>
-              <button type="button" @click="cerrarModalForm"
-                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition">
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </transition>
+    <ModalFormMedico :visible="modalForm.visible" :es-edicion="modalForm.esEdicion" :medico-data="formData"
+      @close="cerrarModalForm" @save="guardarMedico" />
 
     <!-- Modal de Detalle -->
-    <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
-      enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100"
-      leave-to-class="opacity-0">
-      <div v-if="modalDetalle.visible"
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-        @click.self="cerrarModalDetalle">
-        <div class="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="text-2xl font-bold text-gray-800">Detalle del Médico</h3>
-            <button @click="cerrarModalDetalle" class="text-gray-400 hover:text-gray-600 transition">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-
-          <div v-if="modalDetalle.medico" class="space-y-4">
-            <div class="flex items-center gap-4 pb-4 border-b">
-              <div class="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
-                <span class="text-emerald-600 font-bold text-xl">{{
-                  modalDetalle.medico.iniciales
-                  }}</span>
-              </div>
-              <div>
-                <h4 class="text-xl font-semibold text-gray-800">
-                  {{ modalDetalle.medico.nombre }}
-                </h4>
-                <p class="text-gray-600">
-                  {{ modalDetalle.medico.especialidad }}
-                </p>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <p class="text-sm text-gray-500">CMP</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.cmp }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Área</p>
-                <p class="font-semibold text-gray-800">
-                  {{ formatArea(modalDetalle.medico.area) }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Email</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.email }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Teléfono</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.telefono }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Horario</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.horario }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Cupos por Día</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.cuposDia }}
-                </p>
-              </div>
-              <div class="col-span-2">
-                <p class="text-sm text-gray-500">Dirección</p>
-                <p class="font-semibold text-gray-800">
-                  {{ modalDetalle.medico.direccion || "No especificada" }}
-                </p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-500">Estado</p>
-                <span :class="[
-                  'inline-block px-2 py-1 text-xs font-semibold rounded-full',
-                  modalDetalle.medico.estado === 'activo'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-gray-100 text-gray-800',
-                ]">
-                  {{
-                    modalDetalle.medico.estado === "activo"
-                      ? "Activo"
-                      : "Inactivo"
-                  }}
-                </span>
-              </div>
-            </div>
-
-            <div class="flex gap-3 pt-4 border-t">
-              <button @click="editarMedico(modalDetalle.medico)"
-                class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white py-2 px-4 rounded-lg transition">
-                Editar
-              </button>
-              <button @click="cerrarModalDetalle"
-                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition">
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <ModalDetalleMedico :visible="modalDetalle.visible" :medico="modalDetalle.medico" @close="cerrarModalDetalle"
+      @editar="editarMedico" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import Swal from 'sweetalert2';
+import ModalFormMedico from '../components/medicos/ModalFormMedico.vue';
+import ModalDetalleMedico from '../components/medicos/ModalDetalleMedico.vue';
 import {
   UserPlusIcon,
   EyeIcon,
@@ -469,7 +252,8 @@ import {
   NoSymbolIcon,
   CheckCircleIcon,
   ChevronLeftIcon,
-  ChevronRightIcon
+  ChevronRightIcon,
+  ArrowPathIcon
 } from '@heroicons/vue/24/outline';
 
 interface Medico {
@@ -619,6 +403,7 @@ const medicosFiltrados = computed(() => {
 // Paginación
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
+const procesandoMedicoId = ref<number | null>(null);
 
 const paginatedMedicos = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -703,26 +488,42 @@ const editarMedico = (medico: Medico) => {
   }
 };
 
-const guardarMedico = () => {
+interface FormData {
+  id: number;
+  nombre: string;
+  email: string;
+  telefono: string;
+  cmp: string;
+  area: string;
+  especialidad: string;
+  horario: string;
+  cuposDia: number;
+  direccion: string;
+}
+
+const guardarMedico = (data: FormData) => {
+  // Actualizar formData con los datos recibidos
+  formData.value = { ...data };
+
   if (modalForm.value.esEdicion) {
     // Actualizar médico existente
-    const index = medicos.value.findIndex((m) => m.id === formData.value.id);
+    const index = medicos.value.findIndex((m) => m.id === data.id);
     if (index !== -1) {
       const existingMedico = medicos.value[index];
       if (existingMedico) {
         medicos.value[index] = {
           ...existingMedico,
           id: existingMedico.id,
-          nombre: formData.value.nombre,
-          iniciales: obtenerIniciales(formData.value.nombre),
-          email: formData.value.email,
-          telefono: formData.value.telefono,
-          cmp: formData.value.cmp,
-          area: formData.value.area,
-          especialidad: formData.value.especialidad,
-          horario: formData.value.horario,
-          cuposDia: formData.value.cuposDia,
-          direccion: formData.value.direccion,
+          nombre: data.nombre,
+          iniciales: obtenerIniciales(data.nombre),
+          email: data.email,
+          telefono: data.telefono,
+          cmp: data.cmp,
+          area: data.area,
+          especialidad: data.especialidad,
+          horario: data.horario,
+          cuposDia: data.cuposDia,
+          direccion: data.direccion,
           estado: existingMedico.estado
         };
       }
@@ -732,23 +533,32 @@ const guardarMedico = () => {
     // Crear nuevo médico
     const nuevoMedico: Medico = {
       id: medicos.value.length + 1,
-      nombre: formData.value.nombre,
-      iniciales: obtenerIniciales(formData.value.nombre),
-      email: formData.value.email,
-      telefono: formData.value.telefono,
-      cmp: formData.value.cmp,
-      area: formData.value.area,
-      especialidad: formData.value.especialidad,
-      horario: formData.value.horario,
-      cuposDia: formData.value.cuposDia,
-      direccion: formData.value.direccion,
+      nombre: data.nombre,
+      iniciales: obtenerIniciales(data.nombre),
+      email: data.email,
+      telefono: data.telefono,
+      cmp: data.cmp,
+      area: data.area,
+      especialidad: data.especialidad,
+      horario: data.horario,
+      cuposDia: data.cuposDia,
+      direccion: data.direccion,
       estado: "activo",
     };
     medicos.value.push(nuevoMedico);
     console.log("Nuevo médico creado:", nuevoMedico);
   }
+  console.log(modalForm.value.esEdicion ? "Médico actualizado" : "Nuevo médico creado");
 
   cerrarModalForm();
+
+  Swal.fire({
+    title: modalForm.value.esEdicion ? '¡Actualizado!' : '¡Registrado!',
+    text: `El médico ha sido ${modalForm.value.esEdicion ? 'actualizado' : 'registrado'} exitosamente.`,
+    icon: 'success',
+    timer: 2000,
+    showConfirmButton: false
+  });
 };
 
 const verDetalle = (medico: Medico) => {
@@ -756,11 +566,37 @@ const verDetalle = (medico: Medico) => {
   modalDetalle.value.visible = true;
 };
 
-const toggleEstado = (medico: Medico) => {
+const toggleEstado = async (medico: Medico) => {
   const accion = medico.estado === "activo" ? "desactivar" : "activar";
-  if (confirm(`¿Está seguro que desea ${accion} a ${medico.nombre}?`)) {
-    medico.estado = medico.estado === "activo" ? "inactivo" : "activo";
-    console.log(`Médico ${medico.id} ${accion}do`);
+  const nuevoEstado = medico.estado === "activo" ? "inactivo" : "activo";
+  const colorBoton = medico.estado === "activo" ? "#EF4444" : "#10B981"; // Rojo para desactivar, Verde para activar
+
+  const result = await Swal.fire({
+    title: `¿${accion.charAt(0).toUpperCase() + accion.slice(1)} médico?`,
+    text: `El médico pasará a estado ${nuevoEstado}`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: colorBoton,
+    cancelButtonColor: '#6B7280',
+    confirmButtonText: `Sí, ${accion}`,
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (result.isConfirmed) {
+    procesandoMedicoId.value = medico.id;
+    // Simular petición al servidor
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    medico.estado = nuevoEstado;
+    procesandoMedicoId.value = null;
+
+    Swal.fire({
+      title: nuevoEstado === 'activo' ? '¡Activado!' : '¡Desactivado!',
+      text: `El médico ha sido ${accion}do exitosamente.`,
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false
+    });
   }
 };
 

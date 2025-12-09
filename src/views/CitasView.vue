@@ -171,7 +171,12 @@
                 </td>
                 <!-- Acciones -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
-                  <div class="flex gap-2">
+                  <div v-if="procesandoCitaId === cita.id"
+                    class="flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">
+                    <ArrowPathIcon class="w-4 h-4 animate-spin" />
+                    <span class="text-xs font-medium">Procesando...</span>
+                  </div>
+                  <div v-else class="flex gap-2">
                     <button @click="verDetalle(cita)" class="text-blue-600 hover:text-blue-800 transition"
                       title="Ver detalle">
                       <EyeIcon class="w-5 h-5" />
@@ -273,179 +278,17 @@
     </div>
 
     <!-- Modal Detalle de Cita -->
-    <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
-      enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100"
-      leave-to-class="opacity-0">
-      <div v-if="modalDetalle.visible"
-        class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-        @click.self="cerrarModal">
-        <div
-          class="bg-white rounded-lg max-w-3xl w-full p-6 shadow-xl transform transition-all max-h-[90vh] overflow-y-auto">
-          <div class="flex justify-between items-start mb-4">
-            <h3 class="text-2xl font-bold text-gray-800">Detalle de la Cita</h3>
-            <button @click="cerrarModal" class="text-gray-400 hover:text-gray-600 transition">
-              <XMarkIcon class="w-6 h-6" />
-            </button>
-          </div>
-
-          <div v-if="modalDetalle.cita" class="space-y-6">
-            <!-- Información de la Cita -->
-            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-lg p-4 border border-emerald-100">
-              <h4 class="font-semibold text-emerald-800 mb-3 flex items-center gap-2">
-                <CalendarIcon class="w-5 h-5" />
-                Información de la Cita
-              </h4>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div>
-                  <p class="text-xs text-gray-500">Fecha de Cita</p>
-                  <p class="font-semibold text-gray-800">
-                    {{ modalDetalle.cita.fecha ? formatFecha(modalDetalle.cita.fecha) : 'Sin programar' }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">Turno</p>
-                  <p class="font-semibold text-gray-800">
-                    <span v-if="modalDetalle.cita.horario_turno" :class="[
-                      'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
-                      modalDetalle.cita.horario_turno === 'M'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-indigo-100 text-indigo-800'
-                    ]">
-                      <SunIcon v-if="modalDetalle.cita.horario_turno === 'M'" class="w-3 h-3 mr-1" />
-                      <MoonIcon v-else class="w-3 h-3 mr-1" />
-                      {{ modalDetalle.cita.horario_turno_nombre }}
-                    </span>
-                    <span v-else class="text-gray-400">N/A</span>
-                  </p>
-                </div>
-                <div v-if="modalDetalle.cita.horario">
-                  <p class="text-xs text-gray-500">Horario</p>
-                  <p class="font-semibold text-gray-800">
-                    {{ modalDetalle.cita.horario.hora_inicio?.slice(0, 5) }} -
-                    {{ modalDetalle.cita.horario.hora_fin?.slice(0, 5) }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">Estado</p>
-                  <span :class="getEstadoClass(modalDetalle.cita.estado)">
-                    {{ formatEstado(modalDetalle.cita.estado) }}
-                  </span>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">Área</p>
-                  <p class="font-semibold text-gray-800">
-                    {{ modalDetalle.cita.area_nombre || modalDetalle.cita.area || 'N/A' }}
-                  </p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">Doctor</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.doctor_nombre || 'Sin asignar' }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Información del Paciente -->
-            <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
-              <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
-                <UserIcon class="w-5 h-5" />
-                Datos del Paciente
-              </h4>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div class="col-span-2">
-                  <p class="text-xs text-gray-500">Nombre Completo</p>
-                  <p class="font-semibold text-gray-800">{{ getNombreCompleto(modalDetalle.cita.paciente) }}</p>
-                </div>
-                <div>
-                  <p class="text-xs text-gray-500">DNI</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente?.dni || 'N/A' }}</p>
-                </div>
-                <div v-if="modalDetalle.cita.paciente?.telefono">
-                  <p class="text-xs text-gray-500">Teléfono</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente.telefono }}</p>
-                </div>
-                <div v-if="modalDetalle.cita.paciente?.email">
-                  <p class="text-xs text-gray-500">Email</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.paciente.email }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Acompañante (si existe) -->
-            <div v-if="modalDetalle.cita.nombre_acompanante"
-              class="bg-purple-50 rounded-lg p-4 border border-purple-100">
-              <h4 class="font-semibold text-purple-800 mb-3 flex items-center gap-2">
-                <UsersIcon class="w-5 h-5" />
-                Acompañante
-              </h4>
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <div>
-                  <p class="text-xs text-gray-500">Nombre</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.nombre_acompanante }}</p>
-                </div>
-                <div v-if="modalDetalle.cita.dni_acompanante">
-                  <p class="text-xs text-gray-500">DNI</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.dni_acompanante }}</p>
-                </div>
-                <div v-if="modalDetalle.cita.telefono_acompanante">
-                  <p class="text-xs text-gray-500">Teléfono</p>
-                  <p class="font-semibold text-gray-800">{{ modalDetalle.cita.telefono_acompanante }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Síntomas -->
-            <div>
-              <p class="text-sm text-gray-500 mb-2 flex items-center gap-2">
-                <HeartIcon class="w-5 h-5" />
-                Síntomas / Motivo de Consulta
-              </p>
-              <p class="text-gray-800 bg-gray-50 p-3 rounded-lg">{{ modalDetalle.cita.sintomas || 'No especificado' }}
-              </p>
-            </div>
-
-            <!-- Fecha de registro -->
-            <div class="text-xs text-gray-400 border-t pt-3 flex items-center">
-              <ClockIcon class="w-4 h-4 mr-1" />
-              Registrado el: {{ formatFechaHora(modalDetalle.cita.fecha_registro).fecha }} a las
-              {{ formatFechaHora(modalDetalle.cita.fecha_registro).hora }}
-            </div>
-
-            <!-- Botones de acción -->
-            <div class="flex flex-wrap gap-3 pt-4 border-t">
-              <button v-if="modalDetalle.cita.estado === 'pendiente'" @click="confirmarCita(modalDetalle.cita.id)"
-                class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                <CheckIcon class="w-5 h-5" />
-                Confirmar Cita
-              </button>
-              <button v-if="!['atendida', 'cancelada', 'referido'].includes(modalDetalle.cita.estado)"
-                @click="cambiarEstado(modalDetalle.cita.id, 'atendida')"
-                class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                <CheckCircleIcon class="w-5 h-5" />
-                Marcar Atendida
-              </button>
-              <button v-if="!['atendida', 'cancelada', 'referido'].includes(modalDetalle.cita.estado)"
-                @click="cambiarEstado(modalDetalle.cita.id, 'referido')"
-                class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                <PaperAirplaneIcon class="w-5 h-5" />
-                Referir
-              </button>
-              <button @click="cerrarModal"
-                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                <XMarkIcon class="w-5 h-5" />
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <ModalDetalleCita :visible="modalDetalle.visible" :loading="modalDetalle.loading" :cita="modalDetalle.cita"
+      @close="cerrarModal" @confirmar="confirmarCita" @cambiar-estado="cambiarEstado" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import Swal from 'sweetalert2'
 import citaService from '../services/citaService'
 import api from '../services/api'
+import ModalDetalleCita from '../components/citas/ModalDetalleCita.vue'
 import {
   MagnifyingGlassIcon,
   XMarkIcon,
@@ -459,11 +302,7 @@ import {
   CalendarIcon,
   ArrowPathIcon,
   ChevronLeftIcon,
-  ChevronRightIcon,
-  UserIcon,
-  UsersIcon,
-  HeartIcon,
-  ClockIcon
+  ChevronRightIcon
 } from '@heroicons/vue/24/outline'
 
 // Interfaces actualizadas según el nuevo backend
@@ -538,9 +377,11 @@ const filtros = ref<Filtros>({
 
 const modalDetalle = ref<{
   visible: boolean
+  loading: boolean
   cita: Cita | null
 }>({
   visible: false,
+  loading: false,
   cita: null
 })
 
@@ -551,6 +392,7 @@ const totalPages = ref(0)
 const currentPage = ref(1)
 const itemsPerPage = ref(10)
 const isLoading = ref(false)
+const procesandoCitaId = ref<number | null>(null)
 
 // Computed para limitar páginas en paginación
 const paginationPages = computed(() => {
@@ -641,16 +483,6 @@ const formatFecha = (fechaStr: string): string => {
   })
 }
 
-// Función para formatear fecha y hora de registro
-const formatFechaHora = (fechaRegistro: string) => {
-  if (!fechaRegistro) return { fecha: '', hora: '' }
-  const date = new Date(fechaRegistro)
-  return {
-    fecha: date.toLocaleDateString('es-PE'),
-    hora: date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })
-  }
-}
-
 const formatEstado = (estado: string): string => {
   const estados: Record<string, string> = {
     pendiente: 'Pendiente',
@@ -690,48 +522,138 @@ const limpiarFiltros = () => {
 }
 
 const verDetalle = async (cita: Cita) => {
+  // Abrir modal inmediatamente con estado de carga
+  modalDetalle.value.visible = true
+  modalDetalle.value.loading = true
+  modalDetalle.value.cita = null
+
   try {
     // Obtener detalle completo
     const { data } = await citaService.getCita(cita.id)
     modalDetalle.value.cita = data as Cita
-    modalDetalle.value.visible = true
   } catch (error) {
     console.error('Error al obtener detalle de cita:', error)
+    cerrarModal()
+  } finally {
+    modalDetalle.value.loading = false
   }
 }
 
 const cerrarModal = () => {
   modalDetalle.value.visible = false
+  modalDetalle.value.loading = false
   modalDetalle.value.cita = null
 }
 
 const confirmarCita = async (id: number) => {
-  try {
-    await citaService.actualizarCita(id, { estado: 'confirmada' })
-    fetchCitas()
-    if (modalDetalle.value.visible) cerrarModal()
-  } catch (error) {
-    console.error('Error al confirmar cita:', error)
+  const result = await Swal.fire({
+    title: '¿Confirmar cita?',
+    text: "La cita pasará a estado confirmada",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#10B981',
+    cancelButtonColor: '#6B7280',
+    confirmButtonText: 'Sí, confirmar',
+    cancelButtonText: 'Cancelar'
+  })
+
+  if (result.isConfirmed) {
+    procesandoCitaId.value = id
+    try {
+      await citaService.actualizarCita(id, { estado: 'confirmada' })
+      await fetchCitas()
+      if (modalDetalle.value.visible) cerrarModal()
+      Swal.fire({
+        title: '¡Confirmada!',
+        text: 'La cita ha sido confirmada exitosamente.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    } catch (error) {
+      console.error('Error al confirmar cita:', error)
+      Swal.fire('Error', 'No se pudo confirmar la cita', 'error')
+    } finally {
+      procesandoCitaId.value = null
+    }
   }
 }
 
 const cambiarEstado = async (id: number, nuevoEstado: string) => {
-  try {
-    await citaService.actualizarCita(id, { estado: nuevoEstado })
-    fetchCitas()
-    if (modalDetalle.value.visible) cerrarModal()
-  } catch (error) {
-    console.error(`Error al cambiar estado a ${nuevoEstado}:`, error)
+  const estadosLabel: Record<string, string> = {
+    'atendida': 'Atendida',
+    'referido': 'Referido',
+    'cancelada': 'Cancelada'
+  }
+
+  const colors: Record<string, string> = {
+    'atendida': '#8B5CF6',
+    'referido': '#F97316',
+    'cancelada': '#EF4444'
+  }
+
+  const result = await Swal.fire({
+    title: `¿Marcar como ${estadosLabel[nuevoEstado]}?`,
+    text: `La cita cambiará a estado ${nuevoEstado}`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: colors[nuevoEstado] || '#3B82F6',
+    cancelButtonColor: '#6B7280',
+    confirmButtonText: 'Sí, cambiar estado',
+    cancelButtonText: 'Cancelar'
+  })
+
+  if (result.isConfirmed) {
+    procesandoCitaId.value = id
+    try {
+      await citaService.actualizarCita(id, { estado: nuevoEstado })
+      await fetchCitas()
+      if (modalDetalle.value.visible) cerrarModal()
+      Swal.fire({
+        title: '¡Actualizado!',
+        text: `La cita ha sido marcada como ${estadosLabel[nuevoEstado]}.`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
+    } catch (error) {
+      console.error(`Error al cambiar estado a ${nuevoEstado}:`, error)
+      Swal.fire('Error', 'No se pudo actualizar el estado', 'error')
+    } finally {
+      procesandoCitaId.value = null
+    }
   }
 }
 
 const cancelarCita = async (id: number) => {
-  if (confirm('¿Está seguro que desea cancelar esta cita?')) {
+  const result = await Swal.fire({
+    title: '¿Cancelar esta cita?',
+    text: "Esta acción no se puede deshacer",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#EF4444',
+    cancelButtonColor: '#6B7280',
+    confirmButtonText: 'Sí, cancelar cita',
+    cancelButtonText: 'No, mantener'
+  })
+
+  if (result.isConfirmed) {
+    procesandoCitaId.value = id
     try {
       await citaService.actualizarCita(id, { estado: 'cancelada' })
-      fetchCitas()
+      await fetchCitas()
+      Swal.fire({
+        title: 'Cancelada',
+        text: 'La cita ha sido cancelada.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      })
     } catch (error) {
       console.error('Error al cancelar cita:', error)
+      Swal.fire('Error', 'No se pudo cancelar la cita', 'error')
+    } finally {
+      procesandoCitaId.value = null
     }
   }
 }

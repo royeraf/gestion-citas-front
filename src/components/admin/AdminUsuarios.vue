@@ -226,92 +226,8 @@
         </div>
 
         <!-- Modal de Crear/Editar Usuario -->
-        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
-            enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100" leave-to-class="opacity-0">
-            <div v-if="modalVisible"
-                class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-                @click.self="cerrarModal">
-                <div class="bg-white rounded-lg max-w-2xl w-full p-6 shadow-xl transform transition-all">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3 class="text-2xl font-bold text-gray-800">
-                            {{ esEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
-                        </h3>
-                        <button @click="cerrarModal" class="text-gray-400 hover:text-gray-600 transition">
-                            <XMarkIcon class="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <form @submit.prevent="guardarUsuario" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Nombre Completo <span class="text-red-500">*</span>
-                                </label>
-                                <input v-model="newUser.name" type="text" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                    placeholder="Juan Pérez" />
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Usuario <span class="text-red-500">*</span>
-                                </label>
-                                <input v-model="newUser.username" type="text" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                    placeholder="jperez" />
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Contraseña <span class="text-red-500">*</span>
-                                </label>
-                                <input v-model="newUser.password" type="password" :required="!esEdicion"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                    :placeholder="esEdicion ? 'Dejar vacío para mantener' : '********'" />
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Rol <span class="text-red-500">*</span>
-                                </label>
-                                <select v-model="newUser.role" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white">
-                                    <option value="">Seleccionar rol</option>
-                                    <option value="admin">Administrador</option>
-                                    <option value="medico">Médico</option>
-                                    <option value="asistente">Asistente Técnico</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Mensaje de error -->
-                        <transition enter-active-class="transition ease-out duration-200"
-                            enter-from-class="opacity-0 transform -translate-y-1"
-                            enter-to-class="opacity-100 transform translate-y-0">
-                            <div v-if="errorMessage"
-                                class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-center gap-2">
-                                <ExclamationCircleIcon class="w-5 h-5" />
-                                <span class="text-sm">{{ errorMessage }}</span>
-                            </div>
-                        </transition>
-
-                        <div class="flex gap-3 pt-4">
-                            <button type="submit" :disabled="isLoading"
-                                class="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                                <ArrowPathIcon v-if="isLoading" class="w-5 h-5 animate-spin" />
-                                <CheckIcon v-else class="w-5 h-5" />
-                                {{ isLoading ? 'Guardando...' : (esEdicion ? 'Actualizar' : 'Crear Usuario') }}
-                            </button>
-                            <button type="button" @click="cerrarModal"
-                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition">
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </transition>
+        <ModalFormUsuario :visible="modalVisible" :es-edicion="esEdicion" :user-data="newUser" :loading="isLoading"
+            :error="errorMessage" @close="cerrarModal" @save="guardarUsuario" />
 
         <!-- Toast de notificaciones -->
         <transition enter-active-class="transition ease-out duration-300"
@@ -333,6 +249,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import userService, { type User, type CreateUserPayload, type UpdateUserPayload } from '../../services/userService'
+import ModalFormUsuario from './ModalFormUsuario.vue'
 import {
     PlusIcon,
     UsersIcon,
@@ -343,12 +260,9 @@ import {
     ChevronRightIcon,
     PencilIcon,
     TrashIcon,
-    XMarkIcon,
-    CheckIcon,
-    ExclamationCircleIcon,
     CheckCircleIcon,
     UserIcon,
-    ArrowPathIcon
+    ExclamationCircleIcon
 } from '@heroicons/vue/24/outline'
 
 // --- Lógica de Usuarios ---
@@ -505,29 +419,39 @@ const cerrarModal = () => {
     errorMessage.value = ''
 }
 
-const guardarUsuario = async () => {
+interface UserFormData {
+    id: number
+    name: string
+    username: string
+    password: string
+    role: 'admin' | 'medico' | 'asistente' | ''
+}
+
+const guardarUsuario = async (userData: UserFormData) => {
+    // Actualizar newUser con los datos recibidos
+    newUser.value = { ...userData }
     errorMessage.value = ''
     isLoading.value = true
 
     try {
         if (esEdicion.value) {
             const payload: UpdateUserPayload = {
-                name: newUser.value.name,
-                username: newUser.value.username,
-                role: newUser.value.role as 'admin' | 'medico' | 'asistente'
+                name: userData.name,
+                username: userData.username,
+                role: userData.role as 'admin' | 'medico' | 'asistente'
             }
             // Solo incluir password si se proporcionó uno nuevo
-            if (newUser.value.password) {
-                payload.password = newUser.value.password
+            if (userData.password) {
+                payload.password = userData.password
             }
-            await userService.updateUser(newUser.value.id, payload)
+            await userService.updateUser(userData.id, payload)
             mostrarToast('Usuario actualizado exitosamente', 'success')
         } else {
             const payload: CreateUserPayload = {
-                name: newUser.value.name,
-                username: newUser.value.username,
-                password: newUser.value.password,
-                role: newUser.value.role as 'admin' | 'medico' | 'asistente'
+                name: userData.name,
+                username: userData.username,
+                password: userData.password,
+                role: userData.role as 'admin' | 'medico' | 'asistente'
             }
             await userService.createUser(payload)
             mostrarToast('Usuario creado exitosamente', 'success')

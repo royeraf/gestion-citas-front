@@ -101,21 +101,42 @@
 
       <!-- Usuario -->
       <div class="p-4 border-t border-teal-600">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center flex-shrink-0">
-            <UserIcon class="w-6 h-6 text-white" />
-          </div>
-          <div :class="{ 'md:hidden': !sidebarOpen }" class="flex-1 min-w-0">
-            <p class="font-medium truncate">{{ auth.user?.dni }}</p>
-            <p class="text-xs text-teal-200 truncate">{{ getUserRole }}</p>
-          </div>
+        <div class="flex items-center gap-2">
+          <!-- Avatar y datos clickeables -->
+          <button @click="abrirModalPerfil"
+            class="group flex items-center gap-3 flex-1 min-w-0 bg-teal-600/30 hover:bg-gradient-to-r hover:from-teal-500/50 hover:to-emerald-500/50 rounded-xl p-2 transition-all duration-300 border border-transparent hover:border-white/20"
+            title="Ver mi perfil">
+            <div
+              class="w-11 h-11 rounded-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center flex-shrink-0 ring-2 ring-white/40 group-hover:ring-white/60 group-hover:scale-105 transition-all duration-300 shadow-lg">
+              <span v-if="auth.user?.nombres_completos" class="text-white font-bold text-sm">{{ getUserInitials
+              }}</span>
+              <UserIcon v-else class="w-6 h-6 text-white" />
+            </div>
+            <div :class="{ 'md:hidden': !sidebarOpen }" class="flex-1 min-w-0 text-left">
+              <p class="font-semibold truncate text-white group-hover:text-white transition-colors">
+                {{ auth.user?.nombres_completos || auth.user?.dni || 'Usuario' }}
+              </p>
+              <p class="text-xs text-teal-200 truncate flex items-center gap-1">
+                <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                {{ getUserRole }}
+              </p>
+            </div>
+            <!-- Ícono de flecha -->
+            <ChevronRightIcon :class="{ 'md:hidden': !sidebarOpen }"
+              class="w-4 h-4 text-teal-200 group-hover:text-white group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
+          </button>
+          <!-- Botón de cerrar sesión -->
           <button :class="{ 'md:hidden': !sidebarOpen }" @click="cerrarSesion"
-            class="p-2 rounded-lg hover:bg-teal-600 transition-colors" title="Cerrar sesión">
+            class="p-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/40 text-white transition-all duration-300 flex-shrink-0 hover:scale-105"
+            title="Cerrar sesión">
             <ArrowRightOnRectangleIcon class="w-5 h-5" />
           </button>
         </div>
       </div>
     </aside>
+
+    <!-- Modal de Perfil de Usuario -->
+    <ModalPerfilUsuario :visible="modalPerfilVisible" :user="auth.user" @close="modalPerfilVisible = false" />
 
     <!-- Contenido Principal -->
     <div class="flex-1 flex flex-col min-w-0">
@@ -183,9 +204,12 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
+import Swal from 'sweetalert2'
+import ModalPerfilUsuario from '../components/common/ModalPerfilUsuario.vue'
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
+  ChevronRightIcon,
   XMarkIcon,
   Squares2X2Icon,
   UserGroupIcon,
@@ -205,18 +229,23 @@ const route = useRoute()
 const router = useRouter()
 const sidebarOpen = ref(true)
 const mobileMenuOpen = ref(false)
+const modalPerfilVisible = ref(false)
+
+const abrirModalPerfil = () => {
+  modalPerfilVisible.value = true
+}
 
 const isActive = (path: string) => {
   return route.path.startsWith(path)
 }
 
 const getUserRole = computed(() => {
-  if (auth.user && auth.user.role_id) {
-    switch (auth.user.role_id) {
+  if (auth.user && auth.user.rol_id) {
+    switch (auth.user.rol_id) {
       case 1:
         return 'Administrador'
       case 2:
-        return 'Medico'
+        return 'Médico'
       case 3:
         return 'Asistente'
       default:
@@ -226,14 +255,42 @@ const getUserRole = computed(() => {
   return 'Invitado'
 })
 
+const getUserInitials = computed(() => {
+  if (auth.user?.nombres_completos) {
+    const words = auth.user.nombres_completos.split(' ')
+    return words.slice(0, 2).map(w => w[0]).join('').toUpperCase()
+  }
+  return ''
+})
+
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
 }
 
 const cerrarSesion = async () => {
-  if (confirm('¿Está seguro que desea cerrar sesión?')) {
+  const result = await Swal.fire({
+    title: '¿Cerrar sesión?',
+    text: 'Estás a punto de salir del sistema',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#0d9488',
+    cancelButtonColor: '#6b7280',
+    confirmButtonText: 'Sí, cerrar sesión',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  })
+
+  if (result.isConfirmed) {
     await auth.logout()
     router.push('/login')
+
+    Swal.fire({
+      title: '¡Hasta pronto!',
+      text: 'Has cerrado sesión correctamente',
+      icon: 'success',
+      timer: 1500,
+      showConfirmButton: false
+    })
   }
 }
 

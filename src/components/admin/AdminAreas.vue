@@ -84,64 +84,8 @@
         </div>
 
         <!-- Modal de Crear/Editar Área -->
-        <transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0"
-            enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150"
-            leave-from-class="opacity-100" leave-to-class="opacity-0">
-            <div v-if="modalAreaVisible"
-                class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-                @click.self="cerrarModalArea">
-                <div class="bg-white rounded-lg max-w-lg w-full p-6 shadow-xl transform transition-all">
-                    <div class="flex justify-between items-start mb-6">
-                        <h3 class="text-2xl font-bold text-gray-800">
-                            {{ esEdicionArea ? 'Editar Área' : 'Nueva Área' }}
-                        </h3>
-                        <button @click="cerrarModalArea" class="text-gray-400 hover:text-gray-600 transition">
-                            <XMarkIcon class="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    <form @submit="guardarArea" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Nombre del Área <span class="text-red-500">*</span>
-                            </label>
-                            <input v-model="nombre" v-bind="nombreAttrs" type="text"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                :class="{ 'border-red-500': areaErrors.nombre }" placeholder="Ej. Cardiología" />
-                            <span class="text-red-500 text-xs mt-1">{{ areaErrors.nombre }}</span>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Descripción
-                            </label>
-                            <textarea v-model="descripcion" v-bind="descripcionAttrs" rows="3"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                placeholder="Descripción breve del área o servicio..."></textarea>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" id="areaActiva" v-model="activo" v-bind="activoAttrs"
-                                class="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500">
-                            <label for="areaActiva" class="text-sm text-gray-700">Área activa</label>
-                        </div>
-
-                        <div class="flex gap-3 pt-4">
-                            <button type="submit" :disabled="isLoadingArea"
-                                class="flex-1 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
-                                <ArrowPathIcon v-if="isLoadingArea" class="w-5 h-5 animate-spin" />
-                                <CheckIcon v-else class="w-5 h-5" />
-                                {{ isLoadingArea ? 'Guardando...' : (esEdicionArea ? 'Actualizar' : 'Crear Área') }}
-                            </button>
-                            <button type="button" @click="cerrarModalArea"
-                                class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition">
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </transition>
+        <ModalCrearArea :visible="modalAreaVisible" :area="selectedArea" @close="cerrarModalArea"
+            @saved="onAreaSaved" />
 
         <!-- Toast de notificaciones -->
         <transition enter-active-class="transition ease-out duration-300"
@@ -160,16 +104,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import api from '../../services/api'
-import { useForm } from 'vee-validate'
-import * as yup from 'yup'
+import ModalCrearArea from './ModalCrearArea.vue'
 import {
     PlusIcon,
     ArrowPathIcon,
     PencilIcon,
     TrashIcon,
     BuildingOfficeIcon,
-    XMarkIcon,
-    CheckIcon,
     CheckCircleIcon
 } from '@heroicons/vue/24/outline'
 
@@ -183,65 +124,31 @@ interface Area {
 const areas = ref<Area[]>([])
 
 const modalAreaVisible = ref(false)
-const esEdicionArea = ref(false)
-const isLoadingArea = ref(false)
+const selectedArea = ref<Area | null>(null)
 const isLoadingListAreas = ref(false)
-const currentAreaId = ref<number | null>(null)
 const showToast = ref(false)
 const toastMessage = ref('')
 const errorMessage = ref('')
 
-// Esquema de validación
-const areaSchema = yup.object({
-    nombre: yup.string().required('El nombre del área es obligatorio'),
-    descripcion: yup.string().nullable(),
-    activo: yup.boolean().default(true)
-})
-
-const { handleSubmit: handleAreaSubmit, resetForm: resetAreaForm, errors: areaErrors, defineField: defineAreaField } = useForm({
-    validationSchema: areaSchema,
-    initialValues: {
-        nombre: '',
-        descripcion: '',
-        activo: true
-    }
-})
-
-const [nombre, nombreAttrs] = defineAreaField('nombre')
-const [descripcion, descripcionAttrs] = defineAreaField('descripcion')
-const [activo, activoAttrs] = defineAreaField('activo')
-
 const abrirModalArea = () => {
     modalAreaVisible.value = true
-    esEdicionArea.value = false
-    currentAreaId.value = null
-    resetAreaForm({
-        values: {
-            nombre: '',
-            descripcion: '',
-            activo: true
-        }
-    })
+    selectedArea.value = null
 }
 
 const editarArea = (area: Area) => {
     modalAreaVisible.value = true
-    esEdicionArea.value = true
-    currentAreaId.value = area.id
-    resetAreaForm({
-        values: {
-            nombre: area.nombre,
-            descripcion: area.descripcion,
-            activo: area.activo
-        }
-    })
+    selectedArea.value = { ...area }
 }
 
 const cerrarModalArea = () => {
     modalAreaVisible.value = false
-    esEdicionArea.value = false
-    currentAreaId.value = null
-    resetAreaForm()
+    selectedArea.value = null
+}
+
+const onAreaSaved = async () => {
+    const esEdicion = !!selectedArea.value
+    await fetchAreas()
+    mostrarToast(esEdicion ? 'Área actualizada exitosamente' : 'Área creada exitosamente')
 }
 
 const fetchAreas = async () => {
@@ -256,34 +163,6 @@ const fetchAreas = async () => {
         isLoadingListAreas.value = false
     }
 }
-
-const guardarArea = handleAreaSubmit(async (values) => {
-    isLoadingArea.value = true
-    errorMessage.value = ''
-
-    const payload = {
-        nombre: values.nombre,
-        descripcion: values.descripcion,
-        activo: values.activo
-    }
-
-    try {
-        if (esEdicionArea.value && currentAreaId.value) {
-            await api.put(`/areas/${currentAreaId.value}`, payload)
-            mostrarToast('Área actualizada exitosamente')
-        } else {
-            await api.post('/areas/', payload)
-            mostrarToast('Área creada exitosamente')
-        }
-        await fetchAreas()
-        cerrarModalArea()
-    } catch (error: any) {
-        console.error('Error al guardar área:', error)
-        errorMessage.value = error?.response?.data?.message || 'Error al guardar área'
-    } finally {
-        isLoadingArea.value = false
-    }
-})
 
 const eliminarArea = async (id: number) => {
     if (!confirm('¿Está seguro que desea eliminar esta área?')) return

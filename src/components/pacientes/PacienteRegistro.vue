@@ -63,10 +63,17 @@
                     leave-active-class="transition-all duration-200 ease-in"
                     leave-from-class="max-h-[2000px] opacity-100" leave-to-class="max-h-0 opacity-0">
                     <div v-show="seccionesAbiertas.datosPersonales" class="px-5 pb-5 border-t">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                        <div class="flex justify-end p-4">
+                            <div
+                                class="inline-flex items-center px-2 py-1 rounded-md bg-red-50 text-red-600 text-xs font-medium border border-red-200">
+                                <span class="mr-1">( * )</span> Campos obligatorios
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
                             <!-- Nombres -->
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombres *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombres <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" id="nombres" v-model="nombres" v-bind="nombresAttrs"
                                     placeholder="Nombres" @input="toUpperCase('nombres')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
@@ -76,7 +83,8 @@
                             </div>
                             <!-- Apellido Paterno -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Ap. Paterno *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Ap. Paterno <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" id="apellidoPaterno" v-model="apellidoPaterno"
                                     v-bind="apellidoPaternoAttrs" @input="toUpperCase('apellidoPaterno')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
@@ -86,7 +94,8 @@
                             </div>
                             <!-- Apellido Materno -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Ap. Materno *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Ap. Materno <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" id="apellidoMaterno" v-model="apellidoMaterno"
                                     v-bind="apellidoMaternoAttrs" @input="toUpperCase('apellidoMaterno')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
@@ -96,13 +105,9 @@
                             </div>
                             <!-- Fecha Nacimiento -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">F. Nacimiento *</label>
-                                <input type="date" id="fechaNacimiento" v-model="fechaNacimiento"
-                                    v-bind="fechaNacimientoAttrs"
-                                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
-                                    :class="{ 'border-red-500 bg-red-50': errors.fechaNacimiento, 'border-gray-300': !errors.fechaNacimiento }" />
-                                <span v-if="errors.fechaNacimiento" class="text-red-500 text-xs mt-1">{{
-                                    errors.fechaNacimiento }}</span>
+                                <HsDatePicker v-model="fechaNacimiento" label="F. Nacimiento" :required="true"
+                                    :error="errors.fechaNacimiento" :max-date="todayDate" min-date="1900-01-01"
+                                    format="dd/mm/yyyy" placeholder="Seleccionar fecha" input-id="fechaNacimiento" />
                             </div>
                             <!-- Edad -->
                             <div>
@@ -112,7 +117,8 @@
                             </div>
                             <!-- Sexo -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Sexo *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Sexo <span
+                                        class="text-red-500">*</span></label>
                                 <select id="sexo" v-model="sexo" v-bind="sexoAttrs"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 bg-white"
                                     :class="{ 'border-red-500 bg-red-50': errors.sexo, 'border-gray-300': !errors.sexo }">
@@ -124,7 +130,8 @@
                             </div>
                             <!-- Estado Civil -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Estado Civil *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Estado Civil <span
+                                        class="text-red-500">*</span></label>
                                 <select id="estado_civil" v-model="estado_civil" v-bind="estadoCivilAttrs"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 bg-white"
                                     :class="{ 'border-red-500 bg-red-50': errors.estado_civil, 'border-gray-300': !errors.estado_civil }">
@@ -139,7 +146,8 @@
                             </div>
                             <!-- Teléfono -->
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono <span
+                                        class="text-red-500">*</span></label>
                                 <input type="tel" id="telefono" v-model="telefono" v-bind="telefonoAttrs"
                                     placeholder="999999999" maxlength="9"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
@@ -158,7 +166,8 @@
                             </div>
                             <!-- Dirección -->
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Dirección *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Dirección <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" id="direccion" v-model="direccion" v-bind="direccionAttrs"
                                     placeholder="Dirección completa"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
@@ -171,18 +180,27 @@
                 </transition>
             </div>
 
-            <!-- Sección 3: Datos Adicionales (Colapsable) -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <!-- Sección 3: Datos Adicionales (Obligatorio) -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden"
+                :class="{ 'ring-2 ring-red-500': errors.gradoInstruccion || errors.ocupacion || errors.religion || errors.procedencia }">
                 <button type="button" @click="seccionesAbiertas.datosAdicionales = !seccionesAbiertas.datosAdicionales"
                     class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <InformationCircleIcon class="w-5 h-5 text-purple-600" />
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                            :class="errors.gradoInstruccion || errors.ocupacion || errors.religion || errors.procedencia ? 'bg-red-100' : 'bg-purple-100'">
+                            <InformationCircleIcon class="w-5 h-5"
+                                :class="errors.gradoInstruccion || errors.ocupacion || errors.religion || errors.procedencia ? 'text-red-600' : 'text-purple-600'" />
                         </div>
                         <div class="text-left">
-                            <h2 class="font-bold text-gray-800">Datos Adicionales</h2>
-                            <p class="text-xs text-gray-500">Información complementaria (opcional)</p>
+                            <h2 class="font-bold text-gray-800">Datos Adicionales <span class="text-red-500">*</span>
+                            </h2>
+                            <p class="text-xs text-gray-500">Información complementaria del paciente</p>
                         </div>
+                        <span
+                            v-if="errors.gradoInstruccion || errors.ocupacion || errors.religion || errors.procedencia"
+                            class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">
+                            Campos incompletos
+                        </span>
                     </div>
                     <ChevronUpIcon v-if="seccionesAbiertas.datosAdicionales" class="w-5 h-5 transition-transform" />
                     <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
@@ -195,9 +213,11 @@
                     <div v-show="seccionesAbiertas.datosAdicionales" class="px-5 pb-5 border-t">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Grado Instrucción</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Grado Instrucción <span
+                                        class="text-red-500">*</span></label>
                                 <select v-model="gradoInstruccion" v-bind="gradoInstruccionAttrs"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                                    class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-emerald-500"
+                                    :class="{ 'border-red-500 bg-red-50': errors.gradoInstruccion, 'border-gray-300': !errors.gradoInstruccion }">
                                     <option value="">Seleccione</option>
                                     <option value="primaria_incompleta">Primaria Incompleta</option>
                                     <option value="primaria_completa">Primaria Completa</option>
@@ -206,84 +226,35 @@
                                     <option value="tecnico_superior_completa">Técnico Superior</option>
                                     <option value="universitario_completo">Universitario</option>
                                 </select>
+                                <span v-if="errors.gradoInstruccion" class="text-red-500 text-xs mt-1">{{
+                                    errors.gradoInstruccion }}</span>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Ocupación</label>
-                                <input type="text" v-model="ocupacion" v-bind="ocupacionAttrs"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Ocupación <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="ocupacion" v-model="ocupacion" v-bind="ocupacionAttrs"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                                    :class="{ 'border-red-500 bg-red-50': errors.ocupacion, 'border-gray-300': !errors.ocupacion }" />
+                                <span v-if="errors.ocupacion" class="text-red-500 text-xs mt-1">{{ errors.ocupacion
+                                    }}</span>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Religión</label>
-                                <input type="text" v-model="religion" v-bind="religionAttrs"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Religión <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="religion" v-model="religion" v-bind="religionAttrs"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                                    :class="{ 'border-red-500 bg-red-50': errors.religion, 'border-gray-300': !errors.religion }" />
+                                <span v-if="errors.religion" class="text-red-500 text-xs mt-1">{{ errors.religion
+                                    }}</span>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Procedencia</label>
-                                <input type="text" v-model="procedencia" v-bind="procedenciaAttrs"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" />
-                            </div>
-                        </div>
-                    </div>
-                </transition>
-            </div>
-
-            <!-- Sección 4: Acompañante (Obligatorio) -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden"
-                :class="{ 'ring-2 ring-red-500': errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante }">
-                <button type="button" @click="seccionesAbiertas.acompanante = !seccionesAbiertas.acompanante"
-                    class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
-                            :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'bg-red-100' : 'bg-amber-100'">
-                            <UsersIcon class="w-5 h-5"
-                                :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'text-red-600' : 'text-amber-600'" />
-                        </div>
-                        <div class="text-left">
-                            <h2 class="font-bold text-gray-800">Acompañante <span class="text-red-500">*</span></h2>
-                            <p class="text-xs text-gray-500">Datos del acompañante del paciente</p>
-                        </div>
-                        <span v-if="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante"
-                            class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">
-                            Campos incompletos
-                        </span>
-                    </div>
-                    <ChevronUpIcon v-if="seccionesAbiertas.acompanante" class="w-5 h-5 transition-transform" />
-                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
-                </button>
-
-                <transition enter-active-class="transition-all duration-300 ease-out"
-                    enter-from-class="max-h-0 opacity-0" enter-to-class="max-h-[300px] opacity-100"
-                    leave-active-class="transition-all duration-200 ease-in"
-                    leave-from-class="max-h-[300px] opacity-100" leave-to-class="max-h-0 opacity-0">
-                    <div v-show="seccionesAbiertas.acompanante" class="px-5 pb-5 border-t">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">DNI Acompañante *</label>
-                                <input type="text" id="dniAcompanante" v-model="dniAcompanante"
-                                    v-bind="dniAcompananteAttrs" maxlength="8" placeholder="00000000"
-                                    class="w-full px-3 py-2 border rounded-lg text-sm"
-                                    :class="{ 'border-red-500 bg-red-50': errors.dniAcompanante, 'border-gray-300': !errors.dniAcompanante }" />
-                                <span v-if="errors.dniAcompanante" class="text-red-500 text-xs mt-1">{{
-                                    errors.dniAcompanante }}</span>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombre Acompañante *</label>
-                                <input type="text" id="nombreAcompanante" v-model="nombreAcompanante"
-                                    v-bind="nombreAcompananteAttrs" placeholder="Nombre completo"
-                                    class="w-full px-3 py-2 border rounded-lg text-sm"
-                                    :class="{ 'border-red-500 bg-red-50': errors.nombreAcompanante, 'border-gray-300': !errors.nombreAcompanante }" />
-                                <span v-if="errors.nombreAcompanante" class="text-red-500 text-xs mt-1">{{
-                                    errors.nombreAcompanante }}</span>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono Acompañante
-                                    *</label>
-                                <input type="tel" id="telefonoAcompanante" v-model="telefonoAcompanante"
-                                    v-bind="telefonoAcompananteAttrs" maxlength="9" placeholder="999999999"
-                                    class="w-full px-3 py-2 border rounded-lg text-sm"
-                                    :class="{ 'border-red-500 bg-red-50': errors.telefonoAcompanante, 'border-gray-300': !errors.telefonoAcompanante }" />
-                                <span v-if="errors.telefonoAcompanante" class="text-red-500 text-xs mt-1">{{
-                                    errors.telefonoAcompanante }}</span>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Procedencia <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="procedencia" v-model="procedencia" v-bind="procedenciaAttrs"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                                    :class="{ 'border-red-500 bg-red-50': errors.procedencia, 'border-gray-300': !errors.procedencia }" />
+                                <span v-if="errors.procedencia" class="text-red-500 text-xs mt-1">{{ errors.procedencia
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -322,7 +293,8 @@
                     <div v-show="seccionesAbiertas.afiliacion" class="px-5 pb-5 border-t">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Número Afiliación *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Número Afiliación <span
+                                        class="text-red-500">*</span></label>
                                 <input type="text" id="numeroSis" v-model="numeroSis" v-bind="numeroSisAttrs"
                                     placeholder="000-000-000000" class="w-full px-3 py-2 border rounded-lg text-sm"
                                     :class="{ 'border-red-500 bg-red-50': errors.numeroSis, 'border-gray-300': !errors.numeroSis }" />
@@ -330,7 +302,8 @@
                                     }}</span>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Tipo Seguro *</label>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Tipo Seguro <span
+                                        class="text-red-500">*</span></label>
                                 <select id="tipoSeguro" v-model="tipoSeguro" v-bind="tipoSeguroAttrs"
                                     class="w-full px-3 py-2 border rounded-lg text-sm bg-white"
                                     :class="{ 'border-red-500 bg-red-50': errors.tipoSeguro, 'border-gray-300': !errors.tipoSeguro }">
@@ -346,6 +319,73 @@
                 </transition>
             </div>
 
+            <!-- Sección 4: Acompañante (Obligatorio) -->
+            <div class="bg-white rounded-xl shadow-md overflow-hidden"
+                :class="{ 'ring-2 ring-red-500': errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante }">
+                <button type="button" @click="seccionesAbiertas.acompanante = !seccionesAbiertas.acompanante"
+                    class="w-full px-5 py-4 flex items-center justify-between hover:bg-gray-50 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center"
+                            :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'bg-red-100' : 'bg-amber-100'">
+                            <UsersIcon class="w-5 h-5"
+                                :class="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante ? 'text-red-600' : 'text-amber-600'" />
+                        </div>
+                        <div class="text-left">
+                            <h2 class="font-bold text-gray-800">Acompañante <span class="text-red-500">*</span></h2>
+                            <p class="text-xs text-gray-500">Datos del acompañante del paciente</p>
+                        </div>
+                        <span v-if="errors.dniAcompanante || errors.nombreAcompanante || errors.telefonoAcompanante"
+                            class="ml-2 px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">
+                            Campos incompletos
+                        </span>
+                    </div>
+                    <ChevronUpIcon v-if="seccionesAbiertas.acompanante" class="w-5 h-5 transition-transform" />
+                    <ChevronDownIcon v-else class="w-5 h-5 transition-transform" />
+                </button>
+
+                <transition enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="max-h-0 opacity-0" enter-to-class="max-h-[300px] opacity-100"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    leave-from-class="max-h-[300px] opacity-100" leave-to-class="max-h-0 opacity-0">
+                    <div v-show="seccionesAbiertas.acompanante" class="px-5 pb-5 border-t">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">DNI Acompañante <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="dniAcompanante" v-model="dniAcompanante"
+                                    v-bind="dniAcompananteAttrs" maxlength="8" placeholder="00000000"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm"
+                                    :class="{ 'border-red-500 bg-red-50': errors.dniAcompanante, 'border-gray-300': !errors.dniAcompanante }" />
+                                <span v-if="errors.dniAcompanante" class="text-red-500 text-xs mt-1">{{
+                                    errors.dniAcompanante }}</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombre Acompañante <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="nombreAcompanante" v-model="nombreAcompanante"
+                                    v-bind="nombreAcompananteAttrs" placeholder="Nombre completo"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm"
+                                    :class="{ 'border-red-500 bg-red-50': errors.nombreAcompanante, 'border-gray-300': !errors.nombreAcompanante }" />
+                                <span v-if="errors.nombreAcompanante" class="text-red-500 text-xs mt-1">{{
+                                    errors.nombreAcompanante }}</span>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono Acompañante <span
+                                        class="text-red-500">*</span></label>
+                                <input type="tel" id="telefonoAcompanante" v-model="telefonoAcompanante"
+                                    v-bind="telefonoAcompananteAttrs" maxlength="9" placeholder="999999999"
+                                    class="w-full px-3 py-2 border rounded-lg text-sm"
+                                    :class="{ 'border-red-500 bg-red-50': errors.telefonoAcompanante, 'border-gray-300': !errors.telefonoAcompanante }" />
+                                <span v-if="errors.telefonoAcompanante" class="text-red-500 text-xs mt-1">{{
+                                    errors.telefonoAcompanante }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+
+
+
             <!-- Sección 6: Síntomas (Siempre visible) -->
             <div class="bg-white rounded-xl shadow-md p-5">
                 <div class="flex items-center gap-3 mb-3">
@@ -354,7 +394,8 @@
                     </div>
                     <div>
                         <h2 class="font-bold text-gray-800">Motivo de Consulta</h2>
-                        <p class="text-xs text-gray-500">Describa los síntomas del paciente *</p>
+                        <p class="text-xs text-gray-500">Describa los síntomas del paciente <span
+                                class="text-red-500">*</span></p>
                     </div>
                 </div>
                 <textarea id="sintomas" v-model="sintomas" v-bind="sintomasAttrs" rows="3"
@@ -822,6 +863,7 @@ import {
     PhotoIcon,
     CogIcon
 } from '@heroicons/vue/24/outline'
+import HsDatePicker from '../common/HsDatePicker.vue';
 
 interface Medico {
     id: number;
@@ -864,8 +906,8 @@ const schema = yup.object({
     sexo: yup.string().required('El sexo es obligatorio'),
     estado_civil: yup.string().required('El estado civil es obligatorio'),
     gradoInstruccion: yup.string().required('El grado de instrucción es obligatorio'),
-    ocupacion: yup.string().nullable(),
-    religion: yup.string().nullable(),
+    ocupacion: yup.string().required('La ocupación es obligatoria'),
+    religion: yup.string().required('La religión es obligatoria'),
     procedencia: yup.string().required('La procedencia es obligatoria'),
     telefono: yup.string().required('El teléfono es obligatorio'),
     email: yup.string().email('El email no es válido').nullable(),
@@ -911,7 +953,7 @@ const { handleSubmit, resetForm: resetVeeForm, setValues, values, errors, define
 // Estado de las secciones colapsables
 const seccionesAbiertas = ref({
     datosPersonales: true,
-    datosAdicionales: false,
+    datosAdicionales: true,
     acompanante: true, // Obligatorio, abierto por defecto
     afiliacion: true // Obligatorio, abierto por defecto
 });
@@ -992,7 +1034,7 @@ const [dni, dniAttrs] = defineField('dni');
 const [nombres, nombresAttrs] = defineField('nombres');
 const [apellidoPaterno, apellidoPaternoAttrs] = defineField('apellidoPaterno');
 const [apellidoMaterno, apellidoMaternoAttrs] = defineField('apellidoMaterno');
-const [fechaNacimiento, fechaNacimientoAttrs] = defineField('fechaNacimiento');
+const [fechaNacimiento] = defineField('fechaNacimiento');
 const [sexo, sexoAttrs] = defineField('sexo');
 const [estado_civil, estadoCivilAttrs] = defineField('estado_civil');
 const [gradoInstruccion, gradoInstruccionAttrs] = defineField('gradoInstruccion');
@@ -1034,6 +1076,15 @@ const horarioSeleccionado = ref<Horario | null>(null);
 
 const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+// Fecha de hoy para limitar fechas de nacimiento
+const todayDate = computed(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+});
 
 const nombreMesActual = computed(() => nombresMeses[mesActual.value]);
 
@@ -1280,9 +1331,9 @@ const buscarPorDNI = async () => {
                 direccion: data.direccion,
                 tipoSeguro: data.seguro ?? "",
                 numeroSis: data.numero_seguro ?? data.numero_afiliacion ?? "",
+                ocupacion: data.ocupacion ?? "",
                 // Limpiar datos de cita anterior
                 sintomas: "",
-                ocupacion: "",
                 dniAcompanante: "",
                 nombreAcompanante: "",
                 telefonoAcompanante: "",
@@ -1345,6 +1396,7 @@ const onSubmit = handleSubmit(async (values) => {
             telefono: values.telefono,
             email: values.email,
             grado_instruccion: values.gradoInstruccion,
+            ocupacion: values.ocupacion,
             religion: values.religion,
             procedencia: values.procedencia,
             seguro: values.tipoSeguro,

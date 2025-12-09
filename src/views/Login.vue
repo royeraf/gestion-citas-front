@@ -59,10 +59,11 @@
                   <IdentificationIcon
                     class="w-5 h-5 text-gray-400 group-focus-within:text-teal-600 transition-colors" />
                 </div>
-                <input id="dni" v-model="dni" v-bind="dniAttrs" type="text"
+                <input id="dni" v-model="dni" v-bind="dniAttrs" type="text" maxlength="8" inputmode="numeric"
+                  pattern="\d{8}" @input="dni = ($event.target as HTMLInputElement).value.replace(/\D/g, '')"
                   class="block w-full pl-12 pr-4 py-4 bg-gray-50 border rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 transition-all duration-200 font-medium text-gray-700 placeholder-gray-400"
                   :class="errors.dni ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-teal-500'"
-                  placeholder="Ingrese su DNI" />
+                  placeholder="Ingrese su DNI (8 dígitos)" />
               </div>
               <span v-if="errors.dni" class="text-red-500 text-sm ml-1">{{ errors.dni }}</span>
             </div>
@@ -123,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useAuthStore } from "../store/auth";
 import { useRouter } from "vue-router";
 import { useForm } from "vee-validate";
@@ -144,10 +145,21 @@ const showPassword = ref(false);
 const auth = useAuthStore();
 const router = useRouter();
 
+// Verificar si ya está autenticado al cargar el componente
+onMounted(() => {
+  if (auth.isAuthenticated) {
+    router.replace({ path: "/dashboard" });
+  }
+});
+
 // Validación
 const schema = yup.object({
-  dni: yup.string().required("El DNI es obligatorio"),
-  password: yup.string().required("La contraseña es obligatoria").min(8, "La contraseña debe tener al menos 8 caracteres")
+  dni: yup.string()
+    .required("El DNI es obligatorio")
+    .matches(/^\d{8}$/, "El DNI debe tener exactamente 8 dígitos"),
+  password: yup.string()
+    .required("La contraseña es obligatoria")
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
 });
 
 const { handleSubmit, errors, defineField } = useForm({
