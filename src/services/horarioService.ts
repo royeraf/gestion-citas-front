@@ -44,7 +44,7 @@ export interface CrearHorariosMensualesPayload {
     medico_id: number
     area_id: number
     mes: string  // YYYY-MM
-    dias_seleccionados: number[]  // 0-6
+    dias_seleccionados: string[]  // Array de fechas YYYY-MM-DD
     turnos: {
         manana: TurnoConfig
         tarde: TurnoConfig

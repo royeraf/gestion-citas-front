@@ -114,7 +114,17 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        <tr v-for="user in paginatedUsers" :key="user.id"
+                        <!-- Loader -->
+                        <tr v-if="isLoadingList">
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <ArrowPathIcon class="w-10 h-10 text-teal-600 animate-spin mb-3" />
+                                    <p class="text-gray-500 font-medium animate-pulse">Cargando usuarios...</p>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr v-else-if="paginatedUsers.length > 0" v-for="user in paginatedUsers" :key="user.id"
                             class="hover:bg-gray-50 transition duration-150">
                             <td class="px-6 py-4">
                                 <div class="flex items-center">
@@ -157,15 +167,16 @@
                 </table>
             </div>
 
-            <!-- Mensaje cuando no hay resultados -->
-            <div v-if="usuariosFiltrados.length === 0" class="text-center py-12 flex flex-col items-center">
+            <!-- Mensaje cuando no hay resultados (solo si no carga y array vacio) -->
+            <div v-if="!isLoadingList && usuariosFiltrados.length === 0"
+                class="text-center py-12 flex flex-col items-center">
                 <UsersIcon class="w-16 h-16 text-gray-400" />
                 <p class="mt-4 text-gray-500">No se encontraron usuarios</p>
             </div>
         </div>
 
         <!-- Paginación Usuarios -->
-        <div v-if="usuariosFiltrados.length > 0"
+        <div v-if="!isLoadingList && usuariosFiltrados.length > 0"
             class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-lg shadow-lg mt-[-24px] mb-8">
             <div class="flex-1 flex justify-between sm:hidden">
                 <button @click="prevPage" :disabled="currentPage === 1"
@@ -262,7 +273,8 @@ import {
     TrashIcon,
     CheckCircleIcon,
     UserIcon,
-    ExclamationCircleIcon
+    ExclamationCircleIcon,
+    ArrowPathIcon
 } from '@heroicons/vue/24/outline'
 
 // --- Lógica de Usuarios ---
