@@ -386,23 +386,58 @@
 
 
 
-            <!-- Sección 6: Síntomas (Siempre visible) -->
+            <!-- Sección 6: Síntomas (AI Enhanced) -->
             <div class="bg-white rounded-xl shadow-md p-5">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                         <HeartIcon class="w-5 h-5 text-red-600" />
                     </div>
-                    <div>
+                    <div class="flex-1">
                         <h2 class="font-bold text-gray-800">Motivo de Consulta</h2>
                         <p class="text-xs text-gray-500">Describa los síntomas del paciente <span
                                 class="text-red-500">*</span></p>
                     </div>
+                    <!-- AI Button -->
+                    <button type="button" @click="recomendarArea" :disabled="!sintomas || isRecommending"
+                        class="px-3 py-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg text-xs font-semibold shadow-md flex items-center gap-2 hover:from-violet-700 hover:to-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                        <SparklesIcon class="w-4 h-4" v-if="!isRecommending" />
+                        <ArrowPathIcon class="w-4 h-4 animate-spin" v-else />
+                        {{ isRecommending ? 'Analizando...' : 'Recomendar Área con IA' }}
+                    </button>
                 </div>
                 <textarea id="sintomas" v-model="sintomas" v-bind="sintomasAttrs" rows="3"
-                    placeholder="Describa los síntomas iniciales del paciente..."
-                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 resize-none"
+                    placeholder="Describa los síntomas iniciales del paciente... (Ej: Dolor de cabeza intenso y visión borrosa)"
+                    class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 resize-none transition-colors"
                     :class="{ 'border-red-500 bg-red-50': errors.sintomas, 'border-gray-300': !errors.sintomas }"></textarea>
                 <span v-if="errors.sintomas" class="text-red-500 text-xs mt-1">{{ errors.sintomas }}</span>
+                <!-- AI Recommendation Result -->
+                <transition enter-active-class="transition ease-out duration-300"
+                    enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0">
+                    <div v-if="recomendacion"
+                        class="mt-3 bg-violet-50 border border-violet-200 rounded-lg p-4 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-2 opacity-10">
+                            <SparklesIcon class="w-24 h-24 text-violet-600" />
+                        </div>
+                        <h4 class="font-bold text-violet-900 text-sm flex items-center gap-2 mb-1">
+                            <SparklesIcon class="w-4 h-4 text-violet-600" />
+                            Área Recomendada: {{ recomendacion.nombre_area }}
+                        </h4>
+                        <p class="text-violet-700 text-xs leading-relaxed max-w-[90%]">
+                            {{ recomendacion.razon }}
+                        </p>
+                        <div class="mt-2 flex gap-2 items-center">
+                            <div
+                                class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-white text-violet-600 border border-violet-200 capitalize">
+                                Urgencia {{ recomendacion.nivel_urgencia }}
+                            </div>
+                            <button type="button" @click="aplicarRecomendacion"
+                                class="text-[10px] font-bold text-violet-700 hover:underline flex items-center gap-1 ml-auto z-10">
+                                Seleccionar esta área
+                                <ArrowRightIcon class="w-3 h-3" />
+                            </button>
+                        </div>
+                    </div>
+                </transition>
             </div>
 
             <!-- Sección de Programación de Cita -->
@@ -827,6 +862,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useForm } from "vee-validate";
 import * as yup from "yup";
+import Swal from 'sweetalert2';
 import pacienteService from "../../services/pacienteService";
 import horarioService from "../../services/horarioService";
 import citaService from "../../services/citaService";
@@ -861,7 +897,9 @@ import {
     StarIcon,
     BeakerIcon,
     PhotoIcon,
-    CogIcon
+    CogIcon,
+    SparklesIcon,
+    ArrowRightIcon
 } from '@heroicons/vue/24/outline'
 import HsDatePicker from '../common/HsDatePicker.vue';
 
@@ -1073,6 +1111,131 @@ const añoActual = ref(new Date().getFullYear());
 const horariosDelMes = ref<any[]>([]);
 const diaSeleccionado = ref<DiaCalendario | null>(null);
 const horarioSeleccionado = ref<Horario | null>(null);
+
+// New refs for AI
+const isRecommending = ref(false);
+const recomendacion = ref<{ area_id: number, nombre_area: string, razon: string, nivel_urgencia: string } | null>(null);
+const recomendarArea = async () => {
+    if (!values.sintomas) return;
+    isRecommending.value = true;
+    recomendacion.value = null;
+    try {
+        const { data } = await api.post('/areas/recomendar', {
+            sintomas: values.sintomas
+        });
+        recomendacion.value = data;
+
+        // Optional: Auto-select immediately? 
+        // For better UX, we let the user confirm by clicking "Seleccionar esta área"
+    } catch (error) {
+        console.error("Error al recomendar área", error);
+        // You can use a toast here instead of alert
+        searchMessage.value = { text: "No se pudo obtener una recomendación.", type: "error" };
+    } finally {
+        isRecommending.value = false;
+    }
+};
+const aplicarRecomendacion = async () => {
+    if (recomendacion.value && recomendacion.value.area_id) {
+        const areaEncontrada = areas.value.find(a => a.id === recomendacion.value?.area_id);
+        if (areaEncontrada) {
+            // 1. Seleccionar el Área
+            await seleccionarArea(areaEncontrada);
+
+            // 2. Buscar el horario más próximo disponible en esta área
+            try {
+                // Obtener horarios para el área y el mes actual
+                const hoy = new Date();
+                let mesStr = `${añoActual.value}-${String(mesActual.value + 1).padStart(2, '0')}`;
+
+                // Buscar horarios en todo el área (sin filtrar por médico aún)
+                let { data: horariosArea } = await horarioService.getHorarios({
+                    area_id: areaEncontrada.id,
+                    mes: mesStr
+                });
+
+                // Si no hay horarios o estamos a fin de mes, buscar también en el mes siguiente
+                if (!horariosArea || horariosArea.length === 0 || hoy.getDate() > 20) {
+                    const proximoMes = mesActual.value === 11 ? 0 : mesActual.value + 1;
+                    const proximoAno = mesActual.value === 11 ? añoActual.value + 1 : añoActual.value;
+                    const mesSiguienteStr = `${proximoAno}-${String(proximoMes + 1).padStart(2, '0')}`;
+
+                    const { data: horariosSiguiente } = await horarioService.getHorarios({
+                        area_id: areaEncontrada.id,
+                        mes: mesSiguienteStr
+                    });
+                    if (horariosSiguiente) {
+                        horariosArea = [...(horariosArea || []), ...horariosSiguiente];
+                    }
+                }
+
+                if (!horariosArea || horariosArea.length === 0) {
+                    console.log("No se encontraron horarios para recomendación automática");
+                    return;
+                }
+
+                // Filtrar y ordenar para encontrar el más próximo
+                // Nota: Asumimos que la API devuelve cupos_disponibles o usamos cupos
+                const horariosValidos = horariosArea
+                    .map((h: any) => ({
+                        ...h,
+                        cupos_disponibles: h.cupos_disponibles ?? h.cupos,
+                        fechaObj: new Date(`${h.fecha}T${h.hora_inicio}`)
+                    }))
+                    .filter((h: any) =>
+                        h.cupos_disponibles > 0 &&
+                        h.fechaObj > hoy
+                    )
+                    .sort((a: any, b: any) => a.fechaObj.getTime() - b.fechaObj.getTime());
+
+                if (horariosValidos.length > 0) {
+                    const mejorHorario = horariosValidos[0];
+                    console.log("Mejor horario encontrado:", mejorHorario);
+
+                    // 3. Seleccionar el Médico del mejor horario
+                    const medicoDelHorario = medicosDisponibles.value.find(m => m.id === mejorHorario.medico_id);
+                    if (medicoDelHorario) {
+                        await seleccionarMedico(medicoDelHorario);
+
+                        // 4. Seleccionar el Día (asegurarnos que estamos en el mes correcto)
+                        const fechaHorario = new Date(mejorHorario.fecha + 'T00:00:00');
+                        // Si el horario es de otro mes/año, cambiar el calendario
+                        if (fechaHorario.getMonth() !== mesActual.value || fechaHorario.getFullYear() !== añoActual.value) {
+                            mesActual.value = fechaHorario.getMonth();
+                            añoActual.value = fechaHorario.getFullYear();
+                            // Recargar horarios del médico para el nuevo mes
+                            await cargarHorariosDelMes();
+                        }
+
+                        // Buscar el día en el calendario ya computado
+                        const diaEnCalendario = diasCalendario.value.find(d => d.fecha === mejorHorario.fecha);
+                        if (diaEnCalendario) {
+                            seleccionarDia(diaEnCalendario);
+
+                            // 5. Seleccionar el Horario específico
+                            // Buscar en los horarios del día seleccionado (que vienen de diasCalendario > horariosDelMes)
+                            if (diaSeleccionado.value) {
+                                const horarioFinal = diaSeleccionado.value.horarios.find((h: Horario) => h.id === mejorHorario.id);
+                                if (horarioFinal && horarioFinal.cupos_disponibles > 0) {
+                                    seleccionarHorario(horarioFinal);
+
+                                    // Scroll suave al final para mostrar que ya está todo listo
+                                    setTimeout(() => {
+                                        const botonSubmit = document.querySelector('button[type="submit"]');
+                                        if (botonSubmit) botonSubmit.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    }, 500);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error("Error al automátizar selección:", error);
+            }
+        }
+    }
+};
 
 const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -1425,13 +1588,27 @@ const onSubmit = handleSubmit(async (values) => {
         console.log('Cupos restantes:', citaData.cupos_restantes);
 
         // Mostrar mensaje de éxito
-        showSuccess.value = true;
-        setTimeout(() => {
-            showSuccess.value = false;
-        }, 3000);
+        // Mostrar mensaje de éxito con SweetAlert
+        await Swal.fire({
+            title: '¡Cita Registrada!',
+            html: `
+                <div class="text-left">
+                    <p class="mb-2"><strong>Paciente:</strong> ${pacienteData.data.nombres} ${pacienteData.data.apellido_paterno}</p>
+                    <p class="mb-2"><strong>Médico:</strong> ${medicoSeleccionado.value?.name}</p>
+                    <p class="mb-2"><strong>Fecha:</strong> ${diaSeleccionado.value.fechaCompleta}</p>
+                    <p class="mb-2"><strong>Hora:</strong> ${horarioSeleccionado.value.hora_inicio.slice(0, 5)} - ${horarioSeleccionado.value.hora_fin.slice(0, 5)}</p>
+                    <p class="text-emerald-600 font-semibold mt-2">¡Operación exitosa!</p>
+                </div>
+            `,
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            confirmButtonColor: '#10B981'
+        });
 
         // Limpiar formulario después del registro
         resetForm();
+
+
 
     } catch (error: unknown) {
         console.error('Error:', error);

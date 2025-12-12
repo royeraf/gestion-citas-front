@@ -79,8 +79,10 @@
 
         <!-- Filtros mejorados -->
         <div class="bg-white rounded-xl shadow-lg p-6">
-            <div class="flex items-center gap-2 mb-4">
-                <FunnelIcon class="w-5 h-5 text-teal-600" />
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-emerald-100 rounded-lg">
+                    <FunnelIcon class="w-5 h-5 text-emerald-600" />
+                </div>
                 <h2 class="text-lg font-semibold text-gray-800">Filtrar Horarios</h2>
             </div>
 
@@ -221,11 +223,20 @@
 
         <!-- Vista de Tabla -->
         <div v-if="vistaActual === 'tabla'" class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div v-if="isLoadingList" class="flex items-center justify-center py-12">
-                <div class="flex flex-col items-center">
-                    <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-600" />
-                    <p class="mt-3 text-gray-500 font-medium">Cargando horarios...</p>
+            <div v-if="isLoadingList" class="w-full">
+                <div class="animate-pulse">
+                    <div class="h-10 bg-gray-50 border-b border-gray-200 mb-4 mx-4 mt-4 rounded"></div>
+                    <div v-for="i in 5" :key="i" class="h-16 border-b border-gray-100 flex px-6 items-center">
+                        <div class="w-10 h-10 bg-gray-200 rounded-full mr-4"></div>
+                        <div class="flex-1 space-y-2">
+                            <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+                            <div class="h-3 bg-gray-100 rounded w-1/3"></div>
+                        </div>
+                        <div class="w-24 h-6 bg-gray-200 rounded-full ml-4"></div>
+                        <div class="w-16 h-6 bg-gray-200 rounded-lg ml-8"></div>
+                    </div>
                 </div>
+                <p class="text-center text-gray-400 text-sm py-4">Cargando horarios...</p>
             </div>
 
             <div v-else-if="horariosList.length === 0" class="flex flex-col items-center justify-center py-16">
@@ -351,10 +362,24 @@
 
         <!-- Vista de Tarjetas -->
         <div v-if="vistaActual === 'tarjetas'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div v-if="isLoadingList" class="col-span-full flex items-center justify-center py-12">
-                <div class="flex flex-col items-center">
-                    <ArrowPathIcon class="w-10 h-10 animate-spin text-teal-600" />
-                    <p class="mt-3 text-gray-500 font-medium">Cargando horarios...</p>
+            <div v-if="isLoadingList" class="contents">
+                <div v-for="i in 6" :key="i"
+                    class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden animate-pulse">
+                    <div class="h-12 bg-gray-200 w-full mb-4"></div>
+                    <div class="p-4 space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                            <div class="h-4 bg-gray-200 rounded w-1/3"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

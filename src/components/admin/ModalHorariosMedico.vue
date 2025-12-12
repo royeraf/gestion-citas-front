@@ -29,12 +29,13 @@
                 </div>
 
                 <!-- Filtro de mes -->
-                <div class="p-4 border-b bg-gray-50 flex items-center gap-4">
-                    <label class="text-sm font-medium text-gray-600">Mes:</label>
-                    <input type="month" v-model="mesSeleccionado" @change="cargarHorarios"
-                        class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+                <div class="p-4 border-b bg-gray-50 flex items-end gap-4">
+                    <div class="w-48">
+                        <HsMonthYearPicker label="Mes" v-model="mesSeleccionado" @change="cargarHorarios"
+                            :min-date="'2020-01'" :max-date="'2030-12'" />
+                    </div>
                     <button @click="cargarHorarios"
-                        class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition flex items-center gap-2">
+                        class="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition flex items-center gap-2 mb-[1px]">
                         <ArrowPathIcon class="w-4 h-4" :class="{ 'animate-spin': loading }" />
                         Actualizar
                     </button>
@@ -129,6 +130,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import Swal from 'sweetalert2'
 import horarioService, { type Horario } from '../../services/horarioService'
 import {
     CalendarIcon,
@@ -138,6 +140,7 @@ import {
     ArrowPathIcon,
     CalendarDaysIcon
 } from '@heroicons/vue/24/outline'
+import HsMonthYearPicker from '../common/HsMonthYearPicker.vue'
 
 interface Props {
     visible: boolean
@@ -229,14 +232,40 @@ const cargarHorarios = async () => {
 
 const eliminarHorario = async (id: number | undefined) => {
     if (!id) return
-    if (!confirm('¿Está seguro de eliminar este horario?')) return
+
+    const result = await Swal.fire({
+        title: '¿Está seguro?',
+        text: "Esta acción no se puede deshacer",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    })
+
+    if (!result.isConfirmed) return
 
     try {
         await horarioService.eliminarHorario(id)
+
+        await Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El horario ha sido eliminado.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+        })
+
         await cargarHorarios()
         emit('deleted')
     } catch (error) {
         console.error('Error al eliminar horario', error)
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo eliminar el horario',
+            icon: 'error'
+        })
     }
 }
 

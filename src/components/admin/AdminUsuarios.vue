@@ -52,8 +52,14 @@
         </div>
 
         <!-- Filtros -->
+        <!-- Filtros -->
         <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Filtros de Búsqueda</h2>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-emerald-100 rounded-lg">
+                    <FunnelIcon class="w-5 h-5 text-emerald-600" />
+                </div>
+                <h2 class="text-lg font-semibold text-gray-800">Filtros de Búsqueda</h2>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label for="filtroRol" class="block text-sm font-medium text-gray-700 mb-2">
@@ -197,7 +203,7 @@
                         <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
                         a
                         <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, usuariosFiltrados.length)
-                            }}</span>
+                        }}</span>
                         de
                         <span class="font-medium">{{ usuariosFiltrados.length }}</span>
                         resultados
@@ -274,7 +280,8 @@ import {
     CheckCircleIcon,
     UserIcon,
     ExclamationCircleIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    FunnelIcon
 } from '@heroicons/vue/24/outline'
 
 // --- Lógica de Usuarios ---

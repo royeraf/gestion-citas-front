@@ -7,7 +7,7 @@
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
                         {{ getSaludo }}, <span
                             class="bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">{{
-                            getNombreUsuario }}</span> 👋
+                                getNombreUsuario }}</span> 👋
                     </h1>
                     <p class="text-gray-500 mt-1">
                         {{ getFechaCompleta }}
@@ -111,7 +111,12 @@
             <!-- Próximas Citas -->
             <div class="lg:col-span-2 bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-full">
                 <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h2 class="text-lg font-semibold text-gray-800">Próximas Citas</h2>
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <CalendarDaysIcon class="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Próximas Citas</h2>
+                    </div>
                     <router-link to="/citas" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Ver
                         todas</router-link>
                 </div>
@@ -160,7 +165,12 @@
             <div class="space-y-8">
                 <!-- Acciones Rápidas -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Acciones Rápidas</h2>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <BoltIcon class="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Acciones Rápidas</h2>
+                    </div>
                     <div class="grid grid-cols-1 gap-3">
                         <router-link to="/pacientes"
                             class="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-blue-50 hover:border-blue-200 transition group">
@@ -190,7 +200,12 @@
 
                 <!-- Distribución por Especialidad -->
                 <div class="bg-white rounded-lg shadow-md p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Citas por Especialidad (Hoy)</h2>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <ChartPieIcon class="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <h2 class="text-lg font-semibold text-gray-800">Citas por Especialidad (Hoy)</h2>
+                    </div>
 
                     <div v-if="isLoading" class="space-y-4 animate-pulse">
                         <div v-for="i in 3" :key="i">
@@ -236,7 +251,9 @@ import {
     ClockIcon,
     ExclamationCircleIcon,
     IdentificationIcon,
-    CalendarDaysIcon
+    CalendarDaysIcon,
+    BoltIcon,
+    ChartPieIcon
 } from '@heroicons/vue/24/outline';
 
 const auth = useAuthStore();

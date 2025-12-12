@@ -92,6 +92,55 @@ export interface ListarCitasResponse {
     data: Cita[]
 }
 
+// ==================== INTERFACES PARA IMPRESIÓN ====================
+
+// Parámetros para obtener citas confirmadas para impresión
+export interface CitaConfirmadaParams {
+    fecha: string       // YYYY-MM-DD
+    area_id: number
+    medico_id?: number | null // Nuevo campo opcional
+}
+
+// Paciente en cita confirmada
+export interface PacienteConfirmada {
+    id: number
+    nombres: string
+    apellido_paterno: string
+    apellido_materno: string
+    dni: string
+    telefono?: string | null
+}
+
+// Horario en cita confirmada
+export interface HorarioConfirmada {
+    id: number
+    hora_inicio: string
+    hora_fin: string
+    turno: 'M' | 'T'
+    turno_nombre: string
+}
+
+// Cita confirmada para impresión (con número)
+export interface CitaConfirmadaItem {
+    numero: number
+    id: number
+    paciente: PacienteConfirmada
+    horario: HorarioConfirmada | null
+    fecha_registro: string
+}
+
+// Respuesta del endpoint de citas confirmadas
+export interface CitaConfirmadaResponse {
+    success: boolean
+    fecha: string
+    area: {
+        id: number
+        nombre: string
+    }
+    total: number
+    citas: CitaConfirmadaItem[]
+}
+
 const citaService = {
     // Crear nueva cita
     crearCita(payload: CrearCitaPayload) {
@@ -116,6 +165,19 @@ const citaService = {
     // Eliminar cita permanentemente
     eliminarCita(id: number) {
         return api.delete<{ message: string }>(`/citas/${id}`)
+    },
+
+    // Obtener citas confirmadas para impresión (ordenadas por fecha de registro)
+    getCitasConfirmadas(params: CitaConfirmadaParams) {
+        return api.get<CitaConfirmadaResponse>('/citas/confirmadas', { params })
+    },
+
+    // Descargar PDF de citas confirmadas
+    descargarPDFCitasConfirmadas(params: CitaConfirmadaParams) {
+        return api.get('/citas/confirmadas/pdf', {
+            params,
+            responseType: 'blob' as const
+        })
     }
 }
 

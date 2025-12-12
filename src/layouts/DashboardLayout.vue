@@ -109,7 +109,7 @@
             <div
               class="w-11 h-11 rounded-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center flex-shrink-0 ring-2 ring-white/40 group-hover:ring-white/60 group-hover:scale-105 transition-all duration-300 shadow-lg">
               <span v-if="auth.user?.nombres_completos" class="text-white font-bold text-sm">{{ getUserInitials
-              }}</span>
+                }}</span>
               <UserIcon v-else class="w-6 h-6 text-white" />
             </div>
             <div :class="{ 'md:hidden': !sidebarOpen }" class="flex-1 min-w-0 text-left">

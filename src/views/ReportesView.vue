@@ -18,7 +18,12 @@
 
             <!-- Filtros de Fecha -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-                <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Filtros de Búsqueda</h2>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-emerald-100 rounded-lg">
+                        <FunnelIcon class="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <h2 class="text-lg font-semibold text-gray-800">Filtros de Búsqueda</h2>
+                </div>
                 <div class="flex flex-col md:flex-row items-end gap-4">
                     <div class="flex-1 w-full">
                         <label class="block text-sm font-medium text-gray-600 mb-2">Rango de Fechas</label>
@@ -127,7 +132,12 @@
                 <!-- Gráfico de Citas por Mes -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">Citas Atendidas por Mes</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-emerald-100 rounded-lg">
+                                <ChartBarIcon class="w-5 h-5 text-emerald-600" />
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">Citas Atendidas por Mes</h3>
+                        </div>
                         <span class="text-xs font-medium text-gray-400 uppercase">Últimos 6 meses</span>
                     </div>
                     <div ref="chartContainer" class="w-full h-64"></div>
@@ -136,7 +146,12 @@
                 <!-- Gráfico de Pastel: Estado de Citas -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900">Estado de Citas</h3>
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-emerald-100 rounded-lg">
+                                <ChartPieIcon class="w-5 h-5 text-emerald-600" />
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800">Estado de Citas</h3>
+                        </div>
                         <span class="text-xs font-medium text-gray-400 uppercase">Distribución</span>
                     </div>
                     <div class="flex flex-col md:flex-row items-center justify-around">
@@ -167,7 +182,12 @@
             <!-- Especialidades Section -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
                 <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900">Especialidades Más Solicitadas</h3>
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <StarIcon class="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Especialidades Más Solicitadas</h3>
+                    </div>
                     <span class="text-xs font-medium text-gray-400 uppercase">Top 4</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -193,7 +213,12 @@
             <!-- Tabla Detallada -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-                    <h3 class="text-lg font-semibold text-gray-900">Detalle de Atenciones</h3>
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-100 rounded-lg">
+                            <ClipboardDocumentListIcon class="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800">Detalle de Atenciones</h3>
+                    </div>
                     <span class="text-xs font-medium text-gray-400 uppercase">{{ detalleReporte.length }}
                         registros</span>
                 </div>
@@ -254,7 +279,11 @@ import {
     DocumentTextIcon,
     ArrowTrendingUpIcon,
     CheckCircleIcon,
-    ArrowTrendingDownIcon
+    ArrowTrendingDownIcon,
+    FunnelIcon,
+    ChartPieIcon,
+    StarIcon,
+    ClipboardDocumentListIcon
 } from '@heroicons/vue/24/outline';
 
 const filtros = ref({
