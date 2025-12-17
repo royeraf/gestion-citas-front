@@ -145,6 +145,63 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- Botón ver historial de cambios -->
+                                        <div class="mt-3 pt-3 border-t border-gray-100">
+                                            <button @click="toggleHistorialCita(cita.id)"
+                                                class="flex items-center gap-2 text-sm text-teal-600 hover:text-teal-800 font-medium transition">
+                                                <ClockIcon class="w-4 h-4" />
+                                                <span v-if="historialCitaExpandido !== cita.id">Ver historial de
+                                                    cambios</span>
+                                                <span v-else>Ocultar historial</span>
+                                                <ArrowPathIcon v-if="loadingHistorialCita === cita.id"
+                                                    class="w-4 h-4 animate-spin" />
+                                            </button>
+
+                                            <!-- Historial de cambios expandido -->
+                                            <div v-if="historialCitaExpandido === cita.id && historialCitaData"
+                                                class="mt-3 bg-gray-50 rounded-lg p-3 space-y-2">
+                                                <div v-if="historialCitaData.historial.length === 0"
+                                                    class="text-sm text-gray-500 text-center py-2">
+                                                    No hay cambios registrados para esta cita
+                                                </div>
+                                                <div v-else class="space-y-2">
+                                                    <div v-for="cambio in historialCitaData.historial" :key="cambio.id"
+                                                        class="bg-white rounded-lg p-3 border border-gray-200 text-sm">
+                                                        <div class="flex items-center justify-between mb-2">
+                                                            <div class="flex items-center gap-2">
+                                                                <span :class="[
+                                                                    'px-2 py-0.5 rounded text-xs font-medium',
+                                                                    getEstadoClass(cambio.estado_anterior || 'nuevo')
+                                                                ]">
+                                                                    {{ cambio.estado_anterior || 'Creada' }}
+                                                                </span>
+                                                                <ArrowRightCircleIcon class="w-4 h-4 text-gray-400" />
+                                                                <span :class="[
+                                                                    'px-2 py-0.5 rounded text-xs font-medium',
+                                                                    getEstadoClass(cambio.estado_nuevo)
+                                                                ]">
+                                                                    {{ cambio.estado_nuevo }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div
+                                                            class="flex items-center justify-between text-xs text-gray-500">
+                                                            <div class="flex items-center gap-1">
+                                                                <UserCircleIcon class="w-3 h-3" />
+                                                                <span>{{ cambio.usuario_nombre }}</span>
+                                                            </div>
+                                                            <span>{{ formatFechaHora(cambio.fecha_cambio) }}</span>
+                                                        </div>
+                                                        <div v-if="cambio.comentario"
+                                                            class="mt-2 text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                                            <span class="font-medium">Comentario:</span> {{
+                                                            cambio.comentario }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -196,6 +253,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import pacienteService, { type Paciente, type HistorialCita, type HistorialResponse } from '../../services/pacienteService';
+import citaService, { type HistorialEstadoResponse } from '../../services/citaService';
 import {
     XMarkIcon,
     ClockIcon,
@@ -210,7 +268,8 @@ import {
     ArrowRightCircleIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    UserMinusIcon
 } from '@heroicons/vue/24/outline';
 import { CheckCircleIcon as CheckCircleSolid } from '@heroicons/vue/24/solid';
 
@@ -232,6 +291,11 @@ const historialData = ref<HistorialResponse | null>(null);
 const page = ref(1);
 const filtroEstado = ref('');
 
+// Estado para historial de cambios de estado por cita
+const historialCitaExpandido = ref<number | null>(null);
+const historialCitaData = ref<HistorialEstadoResponse | null>(null);
+const loadingHistorialCita = ref<number | null>(null);
+
 // Estados disponibles con sus estilos
 const estados = [
     { value: 'pendiente', label: 'Pendiente', dotClass: 'bg-yellow-400', activeClass: 'bg-yellow-50 text-yellow-800 border-yellow-200' },
@@ -239,6 +303,7 @@ const estados = [
     { value: 'atendida', label: 'Atendida', dotClass: 'bg-green-400', activeClass: 'bg-green-50 text-green-800 border-green-200' },
     { value: 'cancelada', label: 'Cancelada', dotClass: 'bg-red-400', activeClass: 'bg-red-50 text-red-800 border-red-200' },
     { value: 'referido', label: 'Referido', dotClass: 'bg-orange-400', activeClass: 'bg-orange-50 text-orange-800 border-orange-200' },
+    { value: 'no_asistio', label: 'No Asistió', dotClass: 'bg-slate-400', activeClass: 'bg-slate-50 text-slate-800 border-slate-200' },
 ];
 
 // Métodos
@@ -263,6 +328,22 @@ const formatFecha = (fecha: string | null | undefined) => {
         });
     } catch {
         return fecha;
+    }
+};
+
+const formatFechaHora = (fechaISO: string | null | undefined) => {
+    if (!fechaISO) return '';
+    try {
+        const date = new Date(fechaISO);
+        return date.toLocaleString('es-PE', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } catch {
+        return fechaISO;
     }
 };
 
@@ -296,7 +377,8 @@ const getEstadoClass = (estado: string) => {
         'confirmada': 'bg-blue-100 text-blue-800',
         'atendida': 'bg-green-100 text-green-800',
         'cancelada': 'bg-red-100 text-red-800',
-        'referido': 'bg-orange-100 text-orange-800'
+        'referido': 'bg-orange-100 text-orange-800',
+        'no_asistio': 'bg-slate-100 text-slate-800'
     };
     return clases[estado] || 'bg-gray-100 text-gray-700';
 };
@@ -307,7 +389,8 @@ const getEstadoIconBg = (estado: string) => {
         'confirmada': 'bg-blue-500',
         'atendida': 'bg-green-500',
         'cancelada': 'bg-red-500',
-        'referido': 'bg-orange-500'
+        'referido': 'bg-orange-500',
+        'no_asistio': 'bg-slate-500'
     };
     return clases[estado] || 'bg-gray-500';
 };
@@ -318,13 +401,39 @@ const getEstadoIcon = (estado: string) => {
         'confirmada': CheckCircleIcon,
         'atendida': CheckCircleSolid,
         'cancelada': XCircleIcon,
-        'referido': ArrowRightCircleIcon
+        'referido': ArrowRightCircleIcon,
+        'no_asistio': UserMinusIcon
     };
     return iconos[estado] || ClockIcon;
 };
 
 const close = () => {
+    historialCitaExpandido.value = null;
+    historialCitaData.value = null;
     emit('close');
+};
+
+// Función para cargar el historial de cambios de una cita específica
+const toggleHistorialCita = async (citaId: number) => {
+    // Si ya está expandido, cerrar
+    if (historialCitaExpandido.value === citaId) {
+        historialCitaExpandido.value = null;
+        historialCitaData.value = null;
+        return;
+    }
+
+    // Cargar el historial de la cita
+    loadingHistorialCita.value = citaId;
+    try {
+        const { data } = await citaService.getHistorialCita(citaId);
+        historialCitaData.value = data;
+        historialCitaExpandido.value = citaId;
+    } catch (error) {
+        console.error('Error al cargar historial de cita:', error);
+        historialCitaData.value = null;
+    } finally {
+        loadingHistorialCita.value = null;
+    }
 };
 
 // Watch para cargar historial cuando se abre el modal
@@ -332,6 +441,8 @@ watch(() => props.show, (newVal) => {
     if (newVal && props.paciente) {
         page.value = 1;
         filtroEstado.value = '';
+        historialCitaExpandido.value = null;
+        historialCitaData.value = null;
         fetchHistorial();
     }
 });

@@ -13,7 +13,8 @@
             <CalendarIcon class="w-5 h-5" />
             Administración de Citas
           </button>
-          <button @click="activeTab = 'imprimir'" :class="[
+          <!-- Imprimir: solo visible para Admin y Asistente -->
+          <button v-if="canSeePrintTab" @click="activeTab = 'imprimir'" :class="[
             activeTab === 'imprimir'
               ? 'border-emerald-500 text-emerald-600'
               : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
@@ -86,6 +87,7 @@
               <option value="confirmada">Confirmada</option>
               <option value="atendida">Atendida</option>
               <option value="referido">Referido</option>
+              <option value="no_asistio">No Asistió</option>
               <option value="cancelada">Cancelada</option>
             </select>
           </div>
@@ -131,7 +133,7 @@
                   Área
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Doctor
+                  Profesional
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Estado
@@ -191,7 +193,7 @@
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-900">{{ cita.area_nombre || cita.area || 'N/A' }}</div>
                   </td>
-                  <!-- Doctor -->
+                  <!-- Profesional -->
                   <td class="px-6 py-4">
                     <div class="text-sm text-gray-900">{{ cita.doctor_nombre || 'Sin asignar' }}</div>
                   </td>
@@ -209,25 +211,40 @@
                       <span class="text-xs font-medium">Procesando...</span>
                     </div>
                     <div v-else class="flex gap-2">
+                      <!-- Ver detalle: disponible para todos -->
                       <button @click="verDetalle(cita)" class="text-blue-600 hover:text-blue-800 transition"
                         title="Ver detalle">
                         <EyeIcon class="w-5 h-5" />
                       </button>
-                      <button v-if="cita.estado === 'pendiente'" @click="confirmarCita(cita.id)"
-                        class="text-green-600 hover:text-green-800 transition" title="Confirmar cita">
+                      <!-- Confirmar cita: solo Admin y Asistente -->
+                      <button v-if="canUseManagementActions && cita.estado === 'pendiente'"
+                        @click="confirmarCita(cita.id)" class="text-green-600 hover:text-green-800 transition"
+                        title="Confirmar cita">
                         <CheckIcon class="w-5 h-5" />
                       </button>
-                      <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
+                      <!-- Marcar como atendida: solo Admin y Médico -->
+                      <button
+                        v-if="canUseMedicalActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
                         @click="cambiarEstado(cita.id, 'atendida')"
                         class="text-purple-600 hover:text-purple-800 transition" title="Marcar como atendida">
                         <CheckCircleIcon class="w-5 h-5" />
                       </button>
-                      <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
+                      <!-- Referir: solo Admin y Médico -->
+                      <button
+                        v-if="canUseMedicalActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
                         @click="cambiarEstado(cita.id, 'referido')"
                         class="text-orange-600 hover:text-orange-800 transition" title="Referir a otro hospital">
                         <PaperAirplaneIcon class="w-5 h-5" />
                       </button>
-                      <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
+                      <!-- Marcar como No Asistió: solo Admin y Médico -->
+                      <button v-if="canUseMedicalActions && cita.estado === 'confirmada'"
+                        @click="cambiarEstado(cita.id, 'no_asistio')"
+                        class="text-slate-600 hover:text-slate-800 transition" title="Marcar como No Asistió">
+                        <XCircleIcon class="w-5 h-5" />
+                      </button>
+                      <!-- Cancelar cita: solo Admin y Asistente -->
+                      <button
+                        v-if="canUseManagementActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
                         @click="cancelarCita(cita.id)" class="text-red-600 hover:text-red-800 transition"
                         title="Cancelar cita">
                         <XMarkIcon class="w-5 h-5" />
@@ -347,12 +364,12 @@
             </select>
           </div>
 
-          <!-- Filtro por Médico (Opcional) -->
+          <!-- Filtro por Médico (Obligatorio) -->
           <div v-if="filtrosImprimir.area_id">
             <label class="block text-sm font-medium text-gray-700 mb-2 flex justify-between">
               <span>
                 <i class="pi pi-user-md mr-1 text-emerald-600"></i>
-                Médico (Opcional)
+                Profesional <span class="text-red-500">*</span>
               </span>
               <span v-if="isLoadingMedicos" class="text-xs text-emerald-600 flex items-center animate-pulse">
                 Cargando...
@@ -361,7 +378,7 @@
             <div class="relative">
               <select v-model="filtrosImprimir.medico_id" :disabled="isLoadingMedicos"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white transition-all duration-200 disabled:bg-gray-50 disabled:text-gray-400">
-                <option :value="null">Todos los médicos del área</option>
+                <option :value="null">Seleccione un médico</option>
                 <option v-for="medico in medicosFiltrados" :key="medico.id" :value="medico.id">
                   {{ medico.name }}
                 </option>
@@ -370,9 +387,6 @@
                 <ArrowPathIcon class="w-5 h-5 text-emerald-500 animate-spin" />
               </div>
             </div>
-            <p class="text-xs text-gray-400 mt-1 pl-1">
-              Si no selecciona uno, se mostrarán todos.
-            </p>
           </div>
 
           <!-- Botón de buscar -->
@@ -381,7 +395,7 @@
               &nbsp;
             </label>
             <button @click="buscarCitasConfirmadas"
-              :disabled="!filtrosImprimir.fecha || !filtrosImprimir.area_id || isLoadingImprimir"
+              :disabled="!filtrosImprimir.fecha || !filtrosImprimir.area_id || !filtrosImprimir.medico_id || isLoadingImprimir"
               class="w-full px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg">
               <MagnifyingGlassIcon class="w-5 h-5" />
               Buscar Citas
@@ -546,6 +560,7 @@
 
     <!-- Modal Detalle de Cita -->
     <ModalDetalleCita :visible="modalDetalle.visible" :loading="modalDetalle.loading" :cita="modalDetalle.cita"
+      :can-use-medical-actions="canUseMedicalActions" :can-use-management-actions="canUseManagementActions"
       @close="cerrarModal" @confirmar="confirmarCita" @cambiar-estado="cambiarEstado" />
   </div>
 </template>
@@ -557,6 +572,7 @@ import citaService, { type CitaConfirmadaItem } from '../services/citaService'
 import api from '../services/api'
 import medicoService, { type Medico } from '../services/medicoService'
 import ModalDetalleCita from '../components/citas/ModalDetalleCita.vue'
+import { useAuthStore } from '../store/auth'
 import {
   MagnifyingGlassIcon,
   XMarkIcon,
@@ -578,7 +594,8 @@ import {
   ClipboardDocumentListIcon,
   DocumentMagnifyingGlassIcon,
   ExclamationTriangleIcon,
-  ClockIcon
+  ClockIcon,
+  XCircleIcon
 } from '@heroicons/vue/24/outline'
 
 // ==================== INTERFACES ====================
@@ -651,6 +668,32 @@ interface FiltrosImprimir {
 }
 
 // ==================== STATE ====================
+
+// Auth store para verificar permisos por rol
+const auth = useAuthStore()
+
+// Permisos diferenciados por rol:
+// Rol 1 = Administrador (todas las acciones)
+// Rol 2 = Médico (ver detalle, atendida, referido, no_asistió)
+// Rol 3 = Asistente (ver detalle, confirmar, cancelar)
+
+// Permiso para acciones médicas: Atendida, Referido, No Asistió
+// Solo Admin y Médico
+const canUseMedicalActions = computed(() => {
+  return auth.user?.rol_id === 1 || auth.user?.rol_id === 2
+})
+
+// Permiso para acciones de gestión: Confirmar, Cancelar
+// Solo Admin y Asistente
+const canUseManagementActions = computed(() => {
+  return auth.user?.rol_id === 1 || auth.user?.rol_id === 3
+})
+
+// Permiso para ver pestaña de Imprimir Citas
+// Solo Admin y Asistente (el Médico no puede imprimir)
+const canSeePrintTab = computed(() => {
+  return auth.user?.rol_id === 1 || auth.user?.rol_id === 3
+})
 
 // Tab activo
 const activeTab = ref<'administracion' | 'imprimir'>('administracion')
@@ -804,7 +847,8 @@ const formatEstado = (estado: string): string => {
     confirmada: 'Confirmada',
     atendida: 'Atendida',
     cancelada: 'Cancelada',
-    referido: 'Referido'
+    referido: 'Referido',
+    no_asistio: 'No Asistió'
   }
   return estados[estado] || estado
 }
@@ -815,7 +859,8 @@ const getEstadoClass = (estado: string): string => {
     confirmada: 'px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800',
     atendida: 'px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800',
     cancelada: 'px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800',
-    referido: 'px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800'
+    referido: 'px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800',
+    no_asistio: 'px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-800'
   }
   return classes[estado] || 'px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800'
 }
@@ -896,13 +941,15 @@ const cambiarEstado = async (id: number, nuevoEstado: string) => {
   const estadosLabel: Record<string, string> = {
     'atendida': 'Atendida',
     'referido': 'Referido',
-    'cancelada': 'Cancelada'
+    'cancelada': 'Cancelada',
+    'no_asistio': 'No Asistió'
   }
 
   const colors: Record<string, string> = {
     'atendida': '#8B5CF6',
     'referido': '#F97316',
-    'cancelada': '#EF4444'
+    'cancelada': '#EF4444',
+    'no_asistio': '#64748B'
   }
 
   const result = await Swal.fire({
@@ -1087,11 +1134,11 @@ const imprimir = async () => {
 const fetchMedicosPorArea = async (areaId: number) => {
   isLoadingMedicos.value = true
   try {
-    // Usamos el servicio general con parámetros, como indica la solicitud
-    const { data } = await medicoService.getMedicos({ area_id: areaId })
-    medicosFiltrados.value = data
+    // El servicio retorna directamente el array de médicos, no un objeto {data}
+    const medicos = await medicoService.getMedicos({ area_id: areaId })
+    medicosFiltrados.value = medicos
 
-    if (data.length === 0) {
+    if (medicos.length === 0) {
       filterAlert.value = {
         show: true,
         message: 'No se encontraron médicos registrados en esta área.',

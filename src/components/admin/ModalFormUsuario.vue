@@ -62,7 +62,7 @@
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white">
                                     <option value="">Seleccionar rol</option>
                                     <option value="admin">Administrador</option>
-                                    <option value="medico">Médico</option>
+                                    <option value="profesional">Profesional</option>
                                     <option value="asistente">Asistente Técnico</option>
                                 </select>
                             </div>
@@ -112,7 +112,7 @@ interface UserFormData {
     name: string
     username: string
     password: string
-    role: 'admin' | 'medico' | 'asistente' | ''
+    role: 'admin' | 'profesional' | 'asistente' | ''
 }
 
 interface Props {

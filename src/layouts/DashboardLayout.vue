@@ -66,18 +66,20 @@
           <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Citas</span>
         </router-link>
 
-        <router-link to="/medicos"
+        <!-- Profesionales: solo visible para Admin -->
+        <router-link v-if="canSeeMedicos" to="/medicos"
           class="flex items-center gap-4 p-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
           :class="isActive('/medicos') ?
             'bg-white text-teal-700 shadow-lg translate-x-2' :
             'text-teal-100 hover:bg-teal-600 hover:text-white hover:translate-x-1'" @click="mobileMenuOpen = false">
           <BriefcaseIcon class="w-6 h-6 flex-shrink-0 transition-transform duration-300"
             :class="{ 'scale-110': isActive('/medicos') }" />
-          <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Médicos</span>
+          <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Profesionales</span>
         </router-link>
 
         <div class="pt-4 mt-4 border-t border-teal-600">
-          <router-link to="/reportes"
+          <!-- Reportes: solo visible para Admin -->
+          <router-link v-if="canSeeReportes" to="/reportes"
             class="flex items-center gap-4 p-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
             :class="isActive('/reportes') ?
               'bg-white text-teal-700 shadow-lg translate-x-2' :
@@ -87,7 +89,8 @@
             <span :class="{ 'md:hidden': !sidebarOpen }" class="font-medium whitespace-nowrap">Reportes</span>
           </router-link>
 
-          <router-link to="/admin"
+          <!-- Configuración: solo visible para Admin y Asistente -->
+          <router-link v-if="canSeeConfig" to="/admin"
             class="flex items-center gap-4 p-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
             :class="isActive('/admin') ?
               'bg-white text-teal-700 shadow-lg translate-x-2' :
@@ -245,7 +248,7 @@ const getUserRole = computed(() => {
       case 1:
         return 'Administrador'
       case 2:
-        return 'Médico'
+        return 'Profesional'
       case 3:
         return 'Asistente'
       default:
@@ -253,6 +256,25 @@ const getUserRole = computed(() => {
     }
   }
   return 'Invitado'
+})
+
+// Permisos de navegación por rol
+// Rol 1 = Administrador, Rol 2 = Profesional, Rol 3 = Asistente
+// Profesional solo puede ver: Dashboard, Pacientes (solo listado), Citas
+
+const canSeeMedicos = computed(() => {
+  // Solo Administrador puede ver la sección de Profesionales
+  return auth.user?.rol_id === 1
+})
+
+const canSeeReportes = computed(() => {
+  // Solo Administrador puede ver la sección de Reportes
+  return auth.user?.rol_id === 1
+})
+
+const canSeeConfig = computed(() => {
+  // Solo Administrador y Asistente pueden ver Configuración
+  return auth.user?.rol_id === 1 || auth.user?.rol_id === 3
 })
 
 const getUserInitials = computed(() => {
@@ -299,7 +321,7 @@ const tituloActual = computed(() => {
     '/dashboard': 'Dashboard',
     '/pacientes': 'Gestión de Pacientes',
     '/citas': 'Administración de Citas',
-    '/medicos': 'Gestión de Médicos',
+    '/medicos': 'Gestión de Profesionales',
     '/reportes': 'Reportes y Estadísticas',
     '/admin': 'Configuración'
   }
@@ -311,7 +333,7 @@ const subtituloActual = computed(() => {
     '/dashboard': 'Vista general del sistema',
     '/pacientes': 'Registro y gestión de pacientes',
     '/citas': 'Control de citas médicas',
-    '/medicos': 'Administración del personal médico',
+    '/medicos': 'Administración del personal profesional',
     '/reportes': 'Análisis y estadísticas del centro',
     '/admin': 'Ajustes del sistema'
   }

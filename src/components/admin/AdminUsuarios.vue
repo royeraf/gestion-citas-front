@@ -41,8 +41,8 @@
             <div class="bg-white rounded-lg shadow p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm text-gray-500">Médicos</p>
-                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ countByRole('medico') }}</p>
+                        <p class="text-sm text-gray-500">Profesionales</p>
+                        <p class="text-3xl font-bold text-gray-800 mt-1">{{ countByRole('profesional') }}</p>
                     </div>
                     <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                         <BriefcaseIcon class="w-8 h-8 text-green-600" />
@@ -69,7 +69,7 @@
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white">
                         <option value="">Todos los roles</option>
                         <option value="admin">Administrador</option>
-                        <option value="medico">Médico</option>
+                        <option value="profesional">Profesional</option>
                         <option value="asistente">Asistente Técnico</option>
                     </select>
                 </div>
@@ -290,7 +290,7 @@ const newUser = ref({
     name: '',
     username: '',
     password: '',
-    role: '' as 'admin' | 'medico' | 'asistente' | '',
+    role: '' as 'admin' | 'profesional' | 'asistente' | '',
 })
 
 const users = ref<User[]>([])
@@ -305,7 +305,7 @@ const toastMessage = ref('')
 const toastType = ref<'success' | 'error'>('success')
 
 // Filtros
-const filtroRol = ref<'admin' | 'medico' | 'asistente' | ''>('')
+const filtroRol = ref<'admin' | 'profesional' | 'asistente' | ''>('')
 const filtroBusqueda = ref('')
 
 const usuariosFiltrados = computed(() => {
@@ -365,7 +365,8 @@ const getRoleLabel = (role: string, roleNombre?: string): string => {
 
     const labels: Record<string, string> = {
         admin: 'Administrador',
-        medico: 'Médico',
+        medico: 'Profesional',
+        profesional: 'Profesional',
         asistente: 'Asistente Técnico'
     }
     return labels[role] || role
@@ -375,6 +376,7 @@ const getRoleIconComponent = (role: string) => {
     const icons: Record<string, any> = {
         admin: ShieldCheckIcon,
         medico: BriefcaseIcon,
+        profesional: BriefcaseIcon,
         asistente: UserIcon
     }
     return icons[role] || UserIcon
@@ -384,6 +386,7 @@ const getRoleBadgeClass = (role: string): string => {
     const classes: Record<string, string> = {
         admin: 'px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800',
         medico: 'px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800',
+        profesional: 'px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800',
         asistente: 'px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800'
     }
     return classes[role] || 'px-3 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800'
@@ -443,7 +446,7 @@ interface UserFormData {
     name: string
     username: string
     password: string
-    role: 'admin' | 'medico' | 'asistente' | ''
+    role: 'admin' | 'profesional' | 'asistente' | ''
 }
 
 const guardarUsuario = async (userData: UserFormData) => {
@@ -457,7 +460,7 @@ const guardarUsuario = async (userData: UserFormData) => {
             const payload: UpdateUserPayload = {
                 name: userData.name,
                 username: userData.username,
-                role: userData.role as 'admin' | 'medico' | 'asistente'
+                role: userData.role as 'admin' | 'profesional' | 'asistente'
             }
             // Solo incluir password si se proporcionó uno nuevo
             if (userData.password) {
@@ -470,7 +473,7 @@ const guardarUsuario = async (userData: UserFormData) => {
                 name: userData.name,
                 username: userData.username,
                 password: userData.password,
-                role: userData.role as 'admin' | 'medico' | 'asistente'
+                role: userData.role as 'admin' | 'profesional' | 'asistente'
             }
             await userService.createUser(payload)
             mostrarToast('Usuario creado exitosamente', 'success')

@@ -18,7 +18,7 @@
                             </div>
                             <div>
                                 <h3 class="text-xl font-bold">{{ medico?.name }}</h3>
-                                <p class="text-teal-100 text-sm">{{ medico?.especialidad || 'Médico' }}</p>
+                                <p class="text-teal-100 text-sm">{{ medico?.especialidad || 'Profesional' }}</p>
                             </div>
                         </div>
                         <button @click="cerrar"
@@ -81,20 +81,24 @@
                                     <!-- Turno Mañana -->
                                     <div v-if="dia.turnos?.M"
                                         class="bg-gradient-to-r from-amber-400 to-amber-500 text-white px-2 py-1.5 rounded-lg mb-1 flex items-center justify-between group/turno shadow-sm hover:shadow-md transition-all">
-                                        <div class="flex items-center gap-2 cursor-pointer"
-                                            @click="abrirEditarCupos(dia.turnos.M)" title="Editar cupos">
+                                        <div class="flex items-center gap-1.5">
                                             <SunIcon class="w-4 h-4" />
                                             <span class="font-semibold text-sm">{{ dia.turnos.M.cupos }}</span>
-                                            <span
-                                                class="opacity-50 group-hover/turno:opacity-100 hover:bg-teal-600 rounded p-0.5 transition">
-                                                <PencilIcon class="w-3.5 h-3.5" />
-                                            </span>
                                         </div>
-                                        <button @click.stop="eliminarHorario(dia.turnos.M.id)"
-                                            class="opacity-50 group-hover/turno:opacity-100 hover:bg-red-600 rounded p-0.5 transition"
-                                            title="Eliminar">
-                                            <TrashIcon class="w-3.5 h-3.5" />
-                                        </button>
+                                        <div class="flex items-center gap-0.5">
+                                            <!-- Botón Editar Cupos -->
+                                            <button @click.stop="abrirEditarCupos(dia.turnos.M)"
+                                                class="w-5 h-5 flex items-center justify-center bg-white/90 hover:bg-white text-amber-600 hover:text-amber-700 rounded transition-all duration-200 hover:scale-110 shadow-sm"
+                                                title="Editar cupos">
+                                                <PencilIcon class="w-3 h-3" />
+                                            </button>
+                                            <!-- Botón Eliminar -->
+                                            <button @click.stop="eliminarHorario(dia.turnos.M.id)"
+                                                class="w-5 h-5 flex items-center justify-center bg-red-100 hover:bg-red-500 text-red-600 hover:text-white rounded transition-all duration-200 hover:scale-110 shadow-sm"
+                                                title="Eliminar">
+                                                <TrashIcon class="w-3 h-3" />
+                                            </button>
+                                        </div>
                                     </div>
                                     <!-- Botón para agregar turno mañana si no existe -->
                                     <button v-else @click="abrirCrearHorario(dia.fecha, 'M')"
@@ -107,20 +111,24 @@
                                     <!-- Turno Tarde -->
                                     <div v-if="dia.turnos?.T"
                                         class="bg-gradient-to-r from-indigo-400 to-indigo-500 text-white px-2 py-1.5 rounded-lg flex items-center justify-between group/turno shadow-sm hover:shadow-md transition-all">
-                                        <div class="flex items-center gap-2 cursor-pointer"
-                                            @click="abrirEditarCupos(dia.turnos.T)" title="Editar cupos">
+                                        <div class="flex items-center gap-1.5">
                                             <MoonIcon class="w-4 h-4" />
                                             <span class="font-semibold text-sm">{{ dia.turnos.T.cupos }}</span>
-                                            <span
-                                                class="opacity-50 group-hover/turno:opacity-100 hover:bg-teal-600 rounded p-0.5 transition">
-                                                <PencilIcon class="w-3.5 h-3.5" />
-                                            </span>
                                         </div>
-                                        <button @click.stop="eliminarHorario(dia.turnos.T.id)"
-                                            class="opacity-50 group-hover/turno:opacity-100 hover:bg-red-600 rounded p-0.5 transition"
-                                            title="Eliminar">
-                                            <TrashIcon class="w-3.5 h-3.5" />
-                                        </button>
+                                        <div class="flex items-center gap-0.5">
+                                            <!-- Botón Editar Cupos -->
+                                            <button @click.stop="abrirEditarCupos(dia.turnos.T)"
+                                                class="w-5 h-5 flex items-center justify-center bg-white/90 hover:bg-white text-indigo-600 hover:text-indigo-700 rounded transition-all duration-200 hover:scale-110 shadow-sm"
+                                                title="Editar cupos">
+                                                <PencilIcon class="w-3 h-3" />
+                                            </button>
+                                            <!-- Botón Eliminar -->
+                                            <button @click.stop="eliminarHorario(dia.turnos.T.id)"
+                                                class="w-5 h-5 flex items-center justify-center bg-red-100 hover:bg-red-500 text-red-600 hover:text-white rounded transition-all duration-200 hover:scale-110 shadow-sm"
+                                                title="Eliminar">
+                                                <TrashIcon class="w-3 h-3" />
+                                            </button>
+                                        </div>
                                     </div>
                                     <!-- Botón para agregar turno tarde si no existe -->
                                     <button v-else @click="abrirCrearHorario(dia.fecha, 'T')"
@@ -204,7 +212,7 @@
                     Fecha: <span class="font-semibold">{{ formatFechaCrear(nuevoHorario.fecha) }}</span>
                 </p>
 
-                <!-- Información del Médico y Área -->
+                <!-- Información del Profesional y Área -->
                 <div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                     <div class="flex items-center gap-3 mb-2">
                         <div

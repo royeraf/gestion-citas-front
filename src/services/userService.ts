@@ -5,7 +5,7 @@ export interface User {
     id: number
     name: string
     username: string
-    role: 'admin' | 'medico' | 'asistente'
+    role: 'admin' | 'profesional' | 'asistente'
     role_nombre?: string
     dni?: string
     activo?: boolean
@@ -16,7 +16,7 @@ export interface CreateUserPayload {
     name: string
     username: string
     password: string
-    role: 'admin' | 'medico' | 'asistente'
+    role: 'admin' | 'profesional' | 'asistente'
     dni?: string
 }
 
@@ -24,12 +24,12 @@ export interface UpdateUserPayload {
     name?: string
     username?: string
     password?: string
-    role?: 'admin' | 'medico' | 'asistente'
+    role?: 'admin' | 'profesional' | 'asistente'
     activo?: boolean
 }
 
 export interface ListUsersParams {
-    role?: 'admin' | 'medico' | 'asistente'
+    role?: 'admin' | 'profesional' | 'asistente'
     search?: string
 }
 

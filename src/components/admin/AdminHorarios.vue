@@ -6,9 +6,9 @@
                 <div>
                     <h1 class="text-2xl md:text-3xl font-bold flex items-center gap-3">
                         <CalendarIcon class="w-8 h-8 text-teal-200" />
-                        Gestión de Horarios Médicos
+                        Gestión de Horarios de Profesionales
                     </h1>
-                    <p class="text-teal-100 mt-1">Configura la disponibilidad de los médicos de forma sencilla</p>
+                    <p class="text-teal-100 mt-1">Configura la disponibilidad de los profesionales de forma sencilla</p>
                 </div>
                 <button @click="abrirModalHorario"
                     class="bg-white text-teal-700 hover:bg-teal-50 font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center gap-2 shadow-md hover:shadow-lg">
@@ -26,7 +26,7 @@
                         </div>
                         <div>
                             <p class="text-2xl font-bold">{{ todosMedicos.length }}</p>
-                            <p class="text-xs text-teal-100">Médicos</p>
+                            <p class="text-xs text-teal-100">Profesionales</p>
                         </div>
                     </div>
                 </div>
@@ -99,11 +99,11 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-600 mb-2 flex items-center gap-1">
-                        <UserIcon class="w-4 h-4" /> Médico
+                        <UserIcon class="w-4 h-4" /> Profesional
                     </label>
                     <select v-model="filtroMedicoId" @change="cargarHorariosFiltrados"
                         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white transition">
-                        <option :value="null">Todos los médicos</option>
+                        <option :value="null">Todos los profesionales</option>
                         <option v-for="medico in medicos" :key="medico.id" :value="medico.id">{{ medico.name }}</option>
                     </select>
                 </div>
@@ -143,7 +143,7 @@
                     vistaActual === 'medicos' ? 'bg-white shadow text-teal-700' : 'text-gray-600 hover:text-gray-800'
                 ]">
                     <UsersIcon class="w-5 h-5" />
-                    Médicos
+                    Profesionales
                 </button>
                 <button v-if="filtroMedicoId && filtroMes" @click="vistaActual = 'calendario'" :class="[
                     'px-4 py-2 rounded-md transition font-medium text-sm flex items-center gap-2',
@@ -155,7 +155,7 @@
             </div>
         </div>
 
-        <!-- Vista de Médicos -->
+        <!-- Vista de Profesionales -->
         <div v-if="vistaActual === 'medicos'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div v-if="isLoadingList" v-for="i in 6" :key="i" class="bg-white rounded-xl shadow-md p-6 animate-pulse">
                 <div class="flex items-center gap-4">
@@ -177,7 +177,7 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-semibold text-gray-900 truncate">{{ medico.name }}</h3>
-                            <p class="text-sm text-gray-500">{{ medico.especialidad || 'Médico' }}</p>
+                            <p class="text-sm text-gray-500">{{ medico.especialidad || 'Profesional' }}</p>
                         </div>
                         <ChevronRightIcon class="w-5 h-5 text-gray-400 group-hover:text-teal-600 transition" />
                     </div>
@@ -254,7 +254,7 @@
         <ModalCrearHorario :visible="modalVisible" :medicos="todosMedicos" :areas="areas" @close="modalVisible = false"
             @saved="onHorariosSaved" />
 
-        <!-- Modal Horarios del Médico -->
+        <!-- Modal Horarios del Profesional -->
         <ModalHorariosMedico :visible="modalMedicoVisible" :medico="medicoSeleccionado" @close="cerrarModalMedico"
             @deleted="cargarHorariosFiltrados" />
 

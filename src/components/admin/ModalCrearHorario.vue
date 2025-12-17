@@ -42,11 +42,11 @@
 
                         <!-- Sección 1: Datos Básicos -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <!-- Campo Médico -->
+                            <!-- Campo Profesional -->
                             <div ref="medicoFieldRef" class="group">
                                 <label
                                     class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 ml-1">
-                                    Médico <span class="text-red-500">*</span>
+                                    Profesional <span class="text-red-500">*</span>
                                 </label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -59,7 +59,7 @@
                                             ? 'border-red-300 focus:ring-2 focus:ring-red-200 focus:border-red-400'
                                             : 'border-gray-200 hover:border-gray-300 focus:bg-white focus:ring-2 focus:ring-teal-100 focus:border-teal-500'
                                     ]">
-                                        <option :value="null">Seleccione un médico</option>
+                                        <option :value="null">Seleccione un profesional</option>
                                         <option v-for="medico in medicos" :key="medico.id" :value="medico.id">
                                             {{ medico.name }}
                                         </option>
@@ -156,7 +156,7 @@
                                 <!-- Header del calendario -->
                                 <div class="flex items-center justify-between mb-2 pb-1 border-b border-gray-50">
                                     <span class="text-xs font-bold text-gray-700 capitalize">{{ nombreMesSeleccionado
-                                        }}</span>
+                                    }}</span>
                                     <div class="flex items-center gap-1">
                                         <button type="button" @click="seleccionarDiasLaborables"
                                             class="text-[10px] px-1.5 py-0.5 text-gray-500 hover:bg-gray-100 hover:text-teal-600 rounded transition-colors"
@@ -364,7 +364,7 @@
                                         <div class="flex items-center gap-1.5 text-slate-400">
                                             <UserGroupIcon class="w-3.5 h-3.5" />
                                             <span><strong class="text-teal-300 text-lg">{{ calcularTotalCupos()
-                                            }}</strong> citas</span>
+                                                    }}</strong> citas</span>
                                         </div>
                                     </div>
                                 </div>
@@ -456,8 +456,8 @@ const loading = ref(false)
 const validationSchema = yup.object({
     medico_id: yup.number()
         .nullable()
-        .required('Seleccione un médico')
-        .typeError('Seleccione un médico'),
+        .required('Seleccione un profesional')
+        .typeError('Seleccione un profesional'),
     area_id: yup.number()
         .nullable()
         .required('Seleccione un área')

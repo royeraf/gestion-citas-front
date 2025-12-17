@@ -2,12 +2,12 @@
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-gray-800">
-        Administración de Médicos
+        Administración de Profesionales
       </h1>
       <button @click="abrirModalCrear"
         class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200 flex items-center gap-2">
         <UserPlusIcon class="w-5 h-5" />
-        Nuevo Médico
+        Nuevo Profesional
       </button>
     </div>
 
@@ -54,12 +54,12 @@
       </div>
     </div>
 
-    <!-- Tabla de médicos -->
+    <!-- Tabla de profesionales -->
     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
       <!-- Loading State -->
       <div v-if="loading" class="p-12 text-center">
         <ArrowPathIcon class="w-10 h-10 mx-auto text-emerald-500 animate-spin" />
-        <p class="mt-4 text-gray-500">Cargando médicos...</p>
+        <p class="mt-4 text-gray-500">Cargando profesionales...</p>
       </div>
 
       <div v-else class="overflow-x-auto">
@@ -67,7 +67,7 @@
           <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Médico
+                Profesional
               </th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Especialidad
@@ -153,7 +153,7 @@
             d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
         <p class="mt-4 text-gray-500">
-          No se encontraron médicos con los filtros aplicados
+          No se encontraron profesionales con los filtros aplicados
         </p>
       </div>
     </div>
@@ -436,7 +436,7 @@ const guardarMedico = async (data: FormDataLocal) => {
       await medicoService.updateMedico(data.id, {
         name: data.nombre,
         username: data.username,
-        role: 'medico',
+        role: 'profesional',
         password: data.password || undefined
       });
     } else {
@@ -444,7 +444,7 @@ const guardarMedico = async (data: FormDataLocal) => {
         name: data.nombre,
         username: data.username,
         password: data.password,
-        role: 'medico',
+        role: 'profesional',
         dni: data.dni || data.cmp
       });
     }
@@ -455,7 +455,7 @@ const guardarMedico = async (data: FormDataLocal) => {
 
     Swal.fire({
       title: modalForm.value.esEdicion ? '¡Actualizado!' : '¡Registrado!',
-      text: `El médico ha sido ${modalForm.value.esEdicion ? 'actualizado' : 'registrado'} exitosamente.`,
+      text: `El profesional ha sido ${modalForm.value.esEdicion ? 'actualizado' : 'registrado'} exitosamente.`,
       icon: 'success',
       timer: 2000,
       showConfirmButton: false
@@ -478,8 +478,8 @@ const toggleEstado = async (medico: Medico) => {
   const colorBoton = medico.estado === "activo" ? "#EF4444" : "#10B981";
 
   const result = await Swal.fire({
-    title: `¿${accion.charAt(0).toUpperCase() + accion.slice(1)} médico?`,
-    text: `El médico pasará a estado ${nuevoEstado}`,
+    title: `¿${accion.charAt(0).toUpperCase() + accion.slice(1)} profesional?`,
+    text: `El profesional pasará a estado ${nuevoEstado}`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: colorBoton,
@@ -495,7 +495,7 @@ const toggleEstado = async (medico: Medico) => {
       medico.estado = nuevoEstado;
       Swal.fire({
         title: nuevoEstado === 'activo' ? '¡Activado!' : '¡Desactivado!',
-        text: `El médico ha sido ${accion}do exitosamente.`,
+        text: `El profesional ha sido ${accion}do exitosamente.`,
         icon: 'success',
         timer: 2000,
         showConfirmButton: false

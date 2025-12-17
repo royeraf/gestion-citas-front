@@ -45,7 +45,7 @@
                                     <div
                                         class="h-10 w-10 rounded-full bg-teal-100 flex items-center justify-center mr-3">
                                         <span class="text-teal-600 font-semibold text-sm">{{ paciente.nombres?.[0] || ''
-                                        }}{{
+                                            }}{{
                                                 paciente.apellidoPaterno?.[0] || paciente.apellido_paterno?.[0] || ''
                                             }}</span>
                                     </div>
@@ -72,8 +72,9 @@
                                     title="Ver Historial">
                                     <ClockIcon class="w-5 h-5" />
                                 </button>
-                                <button @click="editarPaciente(paciente)" class="text-blue-600 hover:text-blue-900"
-                                    title="Editar">
+                                <!-- Editar: solo Admin y Asistente -->
+                                <button v-if="canEditPatients" @click="editarPaciente(paciente)"
+                                    class="text-blue-600 hover:text-blue-900" title="Editar">
                                     <PencilIcon class="w-5 h-5" />
                                 </button>
                             </td>
@@ -150,6 +151,7 @@ import { ref, watch, onMounted, computed } from "vue";
 import pacienteService, { type Paciente } from "../../services/pacienteService";
 import ModalHistorialPaciente from "./ModalHistorialPaciente.vue";
 import ModalEditarPaciente from "./ModalEditarPaciente.vue";
+import { useAuthStore } from "../../store/auth";
 import {
     MagnifyingGlassIcon,
     ArrowPathIcon,
@@ -158,6 +160,15 @@ import {
     ChevronLeftIcon,
     ChevronRightIcon
 } from '@heroicons/vue/24/outline'
+
+// Auth store para permisos
+const auth = useAuthStore();
+
+// El médico solo puede ver historial, no editar
+// Rol 1 = Admin, Rol 2 = Médico, Rol 3 = Asistente
+const canEditPatients = computed(() => {
+    return auth.user?.rol_id === 1 || auth.user?.rol_id === 3;
+});
 
 // Estado principal
 const busquedaPaciente = ref('');

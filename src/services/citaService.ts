@@ -78,7 +78,7 @@ export interface ListarCitasParams {
     doctor_id?: number
     area?: string            // Búsqueda por nombre de área
     area_id?: number         // Filtrar por ID de área
-    estado?: string          // pendiente, confirmada, atendida, cancelada, referido
+    estado?: string          // pendiente, confirmada, atendida, cancelada, referido, no_asistio
     paciente_dni?: string    // Búsqueda parcial por DNI
     turno?: 'M' | 'T'        // Filtrar por turno
 }
@@ -178,7 +178,31 @@ const citaService = {
             params,
             responseType: 'blob' as const
         })
+    },
+
+    // Obtener historial de cambios de estado de una cita
+    getHistorialCita(citaId: number) {
+        return api.get<HistorialEstadoResponse>(`/citas/${citaId}/historial`)
     }
+}
+
+// Interface para el historial de cambios de estado
+export interface HistorialEstadoItem {
+    id: number
+    cita_id: number
+    estado_anterior: string | null
+    estado_nuevo: string
+    usuario_id: number | null
+    usuario_nombre: string
+    fecha_cambio: string
+    comentario: string | null
+    ip_address: string | null
+}
+
+export interface HistorialEstadoResponse {
+    cita_id: number
+    total: number
+    historial: HistorialEstadoItem[]
 }
 
 export default citaService

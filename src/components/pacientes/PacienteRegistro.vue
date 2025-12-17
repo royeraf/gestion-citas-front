@@ -79,7 +79,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.nombres, 'border-gray-300': !errors.nombres }" />
                                 <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
-                                    }}</span>
+                                }}</span>
                             </div>
                             <!-- Apellido Paterno -->
                             <div>
@@ -153,7 +153,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.telefono, 'border-gray-300': !errors.telefono }" />
                                 <span v-if="errors.telefono" class="text-red-500 text-xs mt-1">{{ errors.telefono
-                                    }}</span>
+                                }}</span>
                             </div>
                             <!-- Email -->
                             <div>
@@ -173,7 +173,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.direccion, 'border-gray-300': !errors.direccion }" />
                                 <span v-if="errors.direccion" class="text-red-500 text-xs mt-1">{{ errors.direccion
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -236,7 +236,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.ocupacion, 'border-gray-300': !errors.ocupacion }" />
                                 <span v-if="errors.ocupacion" class="text-red-500 text-xs mt-1">{{ errors.ocupacion
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Religión <span
@@ -245,7 +245,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.religion, 'border-gray-300': !errors.religion }" />
                                 <span v-if="errors.religion" class="text-red-500 text-xs mt-1">{{ errors.religion
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Procedencia <span
@@ -254,7 +254,7 @@
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.procedencia, 'border-gray-300': !errors.procedencia }" />
                                 <span v-if="errors.procedencia" class="text-red-500 text-xs mt-1">{{ errors.procedencia
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -299,7 +299,7 @@
                                     placeholder="000-000-000000" class="w-full px-3 py-2 border rounded-lg text-sm"
                                     :class="{ 'border-red-500 bg-red-50': errors.numeroSis, 'border-gray-300': !errors.numeroSis }" />
                                 <span v-if="errors.numeroSis" class="text-red-500 text-xs mt-1">{{ errors.numeroSis
-                                    }}</span>
+                                }}</span>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-600 mb-1">Tipo Seguro <span
@@ -312,7 +312,7 @@
                                     <option value="ESSALUD">ESSALUD</option>
                                 </select>
                                 <span v-if="errors.tipoSeguro" class="text-red-500 text-xs mt-1">{{ errors.tipoSeguro
-                                    }}</span>
+                                }}</span>
                             </div>
                         </div>
                     </div>
@@ -490,7 +490,10 @@
                         </div>
                         Paso 1: Seleccionar Área de Atención
                     </h2>
-                    <p class="text-gray-600 text-sm mb-4">Elija el área médica donde desea agendar la cita</p>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Elija el área médica donde desea agendar la cita. Cada área cuenta con médicos especializados
+                        para brindarle la mejor atención.
+                    </p>
 
                     <!-- Grid de Áreas como tarjetas -->
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -518,11 +521,16 @@
                                         areaSeleccionada?.id === area.id ? 'text-white' : 'text-teal-600'
                                     ]" />
                                 </div>
+                                <span :class="[
+                                    'font-semibold text-sm leading-tight',
+                                    areaSeleccionada?.id === area.id ? 'text-white' : 'text-gray-800'
+                                ]">{{ area.nombre }}</span>
+                                <!-- Descripción del área -->
+                                <p v-if="area.descripcion" :class="[
+                                    'text-xs mt-1 leading-tight line-clamp-2',
+                                    areaSeleccionada?.id === area.id ? 'text-teal-100' : 'text-gray-500'
+                                ]">{{ area.descripcion }}</p>
                             </div>
-                            <span :class="[
-                                'font-semibold text-sm leading-tight',
-                                areaSeleccionada?.id === area.id ? 'text-white' : 'text-gray-800'
-                            ]">{{ area.nombre }}</span>
                         </div>
                     </div>
                 </div>
@@ -541,7 +549,7 @@
                     </h2>
                     <p class="text-gray-600 text-sm mb-4">
                         Médicos disponibles en <span class="font-semibold text-teal-700">{{ areaSeleccionada.nombre
-                        }}</span>
+                            }}</span>
                     </p>
 
                     <!-- Skeleton Loader para médicos -->
@@ -573,7 +581,7 @@
                             <h4 class="font-bold text-amber-800 mb-1">No hay médicos disponibles</h4>
                             <p class="text-amber-700 text-sm">
                                 No se encontraron médicos asignados al área de <strong>{{ areaSeleccionada.nombre
-                                }}</strong>.
+                                    }}</strong>.
                                 Por favor, seleccione otra área o contacte al administrador.
                             </p>
                             <button @click="areaSeleccionada = null" type="button"
@@ -714,7 +722,7 @@
                                             class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded flex items-center gap-1">
                                             <SunIcon class="w-3 h-3" />
                                             <span class="font-semibold">{{ horario.cupos_disponibles }}/{{ horario.cupos
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                         <!-- Turno Tarde -->
                                         <div v-for="horario in dia.horarios.filter((h: Horario) => h.turno === 'T')"
@@ -722,7 +730,7 @@
                                             class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded flex items-center gap-1">
                                             <MoonIcon class="w-3 h-3" />
                                             <span class="font-semibold">{{ horario.cupos_disponibles }}/{{ horario.cupos
-                                                }}</span>
+                                            }}</span>
                                         </div>
                                     </div>
                                     <div v-else class="text-xs text-gray-400">No disponible</div>
@@ -932,6 +940,8 @@ interface DiaCalendario {
 interface Area {
     id: number;
     nombre: string;
+    descripcion?: string;
+    activo: boolean;
 }
 
 // Esquema de validación
@@ -1312,7 +1322,8 @@ const calculatedEdad = computed(() => {
 const fetchAreas = async () => {
     try {
         const { data } = await api.get('/areas/');
-        areas.value = data;
+        // Solo mostrar áreas con estado activo
+        areas.value = data.filter((area: Area) => area.activo === true);
     } catch (error) {
         console.error("Error al cargar áreas", error);
     }
@@ -1651,5 +1662,6 @@ const resetForm = () => {
     horarioSeleccionado.value = null;
     pacienteId.value = null;
     searchMessage.value = { text: "", type: "success" };
+    recomendacion.value = null;
 };
 </script>

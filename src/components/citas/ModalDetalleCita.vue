@@ -146,7 +146,7 @@
                                     </p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-500">Doctor</p>
+                                    <p class="text-xs text-gray-500">Profesional</p>
                                     <p class="font-semibold text-gray-800">{{ cita.doctor_nombre || 'Sin asignar' }}</p>
                                 </div>
                             </div>
@@ -220,22 +220,43 @@
 
                         <!-- Botones de acción -->
                         <div class="flex flex-wrap gap-3 pt-4 border-t">
-                            <button v-if="cita.estado === 'pendiente'" @click="$emit('confirmar', cita.id)"
+                            <!-- Confirmar: solo Admin y Asistente -->
+                            <button v-if="props.canUseManagementActions && cita.estado === 'pendiente'"
+                                @click="$emit('confirmar', cita.id)"
                                 class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
                                 <CheckIcon class="w-5 h-5" />
                                 Confirmar Cita
                             </button>
-                            <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
+                            <!-- Marcar Atendida: solo Admin y Médico -->
+                            <button
+                                v-if="props.canUseMedicalActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
                                 @click="$emit('cambiarEstado', cita.id, 'atendida')"
                                 class="flex-1 bg-purple-500 hover:bg-purple-600 text-white py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
                                 <CheckCircleIcon class="w-5 h-5" />
                                 Marcar Atendida
                             </button>
-                            <button v-if="!['atendida', 'cancelada', 'referido'].includes(cita.estado)"
+                            <!-- Referir: solo Admin y Médico -->
+                            <button
+                                v-if="props.canUseMedicalActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
                                 @click="$emit('cambiarEstado', cita.id, 'referido')"
                                 class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
                                 <PaperAirplaneIcon class="w-5 h-5" />
                                 Referir
+                            </button>
+                            <!-- No Asistió: solo Admin y Médico -->
+                            <button v-if="props.canUseMedicalActions && cita.estado === 'confirmada'"
+                                @click="$emit('cambiarEstado', cita.id, 'no_asistio')"
+                                class="flex-1 bg-slate-500 hover:bg-slate-600 text-white py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                                <XCircleIcon class="w-5 h-5" />
+                                No Asistió
+                            </button>
+                            <!-- Cancelar: solo Admin y Asistente -->
+                            <button
+                                v-if="props.canUseManagementActions && !['atendida', 'cancelada', 'referido', 'no_asistio'].includes(cita.estado)"
+                                @click="$emit('cambiarEstado', cita.id, 'cancelada')"
+                                class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                                <XMarkIcon class="w-5 h-5" />
+                                Cancelar Cita
                             </button>
                             <button @click="cerrar"
                                 class="flex-1 px-6 py-2.5 border-2 border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold rounded-xl transition">
@@ -261,7 +282,8 @@ import {
     UserIcon,
     UsersIcon,
     HeartIcon,
-    ClockIcon
+    ClockIcon,
+    XCircleIcon
 } from '@heroicons/vue/24/outline'
 
 interface Paciente {
@@ -308,9 +330,11 @@ interface Props {
     visible: boolean
     loading: boolean
     cita: Cita | null
+    canUseMedicalActions: boolean
+    canUseManagementActions: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
     (e: 'close'): void
@@ -348,7 +372,8 @@ const formatEstado = (estado: string): string => {
         confirmada: 'Confirmada',
         atendida: 'Atendida',
         cancelada: 'Cancelada',
-        referido: 'Referido'
+        referido: 'Referido',
+        no_asistio: 'No Asistió'
     }
     return estados[estado] || estado
 }
@@ -359,7 +384,8 @@ const getEstadoClass = (estado: string): string => {
         confirmada: 'px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800',
         atendida: 'px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800',
         cancelada: 'px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800',
-        referido: 'px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800'
+        referido: 'px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800',
+        no_asistio: 'px-2 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-800'
     }
     return classes[estado] || 'px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800'
 }

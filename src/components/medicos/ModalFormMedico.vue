@@ -12,9 +12,10 @@
                 <div class="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 text-white">
                     <div class="flex justify-between items-center">
                         <div>
-                            <h3 class="text-xl font-bold">{{ esEdicion ? "Editar Médico" : "Nuevo Médico" }}</h3>
-                            <p class="text-teal-100 text-sm mt-1">{{ esEdicion ? "Actualiza los datos del médico" :
-                                "Registra un nuevo médico en el sistema" }}</p>
+                            <h3 class="text-xl font-bold">{{ esEdicion ? "Editar Profesional" : "Nuevo Profesional" }}
+                            </h3>
+                            <p class="text-teal-100 text-sm mt-1">{{ esEdicion ? "Actualiza los datos del profesional" :
+                                "Registra un nuevo profesional en el sistema" }}</p>
                         </div>
                         <button @click="cerrar"
                             class="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition">
@@ -72,7 +73,7 @@
                                     Área (Especialidad principal)
                                 </label>
                                 <p class="text-xs text-amber-600 mb-2">
-                                   * Para asignar un área, debe configurar los horarios del médico.
+                                   * Para asignar un área, debe configurar los horarios del profesional.
                                 </p>
                             </div>
                             -->
@@ -81,7 +82,7 @@
                         <div class="flex gap-3 pt-4">
                             <button type="submit"
                                 class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
-                                {{ esEdicion ? "Actualizar" : "Registrar" }} Médico
+                                {{ esEdicion ? "Actualizar" : "Registrar" }} Profesional
                             </button>
                             <button type="button" @click="cerrar"
                                 class="px-6 py-3 border-2 border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold rounded-xl transition">
