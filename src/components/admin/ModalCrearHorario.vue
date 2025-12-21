@@ -156,7 +156,7 @@
                                 <!-- Header del calendario -->
                                 <div class="flex items-center justify-between mb-2 pb-1 border-b border-gray-50">
                                     <span class="text-xs font-bold text-gray-700 capitalize">{{ nombreMesSeleccionado
-                                    }}</span>
+                                        }}</span>
                                     <div class="flex items-center gap-1">
                                         <button type="button" @click="seleccionarDiasLaborables"
                                             class="text-[10px] px-1.5 py-0.5 text-gray-500 hover:bg-gray-100 hover:text-teal-600 rounded transition-colors"
@@ -364,7 +364,7 @@
                                         <div class="flex items-center gap-1.5 text-slate-400">
                                             <UserGroupIcon class="w-3.5 h-3.5" />
                                             <span><strong class="text-teal-300 text-lg">{{ calcularTotalCupos()
-                                                    }}</strong> citas</span>
+                                            }}</strong> citas</span>
                                         </div>
                                     </div>
                                 </div>
@@ -416,7 +416,6 @@ import {
     BuildingOfficeIcon,
     SunIcon,
     MoonIcon,
-    TicketIcon,
     ExclamationTriangleIcon,
     CalendarDaysIcon,
     ChartBarIcon,
@@ -424,8 +423,7 @@ import {
     QuestionMarkCircleIcon,
     TrashIcon,
     UserGroupIcon,
-    ExclamationCircleIcon,
-    ClockIcon
+    ExclamationCircleIcon
 } from '@heroicons/vue/24/solid'
 
 interface Props {
@@ -438,7 +436,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
     (e: 'close'): void
-    (e: 'saved', result: { creados: number; actualizados: number }): void
+    (e: 'saved', result: { creados: number; actualizados: number; advertencias?: string[] }): void
 }>()
 
 // Refs for scroll

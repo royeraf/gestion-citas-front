@@ -90,7 +90,7 @@
                   <div class="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center">
                     <span class="text-emerald-600 font-semibold">{{
                       medico.iniciales
-                    }}</span>
+                      }}</span>
                   </div>
                   <div class="ml-4">
                     <div class="text-sm font-medium text-gray-900">
@@ -237,7 +237,6 @@ import { medicoService, type Medico } from '../services/medicoService';
 import areaService, { type Area } from '../services/areaService';
 import {
   UserPlusIcon,
-  EyeIcon,
   PencilSquareIcon,
   NoSymbolIcon,
   CheckCircleIcon,
@@ -407,7 +406,7 @@ const abrirModalCrear = () => {
   };
 };
 
-const editarMedico = (medico: Medico) => {
+const editarMedico = (medico: any) => {
   modalForm.value.visible = true;
   modalForm.value.esEdicion = true;
   formData.value = {
@@ -430,7 +429,7 @@ const editarMedico = (medico: Medico) => {
   }
 };
 
-const guardarMedico = async (data: FormDataLocal) => {
+const guardarMedico = async (data: any) => {
   try {
     if (modalForm.value.esEdicion) {
       await medicoService.updateMedico(data.id, {
@@ -467,10 +466,7 @@ const guardarMedico = async (data: FormDataLocal) => {
   }
 };
 
-const verDetalle = (medico: Medico) => {
-  modalDetalle.value.medico = medico;
-  modalDetalle.value.visible = true;
-};
+// verDetalle removida - no se usa actualmente
 
 const toggleEstado = async (medico: Medico) => {
   const accion = medico.estado === "activo" ? "desactivar" : "activar";

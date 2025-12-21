@@ -290,17 +290,12 @@ import {
     MoonIcon,
     TicketIcon,
     FunnelIcon,
-    ArrowPathIcon,
-    PlusIcon,
-    TrashIcon,
     CheckCircleIcon,
     XCircleIcon,
-    CalendarDaysIcon,
     ChevronRightIcon
 } from '@heroicons/vue/24/outline'
 
 const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
-const diasSemanaCompletos = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
 
 const areas = ref<any[]>([])
 const medicos = ref<any[]>([])
@@ -413,21 +408,7 @@ const getMesNombre = (mes: string) => {
     return `${meses[(month || 1) - 1]} ${year}`
 }
 
-const formatearFecha = (fecha: string | undefined) => {
-    if (!fecha) return ''
-    const date = new Date(fecha + 'T00:00:00')
-    return date.toLocaleDateString('es-PE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })
-}
 
-const getTurnoBadgeClass = (turno: string) => {
-    return turno === 'M'
-        ? 'bg-amber-100 text-amber-800'
-        : 'bg-indigo-100 text-indigo-800'
-}
 
 const limpiarFiltros = () => {
     filtroAreaId.value = null
@@ -517,19 +498,7 @@ const onHorariosSaved = (result: { creados: number; actualizados: number }) => {
     cargarHorariosFiltrados()
 }
 
-const eliminarHorario = async (id: number | undefined) => {
-    if (!id) return
-    if (!confirm('¿Está seguro de eliminar este horario?')) return
 
-    try {
-        await horarioService.eliminarHorario(id)
-        mostrarToast('Horario eliminado exitosamente', 'success')
-        cargarHorariosFiltrados()
-    } catch (error) {
-        console.error('Error al eliminar horario', error)
-        mostrarToast('Error al eliminar horario', 'error')
-    }
-}
 
 const mostrarToast = (mensaje: string, tipo: 'success' | 'error' = 'success') => {
     toastMessage.value = mensaje
