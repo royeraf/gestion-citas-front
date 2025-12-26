@@ -68,6 +68,12 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const auth = useAuthStore();
   
+  // Sincronizar estado si el token fue eliminado (por ejemplo, por el interceptor de api.ts)
+  // Esto debe ir PRIMERO para asegurar que auth.isAuthenticated refleje la realidad
+  if (auth.isAuthenticated && !localStorage.getItem('token')) {
+    auth.setSession(null);
+  }
+
   // Si el usuario está autenticado y trata de ir al login, redirigir al dashboard
   if (to.name === "Login" && auth.isAuthenticated) {
     next({ name: "Dashboard" });

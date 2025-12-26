@@ -23,8 +23,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Evita bucles infinitos y no reintenta si es login
-    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/login')) {
+    // Evita bucles infinitos:
+    // 1. Si ya se reintentó (_retry)
+    // 2. Si es login (no tiene sentido refrescar)
+    // 3. Si es el propio endpoint de refresh (si falla, no podemos refrescarnos a nosotros mismos)
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/login') && !originalRequest.url?.includes('/refresh')) {
       originalRequest._retry = true;
 
       try {
