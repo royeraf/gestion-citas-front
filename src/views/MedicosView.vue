@@ -311,7 +311,8 @@ const fetchData = async () => {
   loading.value = true;
   try {
     const [medicosRes, areasRes] = await Promise.all([
-      medicoService.getMedicos(),
+      // En administración sí queremos ver a todos para poder activarlos/desactivarlos
+      medicoService.getMedicos({ activo: 'all' }),
       areaService.getAreas()
     ]);
     medicos.value = medicosRes;

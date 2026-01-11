@@ -28,7 +28,7 @@ export interface CreateMedicoPayload {
 }
 
 export const medicoService = {
-    async getMedicos(params?: { area_id?: number }): Promise<Medico[]> {
+    async getMedicos(params?: { area_id?: number, activo?: boolean | 'all' }): Promise<Medico[]> {
         const response = await api.get('/medicos/', {
             params: params
         });

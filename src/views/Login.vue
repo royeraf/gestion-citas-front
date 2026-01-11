@@ -47,11 +47,25 @@
           </div>
 
           <h2 class="text-3xl font-bold text-gray-800 mb-2">Bienvenido</h2>
-          <p class="text-gray-500 mb-10">Ingresa a tu cuenta para continuar</p>
+          <p class="text-gray-500 mb-6">Ingresa a tu cuenta para continuar</p>
 
-          <form @submit.prevent="onSubmit" class="space-y-6">
+          <!-- Error Message Container (Critical Feedback) -->
+          <div class="min-h-[52px] mb-4">
+            <transition enter-active-class="transition ease-out duration-300"
+              enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition ease-in duration-200" leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 -translate-y-2">
+              <div v-if="error"
+                class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium">
+                <ExclamationCircleIcon class="w-5 h-5 flex-shrink-0" />
+                <span class="flex-1">{{ error }}</span>
+              </div>
+            </transition>
+          </div>
+
+          <form @submit.prevent="onSubmit" class="flex flex-col">
             <!-- DNI Input -->
-            <div class="space-y-2">
+            <div class="space-y-2 mb-4">
               <label for="dni" class="text-sm font-semibold text-gray-700 ml-1">Usuario / DNI</label>
               <div class="relative group">
                 <div
@@ -65,11 +79,13 @@
                   :class="errors.dni ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-teal-500'"
                   placeholder="Ingrese su DNI (8 dígitos)" />
               </div>
-              <span v-if="errors.dni" class="text-red-500 text-sm ml-1">{{ errors.dni }}</span>
+              <div class="h-6">
+                <span v-if="errors.dni" class="text-red-500 text-xs ml-1 block">{{ errors.dni }}</span>
+              </div>
             </div>
 
             <!-- Password Input -->
-            <div class="space-y-2">
+            <div class="space-y-2 mb-6">
               <label for="password" class="text-sm font-semibold text-gray-700 ml-1">Contraseña</label>
               <div class="relative group">
                 <div
@@ -87,31 +103,26 @@
                   <EyeSlashIcon v-else class="w-5 h-5" />
                 </button>
               </div>
-              <span v-if="errors.password" class="text-red-500 text-sm ml-1">{{ errors.password }}</span>
-            </div>
-
-            <!-- Contact Admin Hint -->
-            <div class="text-sm text-center text-gray-500">
-              En caso de olvidar su contraseña, <span class="text-teal-600 font-medium">contacte con el
-                administrador</span>
-            </div>
-
-            <!-- Error Message -->
-            <transition enter-active-class="transition ease-out duration-300"
-              enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0">
-              <div v-if="error"
-                class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl flex items-center gap-3 text-sm font-medium">
-                <ExclamationCircleIcon class="w-5 h-5 flex-shrink-0" />
-                <span>{{ error }}</span>
+              <div class="h-6">
+                <span v-if="errors.password" class="text-red-500 text-xs ml-1 block">{{ errors.password }}</span>
               </div>
-            </transition>
+            </div>
 
             <!-- Submit Button -->
             <button type="submit" :disabled="isLoading"
-              class="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-teal-600/40 transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all duration-200 flex items-center justify-center gap-2">
+              class="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-teal-500/30 hover:shadow-teal-600/40 transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-none transition-all duration-200 flex items-center justify-center gap-2 mb-6">
               <ArrowPathIcon v-if="isLoading" class="animate-spin h-5 w-5" />
               <span>{{ isLoading ? "Iniciando..." : "Iniciar Sesión" }}</span>
             </button>
+
+
+
+            <!-- Contact Admin Hint (At the final) -->
+            <div class="text-sm text-center text-gray-500">
+              En caso de olvidar su contraseña, <br class="sm:hidden">
+              <span class="text-teal-600 font-medium cursor-pointer hover:underline">contacte con el
+                administrador</span>
+            </div>
           </form>
 
           <div class="mt-10 text-center">
@@ -180,6 +191,11 @@ const onSubmit = handleSubmit(async (values) => {
     error.value =
       e?.response?.data?.msg ||
       "Acceso denegado. Verifique sus credenciales.";
+
+    // El mensaje desaparece después de 5 segundos
+    setTimeout(() => {
+      error.value = "";
+    }, 5000);
   } finally {
     isLoading.value = false;
   }
