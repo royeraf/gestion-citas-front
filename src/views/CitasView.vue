@@ -38,7 +38,7 @@
           <div class="ml-3">
             <p class="text-sm text-blue-700">
               <span class="font-medium">Panel del Profesional:</span>
-              El listado actual muestra exclusivamente las citas médicas programadas bajo su responsabilidad.
+              El listado muestra las citas <strong>confirmadas</strong> bajo su responsabilidad y aquellas que usted ha procesado (atendidas, referidas o no asistió).
             </p>
           </div>
         </div>
@@ -113,12 +113,19 @@
               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent bg-white transition-all duration-200"
               :class="filtros.estado ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-300'">
               <option value="">Todos los estados</option>
-              <option value="pendiente">Pendiente</option>
+              <!-- Opciones solo para Admin y Asistente -->
+              <template v-if="!isProfesional">
+                <option value="pendiente">Pendiente</option>
+              </template>
+              <!-- Opciones para todos los roles -->
               <option value="confirmada">Confirmada</option>
               <option value="atendida">Atendida</option>
               <option value="referido">Referido</option>
               <option value="no_asistio">No Asistió</option>
-              <option value="cancelada">Cancelada</option>
+              <!-- Cancelada solo para Admin y Asistente -->
+              <template v-if="!isProfesional">
+                <option value="cancelada">Cancelada</option>
+              </template>
             </select>
           </div>
 
