@@ -45,7 +45,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.nombres }">
                                     <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- DNI (Editable manualmente) -->
@@ -131,7 +131,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.telefono }">
                                     <span v-if="errors.telefono" class="text-red-500 text-xs mt-1">{{ errors.telefono
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Email -->
@@ -142,7 +142,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.email }">
                                     <span v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Dirección -->
@@ -154,7 +154,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.direccion }">
                                     <span v-if="errors.direccion" class="text-red-500 text-xs mt-1">{{ errors.direccion
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -194,7 +194,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.ocupacion }">
                                     <span v-if="errors.ocupacion" class="text-red-500 text-xs mt-1">{{ errors.ocupacion
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Religión -->
@@ -205,7 +205,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.religion }">
                                     <span v-if="errors.religion" class="text-red-500 text-xs mt-1">{{ errors.religion
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Procedencia -->
@@ -240,7 +240,7 @@
                                         <option value="ESSALUD">ESSALUD</option>
                                     </select>
                                     <span v-if="errors.seguro" class="text-red-500 text-xs mt-1">{{ errors.seguro
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Número de Seguro -->
@@ -367,7 +367,7 @@ const [dni, dniAttrs] = defineField('dni');
 const [nombres, nombresAttrs] = defineField('nombres');
 const [apellido_paterno, apellidoPaternoAttrs] = defineField('apellido_paterno');
 const [apellido_materno, apellidoMaternoAttrs] = defineField('apellido_materno');
-const [fecha_nacimiento, fechaNacimientoAttrs] = defineField('fecha_nacimiento');
+const [fecha_nacimiento, _fechaNacimientoAttrs] = defineField('fecha_nacimiento');
 const [sexo, sexoAttrs] = defineField('sexo');
 const [estado_civil, estadoCivilAttrs] = defineField('estado_civil');
 const [telefono, telefonoAttrs] = defineField('telefono');
