@@ -390,6 +390,7 @@
                                         class="text-red-500">*</span></label>
                                 <input type="text" id="nombresAcompanante" v-model="nombresAcompanante"
                                     v-bind="nombresAcompananteAttrs" placeholder="Nombres"
+                                    @input="toUpperCase('nombresAcompanante')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.nombresAcompanante, 'border-gray-300': !errors.nombresAcompanante }" />
                                 <span v-if="errors.nombresAcompanante" class="text-red-500 text-xs mt-1">{{
@@ -400,6 +401,7 @@
                                         class="text-red-500">*</span></label>
                                 <input type="text" id="apellidoPaternoAcompanante" v-model="apellidoPaternoAcompanante"
                                     v-bind="apellidoPaternoAcompananteAttrs" placeholder="Paterno"
+                                    @input="toUpperCase('apellidoPaternoAcompanante')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.apellidoPaternoAcompanante, 'border-gray-300': !errors.apellidoPaternoAcompanante }" />
                                 <span v-if="errors.apellidoPaternoAcompanante" class="text-red-500 text-xs mt-1">{{
@@ -410,6 +412,7 @@
                                         class="text-red-500">*</span></label>
                                 <input type="text" id="apellidoMaternoAcompanante" v-model="apellidoMaternoAcompanante"
                                     v-bind="apellidoMaternoAcompananteAttrs" placeholder="Materno"
+                                    @input="toUpperCase('apellidoMaternoAcompanante')"
                                     class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                                     :class="{ 'border-red-500 bg-red-50': errors.apellidoMaternoAcompanante, 'border-gray-300': !errors.apellidoMaternoAcompanante }" />
                                 <span v-if="errors.apellidoMaternoAcompanante" class="text-red-500 text-xs mt-1">{{
@@ -1658,6 +1661,7 @@ const buscarDniAcompanante = async () => {
             nombresAcompanante: data.nombres,
             apellidoPaternoAcompanante: data.apellido_paterno || data.apellidoPaterno || "",
             apellidoMaternoAcompanante: data.apellido_materno || data.apellidoMaterno || "",
+            telefonoAcompanante: data.telefono || values.telefonoAcompanante || ""
         });
 
         const nombreCompleto = `${data.nombres} ${data.apellido_paterno || ""} ${data.apellido_materno || ""}`;

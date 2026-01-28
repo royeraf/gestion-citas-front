@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/",
-    component: DashboardLayout, // Usar el layout
+    component: DashboardLayout,
     children: [
       {
         path: "",
@@ -45,19 +45,32 @@ const routes: Array<RouteRecordRaw> = [
         path: "medicos",
         name: "Medicos",
         component: MedicosView,
+        meta: { roles: [1] } // Solo Administrador
       },
       {
         path: "reportes",
         name: "Reportes",
         component: ReportesView,
+        meta: { roles: [1] } // Solo Administrador
       },
       {
         path: "admin",
         name: "Administrador",
         component: Admin,
+        meta: { roles: [1, 3] } // Administrador o Asistente
       },
+      // Ruta para manejar errores 404 o rutas no encontradas dentro del layout
+      {
+        path: ":pathMatch(.*)*",
+        redirect: "/dashboard"
+      }
     ],
   },
+  // Captura cualquier otra ruta fuera del layout y redirigir al login o dashboard
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/"
+  }
 ];
 
 const router = createRouter({
@@ -65,28 +78,60 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   const auth = useAuthStore();
   
-  // Sincronizar estado si el token fue eliminado (por ejemplo, por el interceptor de api.ts)
-  // Esto debe ir PRIMERO para asegurar que auth.isAuthenticated refleje la realidad
-  if (auth.isAuthenticated && !localStorage.getItem('token')) {
-    auth.setSession(null);
+  // Rutas públicas (Login)
+  if (to.name === "Login") {
+    if (auth.isAuthenticated) {
+      return next({ name: "Dashboard" });
+    }
+    return next();
   }
 
-  // Si el usuario está autenticado y trata de ir al login, redirigir al dashboard
-  if (to.name === "Login" && auth.isAuthenticated) {
-    next({ name: "Dashboard" });
-    return;
+  // Si tenemos datos de usuario pero no hemos verificado la sesión (ej. F5), intentamos verificar
+  if (auth.user && !auth.isAuthenticated) {
+    try {
+      await auth.fetchProfile();
+      auth.isAuthenticated = true;
+    } catch (error) {
+      auth.setSession(null);
+      return next({ name: "Login" });
+    }
   }
 
-  // Si el usuario NO está autenticado y trata de ir a una ruta protegida (cualquiera que no sea Login)
-  if (to.name !== "Login" && !auth.isAuthenticated) {
-    next({ name: "Login" });
-    return;
+  // Rutas privadas: Verificar autenticación definitiva
+  if (!auth.isAuthenticated) {
+    return next({ name: "Login" });
   }
 
-  // En cualquier otro caso, permitir la navegación
+  // Si por alguna razón tenemos isAuthenticated pero no el user, corregimos
+  if (!auth.user && auth.isAuthenticated) {
+    try {
+      await auth.fetchProfile();
+    } catch (error) {
+      // Si falla la carga del perfil, forzamos logout por seguridad
+      auth.setSession(null);
+      return next({ name: "Login" });
+    }
+  }
+
+  // Verificar Autorización (Roles)
+  const requiredRoles = to.meta.roles as number[] | undefined;
+  
+  if (requiredRoles) {
+    // Si la ruta requiere roles pero no hay usuario (y falló la carga anterior)
+    if (!auth.user) {
+      return next({ name: "Login" });
+    }
+
+    const hasRole = requiredRoles.includes(auth.user.rol_id);
+    if (!hasRole) {
+      console.warn(`Acceso denegado a ${to.path}. Rol requerido: ${requiredRoles}. Rol usuario: ${auth.user.rol_id}`);
+      return next({ name: "Dashboard" });
+    }
+  }
+
   next();
 });
 

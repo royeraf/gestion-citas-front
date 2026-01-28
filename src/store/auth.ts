@@ -20,29 +20,26 @@ interface LoginResponse {
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
-  const token = ref<string | null>(localStorage.getItem('token') || null)
-  const isAuthenticated = ref<boolean>(!!token.value)
+  const isAuthenticated = ref<boolean>(false)
 
-  function setSession(newToken: string | null, userPayload?: User | null) {
-    token.value = newToken
-    isAuthenticated.value = !!newToken
-    if (newToken) localStorage.setItem('token', newToken)
-    else localStorage.removeItem('token')
-
-    if (userPayload) {
-      user.value = userPayload
-      localStorage.setItem('user', JSON.stringify(userPayload))
-    } else {
-      user.value = null
+  // Recuperar datos del usuario para la UI, pero NO asumimos que la sesión es válida (cookie)
+  const storedUser = localStorage.getItem('user');
+  if (storedUser) {
+    try {
+      user.value = JSON.parse(storedUser);
+    } catch (e) {
       localStorage.removeItem('user')
     }
   }
 
-  // Recuperar usuario de localStorage al iniciar
-  if (localStorage.getItem('user')) {
-    try {
-      user.value = JSON.parse(localStorage.getItem('user') || '{}')
-    } catch (e) {
+  function setSession(userPayload: User | null) {
+    if (userPayload) {
+      user.value = userPayload
+      isAuthenticated.value = true
+      localStorage.setItem('user', JSON.stringify(userPayload))
+    } else {
+      user.value = null
+      isAuthenticated.value = false
       localStorage.removeItem('user')
     }
   }
@@ -50,9 +47,9 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(dni: string, password: string): Promise<LoginResponse> {
     try {
       const { data } = await api.post<LoginResponse>('/auth/login', { dni, password })
-      const token = data.access_token
+      // El access_token ya viene en una cookie HttpOnly
       const userPayload = data.usuario
-      setSession(token, userPayload)
+      setSession(userPayload)
       return data
     } catch (error) {
       throw error
@@ -70,7 +67,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Intentar logout en backend, pero no bloquear si falla
       await api.post("/auth/logout").catch(() => {})
     } finally {
-      setSession(null, null)
+      setSession(null)
     }
   }
 
@@ -103,7 +100,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
-    token,
     isAuthenticated,
     login,
     register,

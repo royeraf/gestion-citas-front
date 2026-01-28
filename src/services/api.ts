@@ -10,15 +10,8 @@ const api = axios.create({
   }
 })
 
-// Incluir access token
+// Incluir access token (Ahora manejado automáticamente por cookies)
 api.interceptors.request.use((config) => {
-  // No enviar Authorization header cuando se está refrescando el token
-  if (config.url?.includes('/auth/refresh')) {
-    return config;
-  }
-
-  const token = localStorage.getItem('token')
-  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
@@ -31,20 +24,18 @@ api.interceptors.response.use(
     // Evita bucles infinitos:
     // 1. Si ya se reintentó (_retry)
     // 2. Si es login (no tiene sentido refrescar)
-    // 3. Si es el propio endpoint de refresh (si falla, no podemos refrescarnos a nosotros mismos)
+    // 3. Si es el propio endpoint de refresh
     if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/login') && !originalRequest.url?.includes('/refresh')) {
       originalRequest._retry = true;
 
       try {
-        // solicitar nuevo access token usando la cookie refresh
-        const { data } = await api.post("/auth/refresh");
-        localStorage.setItem("token", data.access_token);
+        // solicitar nuevo access token usando la cookie refresh (el backend lo guardará en cookie access)
+        await api.post("/auth/refresh");
         
-        // reintentar la petición original
-        originalRequest.headers.Authorization = `Bearer ${data.access_token}`;
+        // reintentar la petición original (ahora tendrá la nueva cookie)
         return api(originalRequest);
       } catch (err) {
-        localStorage.removeItem("token");
+        // Si falla el refresh, el usuario debe re-autenticarse
         router.push("/login");
       }
     }
