@@ -45,6 +45,7 @@ export interface Paciente {
     numero_afiliacion?: string | null
     fecha_registro: string
     origen?: 'local' | 'reniec'
+    tipo_existencia?: 'paciente' | 'persona' | 'reniec'
 }
 
 // Alias para compatibilidad

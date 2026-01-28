@@ -32,7 +32,7 @@
                     <div class="flex items-center gap-2">
                         <IdentificationIcon class="w-4 h-4 text-gray-500" />
                         <span class="text-sm text-gray-600">DNI: <span class="font-semibold">{{ paciente.dni
-                                }}</span></span>
+                        }}</span></span>
                     </div>
                     <span v-if="paciente.seguro"
                         :class="['px-3 py-1 text-sm font-medium rounded-full', paciente.seguro === 'SIS' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700']">
@@ -90,7 +90,7 @@
                                         </div>
                                     </div>
                                     <span v-if="errors.dni" class="text-red-500 text-xs mt-1 block">{{ errors.dni
-                                        }}</span>
+                                    }}</span>
                                     <!-- Aviso de edición de DNI -->
                                     <div v-if="isEditMode && editarDniHabilitado && !dniExiste"
                                         class="mt-2 p-2 bg-teal-50 border border-teal-200 rounded-lg">
@@ -102,21 +102,40 @@
                                     </div>
                                     <!-- Advertencia de DNI existente -->
                                     <div v-if="dniExiste && (!isEditMode || editarDniHabilitado) && pacienteExistente"
-                                        class="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                        class="mt-2 p-3 rounded-lg border transition-colors shadow-sm"
+                                        :class="pacienteExistente.tipo_existencia === 'paciente' ? 'bg-amber-50 border-amber-200' : 'bg-blue-50 border-blue-200'">
                                         <div class="flex items-start gap-2">
                                             <ExclamationTriangleIcon
+                                                v-if="pacienteExistente.tipo_existencia === 'paciente'"
                                                 class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                                            <InformationCircleIcon v-else
+                                                class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                                             <div class="text-sm">
-                                                <p class="font-medium text-amber-800">¡Este DNI ya está registrado!</p>
-                                                <p class="text-amber-700 mt-1">
+                                                <p class="font-medium"
+                                                    :class="pacienteExistente.tipo_existencia === 'paciente' ? 'text-amber-800' : 'text-blue-800'">
+                                                    {{ pacienteExistente.tipo_existencia === 'paciente' ?
+                                                        '¡Este paciente ya está registrado!' :
+                                                        'Persona encontrada en el sistema' }}
+                                                </p>
+                                                <p class="mt-1"
+                                                    :class="pacienteExistente.tipo_existencia === 'paciente' ? 'text-amber-700' : 'text-blue-700'">
                                                     {{ pacienteExistente.nombres }} {{
                                                         pacienteExistente.apellido_paterno ||
-                                                    pacienteExistente.apellidoPaterno }}
+                                                        pacienteExistente.apellidoPaterno }}
                                                 </p>
-                                                <p v-if="!isEditMode" class="text-amber-600 text-xs mt-1">Si desea
-                                                    modificar sus datos, búsquelo en el listado y edítelo.</p>
-                                                <p v-else class="text-amber-600 text-xs mt-1">No puede usar un DNI que
-                                                    ya pertenece a otro paciente.</p>
+
+                                                <div v-if="pacienteExistente.tipo_existencia === 'paciente'"
+                                                    class="mt-2 text-xs text-amber-600">
+                                                    <p v-if="!isEditMode">Este DNI ya tiene una historia clínica activa.
+                                                        Búsquelo en el listado para editar sus datos o ver su historial.
+                                                    </p>
+                                                    <p v-else>No puede usar un DNI que ya pertenece a otro paciente.</p>
+                                                </div>
+                                                <div v-else class="mt-2 text-xs text-blue-600">
+                                                    <p>Esta persona ya existe como usuario (médico/asistente). Sus datos
+                                                        personales han sido cargados automáticamente. Puede completar el
+                                                        registro como paciente.</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -131,7 +150,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.nombres }">
                                     <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Apellido Paterno -->
@@ -206,7 +225,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.telefono }">
                                     <span v-if="errors.telefono" class="text-red-500 text-xs mt-1">{{ errors.telefono
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Email -->
@@ -217,7 +236,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.email }">
                                     <span v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Dirección -->
@@ -229,7 +248,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.direccion }">
                                     <span v-if="errors.direccion" class="text-red-500 text-xs mt-1">{{ errors.direccion
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +288,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.ocupacion }">
                                     <span v-if="errors.ocupacion" class="text-red-500 text-xs mt-1">{{ errors.ocupacion
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Religión -->
@@ -280,7 +299,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.religion }">
                                     <span v-if="errors.religion" class="text-red-500 text-xs mt-1">{{ errors.religion
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Procedencia -->
@@ -315,7 +334,7 @@
                                         <option value="ESSALUD">ESSALUD</option>
                                     </select>
                                     <span v-if="errors.seguro" class="text-red-500 text-xs mt-1">{{ errors.seguro
-                                        }}</span>
+                                    }}</span>
                                 </div>
 
                                 <!-- Número de Seguro -->
@@ -343,7 +362,8 @@
                                 class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium">
                                 Cancelar
                             </button>
-                            <button type="submit" :disabled="guardando || dniExiste"
+                            <button type="submit"
+                                :disabled="guardando || (dniExiste && pacienteExistente?.tipo_existencia === 'paciente')"
                                 class="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center gap-2">
                                 <ArrowPathIcon v-if="guardando" class="w-4 h-4 animate-spin" />
                                 <template v-else>
@@ -524,9 +544,9 @@ const onDniInput = () => {
     }
 };
 
-// Verificar si el DNI ya existe (solo en modo registro)
+// Verificar si el DNI ya existe (solo en modo registro o edición de DNI)
 const verificarDniExistente = async () => {
-    if (isEditMode.value || !dni.value || dni.value.length !== 8) {
+    if ((isEditMode.value && !editarDniHabilitado.value) || !dni.value || dni.value.length !== 8) {
         dniExiste.value = false;
         pacienteExistente.value = null;
         return;
@@ -536,14 +556,41 @@ const verificarDniExistente = async () => {
     try {
         const { data } = await pacienteService.buscarPorDNI(dni.value);
         if (data) {
-            dniExiste.value = true;
-            pacienteExistente.value = data;
+            // Manejamos los tres casos: reniec, persona (usuario) o paciente
+            const tipo = (data as any).tipo_existencia || 'paciente';
+
+            if (tipo === 'paciente') {
+                // Si es el mismo paciente que estamos editando, no es error
+                if (isEditMode.value && props.paciente && data.id === props.paciente.id) {
+                    dniExiste.value = false;
+                    pacienteExistente.value = null;
+                } else {
+                    dniExiste.value = true;
+                    pacienteExistente.value = data;
+                }
+            } else if (tipo === 'persona' || tipo === 'reniec') {
+                // Es una persona que existe (como usuario) o datos de Reniec
+                // Autocompletamos pero NO bloqueamos el registro (permitimos que sea paciente)
+                dniExiste.value = tipo === 'persona'; // Solo activamos flag si es local para mostrar aviso azul
+                pacienteExistente.value = data;
+
+                // Autocompletar campos
+                setValues({
+                    nombres: data.nombres || '',
+                    apellido_paterno: data.apellido_paterno || data.apellidoPaterno || '',
+                    apellido_materno: data.apellido_materno || data.apellidoMaterno || '',
+                    fecha_nacimiento: data.fecha_nacimiento || data.fechaNacimiento || '',
+                    sexo: data.sexo || '',
+                    telefono: data.telefono || telefono.value || '',
+                    email: data.email || email.value || '',
+                    direccion: data.direccion || direccion.value || ''
+                });
+            }
         } else {
             dniExiste.value = false;
             pacienteExistente.value = null;
         }
     } catch (error: any) {
-        // Si es 404, el paciente no existe (está bien)
         if (error.response?.status === 404) {
             dniExiste.value = false;
             pacienteExistente.value = null;
