@@ -102,7 +102,15 @@
               </td>
               <td class="px-6 py-4">
                 <div class="text-sm text-gray-900">
-                  {{ formatArea(medico.area) }}
+                  <span v-if="medico.area">{{ formatArea(medico.area) }}</span>
+                  <div v-else-if="medico.especialidades && medico.especialidades.length > 0"
+                    class="flex flex-wrap gap-1">
+                    <span v-for="esp in medico.especialidades" :key="esp.id"
+                      class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ esp.nombre }}
+                    </span>
+                  </div>
+                  <span v-else class="text-gray-400 text-xs italic">Sin especialidad</span>
                 </div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
@@ -220,7 +228,7 @@
 
     <!-- Modal de Crear/Editar -->
     <ModalFormMedico :visible="modalForm.visible" :es-edicion="modalForm.esEdicion" :medico-data="formData"
-      @close="cerrarModalForm" @save="guardarMedico" />
+      :guardando="modalForm.guardando" @close="cerrarModalForm" @save="guardarMedico" />
 
     <!-- Modal de Detalle -->
     <ModalDetalleMedico :visible="modalDetalle.visible" :medico="modalDetalle.medico" @close="cerrarModalDetalle"
@@ -261,6 +269,7 @@ const filtros = ref<Filtros>({
 const modalForm = ref({
   visible: false,
   esEdicion: false,
+  guardando: false,
 });
 
 const modalDetalle = ref<{
@@ -274,6 +283,9 @@ const modalDetalle = ref<{
 interface FormDataLocal {
   id: number;
   nombre: string;
+  nombres: string;
+  apellido_paterno: string;
+  apellido_materno: string;
   email: string;
   telefono: string;
   cmp: string;
@@ -285,11 +297,15 @@ interface FormDataLocal {
   direccion: string;
   username: string;
   password?: string;
+  especialidades?: any[];
 }
 
 const formData = ref<FormDataLocal>({
   id: 0,
   nombre: "",
+  nombres: "",
+  apellido_paterno: "",
+  apellido_materno: "",
   email: "",
   telefono: "",
   cmp: "",
@@ -301,6 +317,7 @@ const formData = ref<FormDataLocal>({
   direccion: "",
   username: "",
   password: "",
+  especialidades: []
 });
 
 const medicos = ref<Medico[]>([]);
@@ -393,6 +410,9 @@ const abrirModalCrear = () => {
   formData.value = {
     id: 0,
     nombre: "",
+    nombres: "",
+    apellido_paterno: "",
+    apellido_materno: "",
     email: "",
     telefono: "",
     cmp: "",
@@ -413,6 +433,9 @@ const editarMedico = (medico: any) => {
   formData.value = {
     id: medico.id,
     nombre: medico.nombre,
+    nombres: medico.nombres,
+    apellido_paterno: medico.apellido_paterno,
+    apellido_materno: medico.apellido_materno,
     email: medico.email,
     telefono: medico.telefono,
     cmp: medico.cmp,
@@ -424,6 +447,7 @@ const editarMedico = (medico: any) => {
     direccion: medico.direccion || "",
     username: medico.username,
     password: "",
+    especialidades: medico.especialidades || [],
   };
   if (modalDetalle.value.visible) {
     cerrarModalDetalle();
@@ -431,6 +455,20 @@ const editarMedico = (medico: any) => {
 };
 
 const guardarMedico = async (data: any) => {
+  const result = await Swal.fire({
+    title: modalForm.value.esEdicion ? '¿Actualizar profesional?' : '¿Registrar nuevo profesional?',
+    text: "Por favor, verifica que los datos ingresados sean los correctos.",
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#0D9488', // teal-600
+    cancelButtonColor: '#6B7280', // gray-500
+    confirmButtonText: 'Sí, continuar',
+    cancelButtonText: 'Revisar datos'
+  });
+
+  if (!result.isConfirmed) return;
+
+  modalForm.value.guardando = true;
   try {
     if (modalForm.value.esEdicion) {
       await medicoService.updateMedico(data.id, {
@@ -460,6 +498,8 @@ const guardarMedico = async (data: any) => {
     console.error(error);
     const msg = error.response?.data?.error || 'Ocurrió un error al guardar';
     Swal.fire('Error', msg, 'error');
+  } finally {
+    modalForm.value.guardando = false;
   }
 };
 
