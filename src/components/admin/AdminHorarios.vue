@@ -292,7 +292,10 @@ import {
     FunnelIcon,
     CheckCircleIcon,
     XCircleIcon,
-    ChevronRightIcon
+    ChevronRightIcon,
+    UserIcon,
+    ClockIcon,
+    XMarkIcon
 } from '@heroicons/vue/24/outline'
 
 const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
