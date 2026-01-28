@@ -102,14 +102,12 @@
                                     </div>
                                     <!-- Botón para agregar turno mañana si no existe -->
                                     <button v-else @click="abrirCrearHorario(dia.fecha, 'M')"
-                                        class="w-full mb-1 h-8 px-2 border-2 border-dashed border-amber-300 text-amber-500 rounded-lg hover:bg-amber-50 hover:border-amber-400 transition-all flex items-center justify-center gap-1 group overflow-hidden">
-                                        <div
-                                            class="flex items-center gap-1 group-hover:scale-110 transition-transform duration-200">
+                                        class="w-full mb-1 h-8 px-2 border-2 border-dashed border-amber-300 text-amber-500 rounded-lg hover:bg-amber-50 hover:border-amber-400 transition-all flex items-center justify-center gap-1 group overflow-hidden"
+                                        title="Crear turno Mañana">
+                                        <div class="flex items-center gap-1">
                                             <PlusIcon class="w-3.5 h-3.5" />
                                             <SunIcon class="w-3.5 h-3.5" />
                                         </div>
-                                        <span
-                                            class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 overflow-hidden transition-all duration-300 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider">Mañana</span>
                                     </button>
 
                                     <!-- Turno Tarde -->
@@ -136,14 +134,12 @@
                                     </div>
                                     <!-- Botón para agregar turno tarde si no existe -->
                                     <button v-else @click="abrirCrearHorario(dia.fecha, 'T')"
-                                        class="w-full h-8 px-2 border-2 border-dashed border-indigo-300 text-indigo-500 rounded-lg hover:bg-indigo-50 hover:border-indigo-400 transition-all flex items-center justify-center gap-1 group overflow-hidden">
-                                        <div
-                                            class="flex items-center gap-1 group-hover:scale-110 transition-transform duration-200">
+                                        class="w-full h-8 px-2 border-2 border-dashed border-indigo-300 text-indigo-500 rounded-lg hover:bg-indigo-50 hover:border-indigo-400 transition-all flex items-center justify-center gap-1 group overflow-hidden"
+                                        title="Crear turno Tarde">
+                                        <div class="flex items-center gap-1">
                                             <PlusIcon class="w-3.5 h-3.5" />
                                             <MoonIcon class="w-3.5 h-3.5" />
                                         </div>
-                                        <span
-                                            class="max-w-0 opacity-0 group-hover:max-w-xs group-hover:opacity-100 overflow-hidden transition-all duration-300 whitespace-nowrap text-[10px] font-bold uppercase tracking-wider">Tarde</span>
                                     </button>
                                 </div>
                             </div>
