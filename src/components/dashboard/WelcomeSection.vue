@@ -29,7 +29,7 @@
 import { computed } from 'vue';
 import { HandRaisedIcon } from '@heroicons/vue/24/solid';
 
-const props = defineProps<{
+defineProps<{
     nombreUsuario: string;
 }>();
 
