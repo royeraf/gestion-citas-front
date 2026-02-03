@@ -32,7 +32,7 @@
                     <div class="flex items-center gap-2">
                         <IdentificationIcon class="w-4 h-4 text-gray-500" />
                         <span class="text-sm text-gray-600">DNI: <span class="font-semibold">{{ paciente.dni
-                        }}</span></span>
+                                }}</span></span>
                     </div>
                     <span v-if="paciente.seguro"
                         :class="['px-3 py-1 text-sm font-medium rounded-full', paciente.seguro === 'SIS' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700']">
@@ -90,7 +90,7 @@
                                         </div>
                                     </div>
                                     <span v-if="errors.dni" class="text-red-500 text-xs mt-1 block">{{ errors.dni
-                                    }}</span>
+                                        }}</span>
                                     <!-- Aviso de edición de DNI -->
                                     <div v-if="isEditMode && editarDniHabilitado && !dniExiste"
                                         class="mt-2 p-2 bg-teal-50 border border-teal-200 rounded-lg">
@@ -150,7 +150,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.nombres }">
                                     <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Apellido Paterno -->
@@ -179,16 +179,16 @@
 
                                 <!-- Fecha de Nacimiento -->
                                 <div>
-                                    <HsDatePicker v-model="fecha_nacimiento" label="Fecha Nacimiento" :required="true"
-                                        :error="errors.fecha_nacimiento" :max-date="todayDate" min-date="1900-01-01"
-                                        format="dd/mm/yyyy" placeholder="Seleccionar fecha"
+                                    <HsDatePicker v-model="fecha_nacimiento" label="Fecha Nacimiento"
+                                        :required="!isEditMode" :error="errors.fecha_nacimiento" :max-date="todayDate"
+                                        min-date="1900-01-01" format="dd/mm/yyyy" placeholder="Seleccionar fecha"
                                         input-id="fecha_nacimiento" />
                                 </div>
 
                                 <!-- Sexo -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Sexo <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <select id="sexo" v-model="sexo" v-bind="sexoAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
                                         :class="{ 'border-red-500 bg-red-50': errors.sexo }">
@@ -202,7 +202,7 @@
                                 <!-- Estado Civil -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Estado Civil <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <select id="estado_civil" v-model="estado_civil" v-bind="estadoCivilAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
                                         :class="{ 'border-red-500 bg-red-50': errors.estado_civil }">
@@ -219,13 +219,13 @@
                                 <!-- Teléfono -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Teléfono / Celular <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="tel" id="telefono" v-model="telefono" v-bind="telefonoAttrs"
                                         maxlength="9" placeholder="999999999"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.telefono }">
                                     <span v-if="errors.telefono" class="text-red-500 text-xs mt-1">{{ errors.telefono
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Email -->
@@ -236,19 +236,19 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.email }">
                                     <span v-if="errors.email" class="text-red-500 text-xs mt-1">{{ errors.email
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Dirección -->
                                 <div class="md:col-span-3">
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Dirección <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="text" id="direccion" v-model="direccion" v-bind="direccionAttrs"
                                         placeholder="Dirección completa"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.direccion }">
                                     <span v-if="errors.direccion" class="text-red-500 text-xs mt-1">{{ errors.direccion
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +263,7 @@
                                 <!-- Grado Instrucción -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Grado Instrucción <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <select id="grado_instruccion" v-model="grado_instruccion"
                                         v-bind="gradoInstruccionAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
@@ -283,29 +283,29 @@
                                 <!-- Ocupación -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Ocupación <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="text" id="ocupacion" v-model="ocupacion" v-bind="ocupacionAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.ocupacion }">
                                     <span v-if="errors.ocupacion" class="text-red-500 text-xs mt-1">{{ errors.ocupacion
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Religión -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Religión <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="text" id="religion" v-model="religion" v-bind="religionAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.religion }">
                                     <span v-if="errors.religion" class="text-red-500 text-xs mt-1">{{ errors.religion
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Procedencia -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Procedencia <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="text" id="procedencia" v-model="procedencia" v-bind="procedenciaAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
                                         :class="{ 'border-red-500 bg-red-50': errors.procedencia }">
@@ -325,7 +325,7 @@
                                 <!-- Tipo Seguro -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Tipo de Seguro <span
-                                            class="text-red-500">*</span></label>
+                                            class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <select id="seguro" v-model="seguro" v-bind="seguroAttrs"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm bg-white"
                                         :class="{ 'border-red-500 bg-red-50': errors.seguro }">
@@ -334,13 +334,13 @@
                                         <option value="ESSALUD">ESSALUD</option>
                                     </select>
                                     <span v-if="errors.seguro" class="text-red-500 text-xs mt-1">{{ errors.seguro
-                                    }}</span>
+                                        }}</span>
                                 </div>
 
                                 <!-- Número de Seguro -->
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Número de Afiliación
-                                        <span class="text-red-500">*</span></label>
+                                        <span class="text-red-500" v-if="!isEditMode">*</span></label>
                                     <input type="text" id="numero_seguro" v-model="numero_seguro"
                                         v-bind="numeroSeguroAttrs" placeholder="000-000-000000"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
@@ -434,29 +434,54 @@ const editarDniHabilitado = ref(false);
 const todayDate = new Date().toISOString().split('T')[0];
 
 // Esquema de validación con yup
-const schema = yup.object({
-    dni: yup.string()
-        .required('El DNI es obligatorio')
-        .length(8, 'El DNI debe tener 8 dígitos')
-        .matches(/^[0-9]+$/, 'El DNI solo debe contener números'),
-    nombres: yup.string().required('Los nombres son obligatorios'),
-    apellido_paterno: yup.string().required('El apellido paterno es obligatorio'),
-    apellido_materno: yup.string().required('El apellido materno es obligatorio'),
-    fecha_nacimiento: yup.string().required('La fecha de nacimiento es obligatoria'),
-    sexo: yup.string().required('El sexo es obligatorio'),
-    estado_civil: yup.string().required('El estado civil es obligatorio'),
-    telefono: yup.string()
-        .required('El teléfono es obligatorio')
-        .matches(/^[0-9]+$/, 'Solo números')
-        .min(9, 'El teléfono debe tener 9 dígitos'),
-    email: yup.string().email('El email no es válido').nullable(),
-    direccion: yup.string().required('La dirección es obligatoria'),
-    grado_instruccion: yup.string().required('El grado de instrucción es obligatorio'),
-    ocupacion: yup.string().required('La ocupación es obligatoria'),
-    religion: yup.string().required('La religión es obligatoria'),
-    procedencia: yup.string().required('La procedencia es obligatoria'),
-    seguro: yup.string().required('El tipo de seguro es obligatorio'),
-    numero_seguro: yup.string().required('El número de afiliación es obligatorio')
+const schema = computed(() => {
+    const baseSchema = {
+        dni: yup.string()
+            .required('El DNI es obligatorio')
+            .length(8, 'El DNI debe tener 8 dígitos')
+            .matches(/^[0-9]+$/, 'El DNI solo debe contener números'),
+        nombres: yup.string().required('Los nombres son obligatorios'),
+        apellido_paterno: yup.string().required('El apellido paterno es obligatorio'),
+        apellido_materno: yup.string().required('El apellido materno es obligatorio'),
+        email: yup.string().email('El email no es válido').nullable(),
+    };
+
+    if (isEditMode.value) {
+        return yup.object({
+            ...baseSchema,
+            fecha_nacimiento: yup.string().nullable(),
+            sexo: yup.string().nullable(),
+            estado_civil: yup.string().nullable(),
+            telefono: yup.string().nullable()
+                .test('is-number', 'Solo números', val => !val || /^[0-9]+$/.test(val))
+                .test('len', 'El teléfono debe tener 9 dígitos', val => !val || val.length >= 9),
+            direccion: yup.string().nullable(),
+            grado_instruccion: yup.string().nullable(),
+            ocupacion: yup.string().nullable(),
+            religion: yup.string().nullable(),
+            procedencia: yup.string().nullable(),
+            seguro: yup.string().nullable(),
+            numero_seguro: yup.string().nullable()
+        });
+    }
+
+    return yup.object({
+        ...baseSchema,
+        fecha_nacimiento: yup.string().required('La fecha de nacimiento es obligatoria'),
+        sexo: yup.string().required('El sexo es obligatorio'),
+        estado_civil: yup.string().required('El estado civil es obligatorio'),
+        telefono: yup.string()
+            .required('El teléfono es obligatorio')
+            .matches(/^[0-9]+$/, 'Solo números')
+            .min(9, 'El teléfono debe tener 9 dígitos'),
+        direccion: yup.string().required('La dirección es obligatoria'),
+        grado_instruccion: yup.string().required('El grado de instrucción es obligatorio'),
+        ocupacion: yup.string().required('La ocupación es obligatoria'),
+        religion: yup.string().required('La religión es obligatoria'),
+        procedencia: yup.string().required('La procedencia es obligatoria'),
+        seguro: yup.string().required('El tipo de seguro es obligatorio'),
+        numero_seguro: yup.string().required('El número de afiliación es obligatorio')
+    });
 });
 
 // Configuración de vee-validate
