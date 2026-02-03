@@ -10,19 +10,28 @@ export interface User {
     dni?: string
     activo?: boolean
     createdAt?: string | null
+    persona?: {
+        nombres: string
+        apellido_paterno: string
+        apellido_materno: string
+        dni: string
+    }
 }
 
 export interface CreateUserPayload {
-    name: string
-    username: string
+    nombres: string
+    apellido_paterno: string
+    apellido_materno: string
+    dni: string
     password: string
     role: 'admin' | 'profesional' | 'asistente'
-    dni?: string
 }
 
 export interface UpdateUserPayload {
-    name?: string
-    username?: string
+    nombres?: string
+    apellido_paterno?: string
+    apellido_materno?: string
+    dni?: string
     password?: string
     role?: 'admin' | 'profesional' | 'asistente'
     activo?: boolean
@@ -31,6 +40,12 @@ export interface UpdateUserPayload {
 export interface ListUsersParams {
     role?: 'admin' | 'profesional' | 'asistente'
     search?: string
+}
+
+export interface DniResponse {
+    nombres: string
+    apellido_paterno: string
+    apellido_materno: string
 }
 
 const userService = {
@@ -65,7 +80,13 @@ const userService = {
         return api.delete<{
             message: string
         }>(`/auth/users/${id}`)
+    },
+
+    // Verificar DNI y obtener datos de RENIEC
+    verificarDni(dni: string) {
+        return api.post<DniResponse>('/dni/', { dni })
     }
 }
 
 export default userService
+

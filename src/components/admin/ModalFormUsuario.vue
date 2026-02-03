@@ -3,8 +3,7 @@
         enter-to-class="opacity-100" leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100"
         leave-to-class="opacity-0">
         <div v-if="visible"
-            class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4"
-            @click.self="cerrar">
+            class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 px-4">
             <div
                 class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl transform transition-all max-h-[90vh] overflow-hidden flex flex-col">
 
@@ -26,55 +25,147 @@
                 <!-- Contenido del modal -->
                 <div class="p-6 overflow-y-auto flex-1">
                     <form @submit="onSubmit" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Nombre Completo <span class="text-red-500">*</span>
-                                </label>
-                                <input v-model="name" v-bind="nameAttrs" type="text"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent uppercase"
-                                    :class="{ 'border-red-500': errors.name }" placeholder="JUAN PÉREZ"
-                                    @input="name = ($event.target as HTMLInputElement).value.toUpperCase()" />
-                                <span v-if="errors.name" class="text-red-500 text-xs mt-1">{{ errors.name }}</span>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Usuario (DNI) <span class="text-red-500">*</span>
-                                </label>
-                                <input v-model="username" v-bind="usernameAttrs" type="text" maxlength="8"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                    :class="{ 'border-red-500': errors.username }" placeholder="12345678" />
-                                <span v-if="errors.username" class="text-red-500 text-xs mt-1">{{ errors.username
-                                }}</span>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Contraseña <span v-if="!esEdicion" class="text-red-500">*</span>
-                                </label>
-                                <div class="relative">
-                                    <input v-model="password" v-bind="passwordAttrs"
-                                        :type="showPassword ? 'text' : 'password'"
-                                        class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                        :class="{ 'border-red-500': errors.password }"
-                                        :placeholder="esEdicion ? 'Dejar vacío para mantener' : '********'" />
-                                    <button type="button" @click="showPassword = !showPassword"
-                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
-                                        <EyeSlashIcon v-if="showPassword" class="w-5 h-5" />
-                                        <EyeIcon v-else class="w-5 h-5" />
-                                    </button>
+                        <!-- Sección: Datos Personales -->
+                        <div class="border-b border-gray-200 pb-4 mb-4">
+                            <h4
+                                class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <UserIcon class="w-4 h-4" />
+                                Datos Personales
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="col-span-1 md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Nombres <span class="text-red-500">*</span>
+                                    </label>
+                                    <input v-model="nombres" v-bind="nombresAttrs" type="text"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none uppercase"
+                                        :class="{ 'border-red-500': errors.nombres }" placeholder="JUAN CARLOS"
+                                        @input="nombres = ($event.target as HTMLInputElement).value.toUpperCase()" />
+                                    <span v-if="errors.nombres" class="text-red-500 text-xs mt-1">{{ errors.nombres
+                                        }}</span>
                                 </div>
-                                <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password
-                                }}</span>
-                            </div>
 
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Apellido Paterno <span class="text-red-500">*</span>
+                                    </label>
+                                    <input v-model="apellidoPaterno" v-bind="apellidoPaternoAttrs" type="text"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none uppercase"
+                                        :class="{ 'border-red-500': errors.apellidoPaterno }" placeholder="PÉREZ"
+                                        @input="apellidoPaterno = ($event.target as HTMLInputElement).value.toUpperCase()" />
+                                    <span v-if="errors.apellidoPaterno" class="text-red-500 text-xs mt-1">{{
+                                        errors.apellidoPaterno }}</span>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Apellido Materno <span class="text-red-500">*</span>
+                                    </label>
+                                    <input v-model="apellidoMaterno" v-bind="apellidoMaternoAttrs" type="text"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none uppercase"
+                                        :class="{ 'border-red-500': errors.apellidoMaterno }" placeholder="GARCÍA"
+                                        @input="apellidoMaterno = ($event.target as HTMLInputElement).value.toUpperCase()" />
+                                    <span v-if="errors.apellidoMaterno" class="text-red-500 text-xs mt-1">{{
+                                        errors.apellidoMaterno }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección: Credenciales -->
+                        <div class="border-b border-gray-200 pb-4 mb-4">
+                            <h4
+                                class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <KeyIcon class="w-4 h-4" />
+                                Credenciales de Acceso
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        DNI <span class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input v-model="dni" v-bind="dniAttrs" type="text" maxlength="8"
+                                            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none"
+                                            :class="{
+                                                'border-red-500': errors.dni,
+                                                'border-green-500 bg-green-50': dniVerificado,
+                                                'border-blue-500': verificandoDni
+                                            }" placeholder="12345678" />
+                                        <div class="absolute right-3 top-1/2 -translate-y-1/2">
+                                            <ArrowPathIcon v-if="verificandoDni"
+                                                class="w-5 h-5 text-blue-500 animate-spin" />
+                                            <CheckCircleIcon v-else-if="dniVerificado" class="w-5 h-5 text-green-500" />
+                                        </div>
+                                    </div>
+                                    <span v-if="errors.dni" class="text-red-500 text-xs mt-1">{{ errors.dni }}</span>
+                                    <span v-else-if="verificandoDni"
+                                        class="text-blue-600 text-xs mt-1 flex items-center gap-1">
+                                        <ArrowPathIcon class="w-3 h-3 animate-spin" /> Verificando DNI en RENIEC...
+                                    </span>
+                                    <span v-else-if="dniVerificado"
+                                        class="text-green-600 text-xs mt-1 flex items-center gap-1">
+                                        <CheckIcon class="w-3 h-3" /> DNI verificado - datos autocompletados
+                                    </span>
+                                    <span v-else-if="dni.length === 8 && !esEdicion" class="text-gray-500 text-xs mt-1">
+                                        Ingrese un DNI válido para autocompletar datos
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Contraseña <span v-if="!esEdicion" class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input v-model="password" v-bind="passwordAttrs"
+                                            :type="showPassword ? 'text' : 'password'"
+                                            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none"
+                                            :class="{ 'border-red-500': errors.password }"
+                                            :placeholder="esEdicion ? 'Dejar vacío para mantener' : '********'" />
+                                        <button type="button" @click="showPassword = !showPassword"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                                            <EyeSlashIcon v-if="showPassword" class="w-5 h-5" />
+                                            <EyeIcon v-else class="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password
+                                        }}</span>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Confirmar Contraseña <span v-if="!esEdicion" class="text-red-500">*</span>
+                                    </label>
+                                    <div class="relative">
+                                        <input v-model="confirmPassword" v-bind="confirmPasswordAttrs"
+                                            :type="showConfirmPassword ? 'text' : 'password'"
+                                            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none"
+                                            :class="{ 'border-red-500': errors.confirmPassword }"
+                                            :placeholder="esEdicion ? 'Dejar vacío para mantener' : '********'" />
+                                        <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
+                                            <EyeSlashIcon v-if="showConfirmPassword" class="w-5 h-5" />
+                                            <EyeIcon v-else class="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                    <span v-if="errors.confirmPassword" class="text-red-500 text-xs mt-1">{{
+                                        errors.confirmPassword }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección: Rol -->
+                        <div>
+                            <h4
+                                class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3 flex items-center gap-2">
+                                <ShieldCheckIcon class="w-4 h-4" />
+                                Rol del Sistema
+                            </h4>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
                                     Rol <span class="text-red-500">*</span>
                                 </label>
                                 <select v-model="role" v-bind="roleAttrs"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-white"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent focus:outline-none bg-white"
                                     :class="{ 'border-red-500': errors.role }">
                                     <option value="">Seleccionar rol</option>
                                     <option value="admin">Administrador</option>
@@ -119,21 +210,31 @@
 import { computed, ref, watch } from 'vue'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
+import userService from '../../services/userService'
 import {
     XMarkIcon,
     CheckIcon,
     ArrowPathIcon,
     ExclamationCircleIcon,
     EyeIcon,
-    EyeSlashIcon
+    EyeSlashIcon,
+    UserIcon,
+    KeyIcon,
+    ShieldCheckIcon,
+    CheckCircleIcon
 } from '@heroicons/vue/24/outline'
 
 const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+const verificandoDni = ref(false)
+const dniVerificado = ref(false)
 
-interface UserFormData {
+export interface UserFormData {
     id: number
-    name: string
-    username: string
+    nombres: string
+    apellidoPaterno: string
+    apellidoMaterno: string
+    dni: string
     password: string
     role: 'admin' | 'profesional' | 'asistente' | ''
 }
@@ -158,18 +259,31 @@ const emit = defineEmits<{
 
 // Esquema de validación con yup
 const schema = computed(() => yup.object({
-    name: yup.string()
-        .required('El nombre completo es obligatorio')
-        .min(3, 'El nombre debe tener al menos 3 caracteres')
-        .matches(/^[A-ZÁÉÍÓÚÑ\s]+$/, 'El nombre debe estar en mayúsculas'),
-    username: yup.string()
-        .required('El usuario (DNI) es obligatorio')
+    nombres: yup.string()
+        .required('Los nombres son obligatorios')
+        .min(2, 'Los nombres deben tener al menos 2 caracteres')
+        .matches(/^[A-ZÁÉÍÓÚÑ\s]+$/, 'Los nombres deben estar en mayúsculas'),
+    apellidoPaterno: yup.string()
+        .required('El apellido paterno es obligatorio')
+        .min(2, 'El apellido debe tener al menos 2 caracteres')
+        .matches(/^[A-ZÁÉÍÓÚÑ\s]+$/, 'El apellido debe estar en mayúsculas'),
+    apellidoMaterno: yup.string()
+        .required('El apellido materno es obligatorio')
+        .min(2, 'El apellido debe tener al menos 2 caracteres')
+        .matches(/^[A-ZÁÉÍÓÚÑ\s]+$/, 'El apellido debe estar en mayúsculas'),
+    dni: yup.string()
+        .required('El DNI es obligatorio')
         .matches(/^\d{8}$/, 'El DNI debe contener exactamente 8 dígitos numéricos'),
     password: props.esEdicion
         ? yup.string().nullable()
         : yup.string()
             .required('La contraseña es obligatoria')
             .min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    confirmPassword: props.esEdicion
+        ? yup.string().nullable()
+        : yup.string()
+            .required('Debe confirmar la contraseña')
+            .oneOf([yup.ref('password')], 'Las contraseñas no coinciden'),
     role: yup.string()
         .required('Debe seleccionar un rol')
         .oneOf(['admin', 'profesional', 'asistente'], 'Seleccione un rol válido')
@@ -178,9 +292,12 @@ const schema = computed(() => yup.object({
 const { handleSubmit, resetForm, errors, defineField } = useForm({
     validationSchema: schema,
     initialValues: {
-        name: '',
-        username: '',
+        nombres: '',
+        apellidoPaterno: '',
+        apellidoMaterno: '',
+        dni: '',
         password: '',
+        confirmPassword: '',
         role: ''
     },
     validateOnMount: false
@@ -192,9 +309,12 @@ const fieldConfig = {
     validateOnBlur: true
 }
 
-const [name, nameAttrs] = defineField('name', fieldConfig)
-const [username, usernameAttrs] = defineField('username', fieldConfig)
+const [nombres, nombresAttrs] = defineField('nombres', fieldConfig)
+const [apellidoPaterno, apellidoPaternoAttrs] = defineField('apellidoPaterno', fieldConfig)
+const [apellidoMaterno, apellidoMaternoAttrs] = defineField('apellidoMaterno', fieldConfig)
+const [dni, dniAttrs] = defineField('dni', fieldConfig)
 const [password, passwordAttrs] = defineField('password', fieldConfig)
+const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword', fieldConfig)
 const [role, roleAttrs] = defineField('role', fieldConfig)
 
 watch(() => props.visible, (newVal) => {
@@ -202,9 +322,12 @@ watch(() => props.visible, (newVal) => {
         // Modo edición: cargar datos del usuario
         resetForm({
             values: {
-                name: props.userData.name,
-                username: props.userData.username,
+                nombres: props.userData.nombres,
+                apellidoPaterno: props.userData.apellidoPaterno,
+                apellidoMaterno: props.userData.apellidoMaterno,
+                dni: props.userData.dni,
                 password: '',
+                confirmPassword: '',
                 role: props.userData.role
             }
         })
@@ -212,35 +335,75 @@ watch(() => props.visible, (newVal) => {
         // Modo nuevo: limpiar formulario y errores
         resetForm({
             values: {
-                name: '',
-                username: '',
+                nombres: '',
+                apellidoPaterno: '',
+                apellidoMaterno: '',
+                dni: '',
                 password: '',
+                confirmPassword: '',
                 role: ''
             }
         })
     }
     // Resetear estado de mostrar contraseña
     showPassword.value = false
+    showConfirmPassword.value = false
 })
+
+// Watcher para verificar DNI automáticamente cuando tenga 8 dígitos
+watch(dni, async (newDni) => {
+    // Solo verificar si es modo creación y tiene exactamente 8 dígitos numéricos
+    if (!props.esEdicion && /^\d{8}$/.test(newDni)) {
+        verificandoDni.value = true
+        dniVerificado.value = false
+
+        try {
+            const { data } = await userService.verificarDni(newDni)
+
+            // Autocompletar los campos con los datos de RENIEC
+            if (data.nombres) {
+                nombres.value = data.nombres
+                apellidoPaterno.value = data.apellido_paterno || ''
+                apellidoMaterno.value = data.apellido_materno || ''
+                dniVerificado.value = true
+            }
+        } catch (error: any) {
+            console.error('Error al verificar DNI:', error)
+            // No mostrar error, solo dejar que el usuario ingrese manualmente
+            dniVerificado.value = false
+        } finally {
+            verificandoDni.value = false
+        }
+    } else {
+        // Resetear estado si el DNI no tiene 8 dígitos
+        dniVerificado.value = false
+    }
+}, { immediate: false })
 
 const cerrar = () => {
     emit('close')
     resetForm({
         values: {
-            name: '',
-            username: '',
+            nombres: '',
+            apellidoPaterno: '',
+            apellidoMaterno: '',
+            dni: '',
             password: '',
+            confirmPassword: '',
             role: ''
         }
     })
     showPassword.value = false
+    dniVerificado.value = false
 }
 
 const onSubmit = handleSubmit((values) => {
     const formData: UserFormData = {
         id: props.userData?.id || 0,
-        name: values.name,
-        username: values.username,
+        nombres: values.nombres,
+        apellidoPaterno: values.apellidoPaterno,
+        apellidoMaterno: values.apellidoMaterno,
+        dni: values.dni,
         password: values.password || '',
         role: values.role as 'admin' | 'profesional' | 'asistente' | ''
     }

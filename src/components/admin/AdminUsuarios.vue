@@ -203,7 +203,7 @@
                         <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span>
                         a
                         <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, usuariosFiltrados.length)
-                        }}</span>
+                            }}</span>
                         de
                         <span class="font-medium">{{ usuariosFiltrados.length }}</span>
                         resultados
@@ -267,6 +267,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import userService, { type User, type CreateUserPayload, type UpdateUserPayload } from '../../services/userService'
 import ModalFormUsuario from './ModalFormUsuario.vue'
+import Swal from 'sweetalert2'
 import {
     PlusIcon,
     UsersIcon,
@@ -287,8 +288,10 @@ import {
 // --- Lógica de Usuarios ---
 const newUser = ref({
     id: 0,
-    name: '',
-    username: '',
+    nombres: '',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    dni: '',
     password: '',
     role: '' as 'admin' | 'profesional' | 'asistente' | '',
 })
@@ -417,7 +420,7 @@ const fetchUsers = async () => {
 const abrirModalCrear = () => {
     modalVisible.value = true
     esEdicion.value = false
-    newUser.value = { id: 0, name: '', username: '', password: '', role: '' }
+    newUser.value = { id: 0, nombres: '', apellidoPaterno: '', apellidoMaterno: '', dni: '', password: '', role: '' }
     errorMessage.value = ''
 }
 
@@ -426,8 +429,10 @@ const editarUsuario = (user: User) => {
     esEdicion.value = true
     newUser.value = {
         id: user.id,
-        name: user.name,
-        username: user.username,
+        nombres: user.persona?.nombres || '',
+        apellidoPaterno: user.persona?.apellido_paterno || '',
+        apellidoMaterno: user.persona?.apellido_materno || '',
+        dni: user.dni || user.username,
         password: '',
         role: user.role
     }
@@ -437,19 +442,27 @@ const editarUsuario = (user: User) => {
 const cerrarModal = () => {
     modalVisible.value = false
     esEdicion.value = false
-    newUser.value = { id: 0, name: '', username: '', password: '', role: '' }
+    newUser.value = { id: 0, nombres: '', apellidoPaterno: '', apellidoMaterno: '', dni: '', password: '', role: '' }
     errorMessage.value = ''
 }
 
-interface UserFormData {
-    id: number
-    name: string
-    username: string
-    password: string
-    role: 'admin' | 'profesional' | 'asistente' | ''
-}
+import type { UserFormData } from './ModalFormUsuario.vue'
 
 const guardarUsuario = async (userData: UserFormData) => {
+    // 1. Confirmación con SweetAlert
+    const confirmResult = await Swal.fire({
+        title: esEdicion.value ? '¿Actualizar usuario?' : '¿Crear nuevo usuario?',
+        text: "Por favor verifique que los datos sean correctos",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#0d9488', // teal-600
+        cancelButtonColor: '#6b7280', // gray-500
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar'
+    })
+
+    if (!confirmResult.isConfirmed) return
+
     // Actualizar newUser con los datos recibidos
     newUser.value = { ...userData }
     errorMessage.value = ''
@@ -458,8 +471,10 @@ const guardarUsuario = async (userData: UserFormData) => {
     try {
         if (esEdicion.value) {
             const payload: UpdateUserPayload = {
-                name: userData.name,
-                username: userData.username,
+                nombres: userData.nombres,
+                apellido_paterno: userData.apellidoPaterno,
+                apellido_materno: userData.apellidoMaterno,
+                dni: userData.dni,
                 role: userData.role as 'admin' | 'profesional' | 'asistente'
             }
             // Solo incluir password si se proporcionó uno nuevo
@@ -467,26 +482,53 @@ const guardarUsuario = async (userData: UserFormData) => {
                 payload.password = userData.password
             }
             await userService.updateUser(userData.id, payload)
-            mostrarToast('Usuario actualizado exitosamente', 'success')
         } else {
             const payload: CreateUserPayload = {
-                name: userData.name,
-                username: userData.username,
+                nombres: userData.nombres,
+                apellido_paterno: userData.apellidoPaterno,
+                apellido_materno: userData.apellidoMaterno,
+                dni: userData.dni,
                 password: userData.password,
                 role: userData.role as 'admin' | 'profesional' | 'asistente'
             }
             await userService.createUser(payload)
-            mostrarToast('Usuario creado exitosamente', 'success')
         }
 
-        await fetchUsers()
+        // 1. Apagar loading inmediatamente tras éxito
+        isLoading.value = false
+
+        // Capturar estado de edición antes de resetearlo
+        const fueEdicion = esEdicion.value
+
+        // 2. Cerrar modal para limpiar la vista (esto resetea esEdicion a false)
         cerrarModal()
+
+        // 3. Refrescar lista en segundo plano
+        await fetchUsers()
+
+        // 4. Mostrar mensaje de éxito usando la variable capturada
+        await Swal.fire({
+            title: fueEdicion ? '¡Actualizado!' : '¡Creado!',
+            text: fueEdicion ? 'El usuario ha sido actualizado exitosamente.' : 'El usuario ha sido creado exitosamente.',
+            icon: 'success',
+            confirmButtonColor: '#0d9488',
+            timer: 2000,
+            timerProgressBar: true
+        })
+
     } catch (error: any) {
+        isLoading.value = false // Asegurar que se apague en caso de error
         const mensaje = error?.response?.data?.error || error?.response?.data?.message || 'Error al guardar usuario'
         errorMessage.value = mensaje
         console.error('Error al guardar usuario:', error)
-    } finally {
-        isLoading.value = false
+
+        // Mostrar error con SweetAlert también
+        Swal.fire({
+            title: 'Error',
+            text: mensaje,
+            icon: 'error',
+            confirmButtonColor: '#d33'
+        })
     }
 }
 
