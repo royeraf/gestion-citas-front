@@ -11,7 +11,7 @@ export interface Manual {
 
 export const manualService = {
   getManuales() {
-    return api.get<Manual[]>('/manuales');
+    return api.get<Manual[]>('/manuales/');
   },
 
   getManualesPorRol(rolId: number) {
