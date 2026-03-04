@@ -83,19 +83,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   // intenta reconstruir user desde token si no tenemos user (opcional)
   async function fetchProfile() {
-    try {
-      const { data } = await api.get<{ user: User }>('/auth/perfil') 
-      // Note: Endpoint matching might vary. API shows /perfil returns {user: ...}
-      // Usually not needed if we persist user in localStorage, unless logical check.
-      // But keeping existing logic structure.
-      if (data.user) {
-         user.value = data.user
-      }
-      return data
-    } catch {
-      // si falla, no hacemos logout forzado aquí para no ser molestos, 
-      // el interceptor 401 se encargará si es crítico.
+    const { data } = await api.get<{ user: User }>('/auth/perfil')
+    if (data.user) {
+      user.value = data.user
     }
+    return data
   }
 
   return {

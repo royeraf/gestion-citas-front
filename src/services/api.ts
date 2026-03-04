@@ -34,8 +34,11 @@ api.interceptors.response.use(
         // reintentar la petición original (ahora tendrá la nueva cookie)
         return api(originalRequest);
       } catch (err) {
-        // Si falla el refresh, limpiamos rastro local y rechazamos para que el router actúe
+        // Si falla el refresh, limpiamos rastro local y estado de Pinia
         localStorage.removeItem('user');
+        const { useAuthStore } = await import('../store/auth');
+        const auth = useAuthStore();
+        auth.setSession(null);
         return Promise.reject(err);
       }
     }

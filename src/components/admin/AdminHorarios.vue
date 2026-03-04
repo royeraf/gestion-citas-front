@@ -428,7 +428,7 @@ const limpiarFiltros = () => {
 const fetchAreas = async () => {
     try {
         const { data } = await api.get('/areas/')
-        areas.value = data
+        areas.value = data.filter((a: any) => a.activo)
     } catch (error) {
         console.error('Error al cargar áreas', error)
     }
