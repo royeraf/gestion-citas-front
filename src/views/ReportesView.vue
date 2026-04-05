@@ -23,6 +23,7 @@
                         <ChartBarIcon class="w-5 h-5" />
                         Estadísticas Generales
                     </button>
+                    <!--
                     <button @click="activeTab = 'indicadores'" :class="[
                         activeTab === 'indicadores'
                             ? 'border-teal-500 text-teal-600'
@@ -32,6 +33,7 @@
                         <PresentationChartLineIcon class="w-5 h-5" />
                         Indicadores de Tesis
                     </button>
+                    -->
                 </nav>
             </div>
 
@@ -65,10 +67,14 @@
                                 <option v-for="area in areas" :key="area.id" :value="area.id">{{ area.nombre }}</option>
                             </select>
                         </div>
-                        <button @click="generarReporte"
-                            class="w-full md:w-auto bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-2.5 px-6 rounded-xl shadow-lg shadow-teal-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 flex items-center justify-center gap-2">
-                            <ChartBarIcon class="w-5 h-5" />
-                            Generar Reporte
+                        <button @click="generarReporte" :disabled="loading"
+                            class="w-full md:w-auto bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold py-2.5 px-6 rounded-xl shadow-lg shadow-teal-500/25 transition-all duration-200 hover:shadow-xl hover:shadow-teal-500/30 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <svg v-if="loading" class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <ChartBarIcon v-else class="w-5 h-5" />
+                            {{ loading ? 'Cargando...' : 'Generar Reporte' }}
                         </button>
                     </div>
                 </div>
@@ -176,11 +182,18 @@
                             </div>
                             <h3 class="text-lg font-semibold text-gray-800">Detalle de Citas</h3>
                         </div>
-                        <button @click="exportarPDF"
-                            class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm">
-                            <DocumentTextIcon class="w-4 h-4" />
-                            Exportar PDF
+                        <button @click="exportarPDF" :disabled="exportandoPDF"
+                            class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-xl shadow-lg transition-all duration-200 text-sm disabled:opacity-60 disabled:cursor-not-allowed">
+                            <svg v-if="exportandoPDF" class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <DocumentTextIcon v-else class="w-4 h-4" />
+                            {{ exportandoPDF ? 'Generando...' : 'Exportar PDF' }}
                         </button>
+                    </div>
+                    <div v-if="errorExport" class="mx-6 mt-3 px-4 py-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                        {{ errorExport }}
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -224,8 +237,8 @@
                 </div>
             </div>
 
-            <!-- Tab: Indicadores de Tesis -->
-            <div v-show="activeTab === 'indicadores'">
+            <!-- Tab: Indicadores de Tesis (Requerimiento: no mostrar, comentado) -->
+            <div v-if="false" v-show="activeTab === 'indicadores'">
                 <!-- Filtros Indicadores -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
                     <div class="flex items-center gap-3 mb-6">
@@ -278,16 +291,16 @@
                             <span class="text-xs font-medium text-gray-400 uppercase">Dimensión 1</span>
                         </div>
                         <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">{{
-                            indicadores.utilizacion_capacidad.nombre }}</p>
+                            indicadores?.utilizacion_capacidad.nombre }}</p>
                         <p class="mt-2 text-4xl font-bold text-gray-900">
-                            {{ indicadores.utilizacion_capacidad.valor }}<span class="text-2xl text-gray-400">%</span>
+                            {{ indicadores?.utilizacion_capacidad.valor }}<span class="text-2xl text-gray-400">%</span>
                         </p>
-                        <p class="mt-2 text-xs text-gray-500">{{ indicadores.utilizacion_capacidad.descripcion }}</p>
+                        <p class="mt-2 text-xs text-gray-500">{{ indicadores?.utilizacion_capacidad.descripcion }}</p>
                         <div class="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
                             <p><strong>Citas programadas:</strong> {{
-                                indicadores.utilizacion_capacidad.componentes.citas_programadas }}</p>
+                                indicadores?.utilizacion_capacidad.componentes.citas_programadas }}</p>
                             <p><strong>Cupos totales:</strong> {{
-                                indicadores.utilizacion_capacidad.componentes.cupos_totales }}</p>
+                                indicadores?.utilizacion_capacidad.componentes.cupos_totales }}</p>
                         </div>
                     </div>
 
@@ -301,16 +314,16 @@
                             <span class="text-xs font-medium text-gray-400 uppercase">Dimensión 2</span>
                         </div>
                         <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">{{
-                            indicadores.tasa_inasistencia.nombre }}</p>
+                            indicadores?.tasa_inasistencia.nombre }}</p>
                         <p class="mt-2 text-4xl font-bold text-gray-900">
-                            {{ indicadores.tasa_inasistencia.valor }}<span class="text-2xl text-gray-400">%</span>
+                            {{ indicadores?.tasa_inasistencia.valor }}<span class="text-2xl text-gray-400">%</span>
                         </p>
-                        <p class="mt-2 text-xs text-gray-500">{{ indicadores.tasa_inasistencia.descripcion }}</p>
+                        <p class="mt-2 text-xs text-gray-500">{{ indicadores?.tasa_inasistencia.descripcion }}</p>
                         <div class="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
-                            <p><strong>No asistieron:</strong> {{ indicadores.tasa_inasistencia.componentes.no_shows }}
+                            <p><strong>No asistieron:</strong> {{ indicadores?.tasa_inasistencia.componentes.no_shows }}
                             </p>
                             <p><strong>Citas confirmadas:</strong> {{
-                                indicadores.tasa_inasistencia.componentes.citas_confirmadas }}</p>
+                                indicadores?.tasa_inasistencia.componentes.citas_confirmadas }}</p>
                         </div>
                     </div>
 
@@ -324,13 +337,13 @@
                             <span class="text-xs font-medium text-gray-400 uppercase">Dimensión 3</span>
                         </div>
                         <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">{{
-                            indicadores.lead_time.nombre }}</p>
+                            indicadores?.lead_time.nombre }}</p>
                         <p class="mt-2 text-4xl font-bold text-gray-900">
-                            {{ indicadores.lead_time.valor }}<span class="text-2xl text-gray-400"> días</span>
+                            {{ indicadores?.lead_time.valor }}<span class="text-2xl text-gray-400"> días</span>
                         </p>
-                        <p class="mt-2 text-xs text-gray-500">{{ indicadores.lead_time.descripcion }}</p>
+                        <p class="mt-2 text-xs text-gray-500">{{ indicadores?.lead_time.descripcion }}</p>
                         <div class="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500">
-                            <p><strong>Fórmula:</strong> {{ indicadores.lead_time.formula }}</p>
+                            <p><strong>Fórmula:</strong> {{ indicadores?.lead_time.formula }}</p>
                         </div>
                     </div>
                 </div>
@@ -346,21 +359,21 @@
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="bg-green-50 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-green-600">{{ indicadorEstadisticas.citas_atendidas }}</p>
+                            <p class="text-2xl font-bold text-green-600">{{ indicadorEstadisticas?.citas_atendidas }}</p>
                             <p class="text-sm text-gray-600">Citas Atendidas</p>
                         </div>
                         <div class="bg-red-50 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-red-600">{{ indicadorEstadisticas.citas_canceladas }}</p>
+                            <p class="text-2xl font-bold text-red-600">{{ indicadorEstadisticas?.citas_canceladas }}</p>
                             <p class="text-sm text-gray-600">Canceladas</p>
                         </div>
                         <div class="bg-amber-50 rounded-xl p-4 text-center">
-                            <p class="text-2xl font-bold text-amber-600">{{ indicadorEstadisticas.citas_no_asistio }}
+                            <p class="text-2xl font-bold text-amber-600">{{ indicadorEstadisticas?.citas_no_asistio }}
                             </p>
                             <p class="text-sm text-gray-600">No Asistieron</p>
                         </div>
                         <div class="bg-indigo-50 rounded-xl p-4 text-center">
                             <p class="text-2xl font-bold text-indigo-600">{{
-                                indicadorEstadisticas.tasa_atencion_efectiva }}%</p>
+                                indicadorEstadisticas?.tasa_atencion_efectiva }}%</p>
                             <p class="text-sm text-gray-600">Tasa de Atención</p>
                         </div>
                     </div>
@@ -435,6 +448,7 @@
 import { ref, onMounted, nextTick, watch } from 'vue';
 import * as d3 from 'd3';
 import areaService from '../services/areaService';
+import reporteService from '../services/reporteService';
 import indicadorService, { type IndicadoresResponse, type DatosArea } from '../services/indicadorService';
 import {
     ChartBarIcon,
@@ -467,25 +481,26 @@ const filtros = ref({
 });
 
 const stats = ref({
-    totalCitas: 340,
-    tasaAsistencia: 85,
-    cancelaciones: 24
+    totalCitas: 0,
+    tasaAsistencia: 0,
+    cancelaciones: 0
 });
 
 const chartContainer = ref<HTMLElement | null>(null);
 const pieChartContainer = ref<HTMLElement | null>(null);
 
-// Datos de ejemplo para especialidades
-const especialidades = ref([
-    { nombre: 'Medicina General', cantidad: 120, porcentaje: 35 },
-    { nombre: 'Odontología', cantidad: 85, porcentaje: 25 },
-    { nombre: 'Psicología', cantidad: 60, porcentaje: 18 },
-    { nombre: 'Nutrición', cantidad: 45, porcentaje: 13 },
-    { nombre: 'Obstetricia', cantidad: 30, porcentaje: 9 }
-]);
+let chartDataMeses = ref<{ nombre: string; cantidad: number }[]>([]);
+let chartDataEstados = ref<{ label: string; value: number; color: string }[]>([]);
 
-// Datos de ejemplo para tabla detallada
+// Datos para especialidades
+const especialidades = ref<{ nombre: string; cantidad: number; porcentaje: number }[]>([]);
+
+// Datos para tabla detallada
 const citasDetalle = ref<{ id: number; fecha: string; paciente: string; especialidad: string; estado: string }[]>([]);
+
+const loading = ref(false);
+const exportandoPDF = ref(false);
+const errorExport = ref('');
 
 // ==================== Estado para Indicadores de Tesis ====================
 const indicadorFiltros = ref<{
@@ -516,14 +531,60 @@ const cargarAreas = async () => {
     }
 };
 
-const generarReporte = () => {
-    console.log('Generando reporte con filtros:', filtros.value);
-    // TODO: Implementar lógica de reporte
+const generarReporte = async () => {
+    loading.value = true;
+    try {
+        const params = {
+            fecha_inicio: filtros.value.fechaInicio,
+            fecha_fin: filtros.value.fechaFin,
+            area_id: filtros.value.especialidad
+        };
+        const response = await reporteService.getEstadisticas(params);
+        if (response.data.success) {
+            stats.value = response.data.stats;
+            especialidades.value = response.data.citasPorEspecialidad;
+            citasDetalle.value = response.data.citasDetalle;
+
+            chartDataMeses.value = response.data.citasAtendidasPorMes;
+            chartDataEstados.value = response.data.estadoCitas;
+
+            await nextTick();
+            renderChart();
+            renderPieChart();
+        }
+    } catch (error) {
+        console.error('Error al generar reporte:', error);
+    } finally {
+        loading.value = false;
+    }
 };
 
-const exportarPDF = () => {
-    console.log('Exportando PDF...');
-    // TODO: Implementar exportación a PDF
+const exportarPDF = async () => {
+    exportandoPDF.value = true;
+    errorExport.value = '';
+    try {
+        const params = {
+            fecha_inicio: filtros.value.fechaInicio,
+            fecha_fin: filtros.value.fechaFin,
+            area_id: filtros.value.especialidad || undefined
+        };
+        const response = await reporteService.exportarPDF(params);
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `reporte_citas_${filtros.value.fechaInicio}_${filtros.value.fechaFin}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+        console.error('Error al exportar PDF:', error);
+        errorExport.value = 'No se pudo generar el PDF. Intenta de nuevo.';
+        setTimeout(() => { errorExport.value = ''; }, 4000);
+    } finally {
+        exportandoPDF.value = false;
+    }
 };
 
 const getEstadoClass = (estado: string) => {
@@ -586,14 +647,9 @@ const renderChart = () => {
     if (!chartContainer.value) return;
     d3.select(chartContainer.value).selectAll('*').remove();
 
-    const data = [
-        { nombre: 'Ene', cantidad: 120 },
-        { nombre: 'Feb', cantidad: 145 },
-        { nombre: 'Mar', cantidad: 135 },
-        { nombre: 'Abr', cantidad: 160 },
-        { nombre: 'May', cantidad: 180 },
-        { nombre: 'Jun', cantidad: 155 }
-    ];
+    const data = chartDataMeses.value;
+    
+    if (data.length === 0) return;
 
     const margin = { top: 20, right: 0, bottom: 30, left: 40 };
     const width = chartContainer.value.clientWidth - margin.left - margin.right;
@@ -607,10 +663,11 @@ const renderChart = () => {
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
     const x = d3.scaleBand().range([0, width]).domain(data.map(d => d.nombre)).padding(0.2);
-    const y = d3.scaleLinear().domain([0, 200]).range([height, 0]);
+    const maxVal = (d3.max(data, d => d.cantidad) as number) || 1;
+    const y = d3.scaleLinear().domain([0, Math.ceil(maxVal * 1.15)]).range([height, 0]);
 
     svg.append('g').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x));
-    svg.append('g').call(d3.axisLeft(y));
+    svg.append('g').call(d3.axisLeft(y).tickFormat(d3.format('d')));
 
     svg.selectAll("mybar")
         .data(data)
@@ -646,12 +703,9 @@ const renderPieChart = () => {
         .attr('transform', `translate(${containerWidth / 2},${chartHeight / 2})`);
 
     // Datos para estado de citas
-    const data = [
-        { label: 'Atendidas', value: 280, color: '#10b981' },
-        { label: 'Canceladas', value: 24, color: '#ef4444' },
-        { label: 'No Asistió', value: 18, color: '#f59e0b' },
-        { label: 'Pendientes', value: 18, color: '#6366f1' }
-    ];
+    const data = chartDataEstados.value;
+    
+    if (data.length === 0) return;
 
     const pie = d3.pie<any>().value(d => d.value).sort(null);
     const arc = d3.arc<any>().innerRadius(radius * 0.5).outerRadius(radius);
@@ -695,9 +749,7 @@ const renderPieChart = () => {
 
 onMounted(async () => {
     await cargarAreas();
-    await nextTick();
-    renderChart();
-    renderPieChart();
+    await generarReporte();
 });
 
 watch(activeTab, async (newTab) => {
